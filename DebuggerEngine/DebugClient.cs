@@ -42,7 +42,7 @@ namespace DebuggerEngine {
             return Task.Factory.StartNew(() => {
                 var iid = typeof(IDebugClient).GUID;
                 object client;
-                DebugCreate(ref iid, out client).ThrowIfFailed("Failed to create debug client");
+                DebugCreate(ref iid, out client).ThrowIfFailed();
                 return new DebugClient(client, scheduler);
             }, CancellationToken.None, TaskCreationOptions.None, scheduler);
         }
@@ -139,12 +139,12 @@ namespace DebuggerEngine {
             Dispose(false);
         }
 
-        protected virtual void Dispose(bool isDisposing) {
+        protected async virtual void Dispose(bool isDisposing) {
             if(isDisposing) {
                 GC.SuppressFinalize(this);
             }
-            ((IDisposable)_scheduler).Dispose();
-            Client.EndSession(DEBUG_END.ACTIVE_DETACH);
+            await RunAsync(() => Client.DetachProcesses());
+            ((IDisposable)_scheduler)?.Dispose();
         }
     }
 }

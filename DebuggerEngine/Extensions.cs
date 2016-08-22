@@ -8,9 +8,9 @@ namespace DebuggerEngine {
 	using System.Runtime.InteropServices;
 
 	public static class Extensions {
-		public static void ThrowIfFailed(this int hr, string message = null) {
-			if(hr < 0)
-				throw new COMException(message ?? "Error", hr);
+		public static void ThrowIfFailed(this int hr) {
+            if(hr < 0)
+                Marshal.ThrowExceptionForHR(hr);
 		}
 	}
 }

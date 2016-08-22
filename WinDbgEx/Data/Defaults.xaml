@@ -1,0 +1,25 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ui="clr-namespace:WinDbgEx.UICore;assembly=WinDbgEx.UICore"
+                    xmlns:cmds="clr-namespace:WinDbgEx.Commands"
+                    >
+    <ui:MenuItemCollectionViewModel x:Key="DefaultMenu">
+        <ui:MenuItemViewModel Text="_File" >
+            <ui:MenuItemViewModel Text="_Run Executable..." Command="cmds:FileCommands.RunExecutable" GestureText="Ctrl+R"  />
+            <ui:MenuItemViewModel Text="Attach to _Process..." Command="cmds:FileCommands.AttachToProcess" />
+            <ui:MenuItemViewModel Text="Open Dump File..." />
+            <ui:MenuItemViewModel IsSeparator="True" />
+            <ui:MenuItemViewModel Text="Attach to _Local Kernel" Command="cmds:FileCommands.AttachToLocalKernel"  />
+            <ui:MenuItemViewModel Text="Attach to _Kernel..." Command="cmds:FileCommands.AttachToKernel" />
+            <ui:MenuItemViewModel IsSeparator="True" />
+            <ui:MenuItemViewModel Text="E_xit" Command="cmds:FileCommands.Exit"/>
+        </ui:MenuItemViewModel>
+        <ui:MenuItemViewModel Text="_Edit" >
+            <ui:MenuItemViewModel Text="_Copy" Command="Copy" />
+        </ui:MenuItemViewModel>
+        <ui:MenuItemViewModel Text="_Debug">
+            <ui:MenuItemViewModel Text="_Go" GestureText="F5" />
+            <ui:MenuItemViewModel Text="Step _Over" GestureText="F10" />
+        </ui:MenuItemViewModel>
+    </ui:MenuItemCollectionViewModel>
+</ResourceDictionary>
