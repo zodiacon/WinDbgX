@@ -26,10 +26,8 @@
                 <MenuItem Header="{Binding Text}" Command="{Binding Command}" 
                           ToolTip="{Binding Description}" IsCheckable="{Binding IsCheckable}" IsChecked="{Binding IsChecked}"
                           ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
-                          CommandParameter="{Binding CommandParameter, TargetNullValue={ext:CommandContext}}" InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item">
-                    <MenuItem.Icon>
-                        <Image Source="{Binding Icon, Converter={StaticResource iconConverter}}" Stretch="Uniform" x:Name="icon" MaxWidth="20" MaxHeight="20" />
-                    </MenuItem.Icon>
+                          CommandParameter="{Binding CommandParameter, TargetNullValue={ext:CommandContext}}" InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item"
+                          Icon="{Binding Icon, Converter={StaticResource iconConverter}}">
                 </MenuItem>
             </HierarchicalDataTemplate>
         </Grid.Resources>

@@ -18,7 +18,7 @@
             <ui:MenuItemViewModel Text="_Copy" Command="Copy" />
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Debug">
-            <ui:MenuItemViewModel Text="_Go" GestureText="F5" />
+            <ui:MenuItemViewModel Text="_Go" GestureText="F5" Icon="/icons/go.ico" />
             <ui:MenuItemViewModel Text="Step _Over" GestureText="F10" />
         </ui:MenuItemViewModel>
     </ui:MenuItemCollectionViewModel>
