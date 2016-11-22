@@ -18,7 +18,7 @@ namespace WinDbgEx.Commands {
         });
 
         public static DelegateCommandBase AttachToProcess { get; } = new DelegateCommand<DebugContext>(async context => {
-            await context.Debugger.OpenDumpFileAsync(@"d:\temp\memory.dmp");
+            await context.Debugger.OpenDumpFile(@"d:\temp\memory.dmp");
         });
 
         public static DelegateCommandBase AttachToKernel { get; } = new DelegateCommand<DebugContext>(context => { });
@@ -26,5 +26,15 @@ namespace WinDbgEx.Commands {
         public static DelegateCommandBase RunExecutable { get; } = new DelegateCommand<DebugContext>(context => { });
 
         public static DelegateCommandBase Exit { get; } = new DelegateCommand(() => Application.Current.Shutdown());
+
+        public static DelegateCommandBase OpenDumpFile { get; } = new DelegateCommand<DebugContext>(async context => {
+            var dlg = context.FileDialogService.GetFileForOpen("Dump files (*.dmp)|*.dmp", "Select Dump File");
+            if(dlg == null) return;
+
+            await context.Debugger.OpenDumpFile(dlg);
+            ulong miState = await context.Debugger.GetGlobalAddress("nt", "MiState");
+            int zz = 9;
+        });
+
     }
 }

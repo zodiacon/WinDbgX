@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Diagnostics.Runtime.Interop;
+using DebuggerEngine.Interop;
 
 namespace DebuggerEngine {
-	class OutputCallbacks : IDebugOutputCallbacks2 /*, IDebugOutputCallbacks2 */ {
+    class OutputCallbacks : IDebugOutputCallbacksWide, IDebugOutputCallbacks2 {
 	public int Output(DEBUG_OUTPUT Mask, string Text) {
 		switch(Mask) {
 			case DEBUG_OUTPUT.DEBUGGEE:

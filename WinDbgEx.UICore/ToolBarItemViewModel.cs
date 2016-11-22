@@ -4,9 +4,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Prism.Mvvm;
+using System.Windows.Markup;
 
 namespace WinDbgEx.UICore {
-	class ToolBarItemViewModel : BindableBase {
+	public abstract class ToolBarItemViewModel : BindableBase {
 		private string _text;
 
 		public string Text {
@@ -47,7 +48,7 @@ namespace WinDbgEx.UICore {
 
 	}
 
-	class ToolBarButtonViewModel : ToolBarItemViewModel {
+	public class ToolBarButtonViewModel : ToolBarItemViewModel {
 		private string _icon;
 
 		public string Icon {
@@ -71,15 +72,8 @@ namespace WinDbgEx.UICore {
 
 	}
 
-	class ToolBarButtonViewModel<T> : ToolBarButtonViewModel {
-		public new Func<T> CommandParameter {
-			get { return _commandParameter as Func<T>; }
-			set { SetProperty(ref _commandParameter, value); }
-		}
-
-	}
-
-	class ToolBarComboBoxViewModel : ToolBarItemViewModel {
+	[ContentProperty("Items")]
+	public class ToolBarComboBoxViewModel : ToolBarItemViewModel {
 		private IEnumerable _items;
 
 		public IEnumerable Items {
@@ -118,23 +112,4 @@ namespace WinDbgEx.UICore {
 		public DataTemplateSelector ItemTemplateSelector { get; set; }
 	}
 
-	class ToolBarComboBoxViewModel<T> : ToolBarComboBoxViewModel where T : class {
-		public new T SelectedItem {
-			get {
-				return base.SelectedItem as T;
-			}
-			set {
-				base.SelectedItem = value;
-			}
-		}
-
-		public new Func<T> CommandParameter {
-			get {
-				return base.CommandParameter as Func<T>;
-			}
-			set {
-				base.CommandParameter = value;
-			}
-		}
-	}
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Diagnostics.Runtime.Interop;
+﻿using DebuggerEngine.Interop;
 
 namespace DebuggerEngine {
     public class ModuleInfo {

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using WinDbgEx.ViewModels;
+using Zodiacon.WPF;
 
 namespace WinDbgEx {
     /// <summary>
@@ -17,7 +20,13 @@ namespace WinDbgEx {
         protected override void OnStartup(StartupEventArgs e) {
             base.OnStartup(e);
 
-            var vm = _mainViewModel = new MainViewModel();
+            var container = new CompositionContainer(
+                new AggregateCatalog(
+                    new AssemblyCatalog(typeof(IFileDialogService).Assembly),
+                    new AssemblyCatalog(Assembly.GetExecutingAssembly())));
+
+            var vm = _mainViewModel = container.GetExportedValue<MainViewModel>();
+            vm.Init();
             var win = new MainWindow { DataContext = vm };
             win.Show();
         }

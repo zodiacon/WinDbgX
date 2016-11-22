@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Diagnostics.Runtime.Interop;
+using System.Runtime.InteropServices;
+using DebuggerEngine.Interop;
 
 namespace DebuggerEngine {
-	class EventCallbacks : IDebugEventCallbacksWide {
-		readonly IDebugControl6 _control;
+    class EventCallbacks : IDebugEventCallbacksWide {
+		readonly IDebugControl5 _control;
 
-		public EventCallbacks(IDebugControl6 control) {
+		public EventCallbacks(IDebugControl5 control) {
 			_control = control;
 		}
 
@@ -87,7 +84,11 @@ namespace DebuggerEngine {
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
 
-		public bool StateChanged { get; set; }
+        public int Exception([In] EXCEPTION_RECORD64 Exception, [In] uint FirstChance) {
+            return 0;
+        }
+
+        public bool StateChanged { get; set; }
 
 		public bool BreakpointHit { get; set; }
 	}

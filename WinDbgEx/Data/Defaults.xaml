@@ -7,7 +7,7 @@
         <ui:MenuItemViewModel Text="_File" >
             <ui:MenuItemViewModel Text="_Run Executable..." Command="cmds:FileCommands.RunExecutable" GestureText="Ctrl+R"  />
             <ui:MenuItemViewModel Text="Attach to _Process..." Command="cmds:FileCommands.AttachToProcess" />
-            <ui:MenuItemViewModel Text="Open Dump File..." />
+            <ui:MenuItemViewModel Text="Open Dump File..." Command="cmds:FileCommands.OpenDumpFile"/>
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Attach to _Local Kernel" Command="cmds:FileCommands.AttachToLocalKernel"  />
             <ui:MenuItemViewModel Text="Attach to _Kernel..." Command="cmds:FileCommands.AttachToKernel" />
