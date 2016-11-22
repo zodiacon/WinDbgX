@@ -15,7 +15,7 @@ using Zodiacon.WPF;
 namespace WinDbgEx.ViewModels {
     [Export]
     class MainViewModel : BindableBase, IDisposable {
-        ObservableCollection<MenuItemViewModel> _menuItems = new ObservableCollection<MenuItemViewModel>();
+        MenuItemCollectionViewModel _menuItems = new MenuItemCollectionViewModel();
         public DebugClient Debugger { get; private set; }
 
         public static MainViewModel Instance { get; private set; }
@@ -34,7 +34,7 @@ namespace WinDbgEx.ViewModels {
             };
         }
 
-        public IList<MenuItemViewModel> MenuItems => _menuItems;
+        public MenuItemCollectionViewModel MenuItems => _menuItems;
 
         public DebugContext DebugContext { get; private set; }
 

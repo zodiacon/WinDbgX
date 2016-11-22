@@ -17,8 +17,8 @@ namespace WinDbgEx.Commands {
             }
         });
 
-        public static DelegateCommandBase AttachToProcess { get; } = new DelegateCommand<DebugContext>(async context => {
-            await context.Debugger.OpenDumpFile(@"d:\temp\memory.dmp");
+        public static DelegateCommandBase AttachToProcess { get; } = new DelegateCommand<DebugContext>(context => {
+            
         });
 
         public static DelegateCommandBase AttachToKernel { get; } = new DelegateCommand<DebugContext>(context => { });

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Markup;
 using Prism.Mvvm;
+using System.Windows;
+using System.Globalization;
 
 namespace WinDbgEx.UICore {
     [ContentProperty("Items")]
@@ -54,14 +56,11 @@ namespace WinDbgEx.UICore {
 
 		public ICommand Command {
 			get { return _command; }
-			set { SetProperty(ref _command, value); }
-		}
-
-		object _commandParameter;
-
-		public object CommandParameter {
-			get { return _commandParameter; }
-			set { SetProperty(ref _commandParameter, value); }
+			set {
+				if (SetProperty(ref _command, value) && value != null && KeyGesture != null) {
+					AddInputBinding();
+				}
+			}
 		}
 
 		private string _shortcutText;
@@ -75,10 +74,21 @@ namespace WinDbgEx.UICore {
 
 		public KeyGesture KeyGesture {
 			get { return _keyGesture; }
-			set { SetProperty(ref _keyGesture, value); }
+			set {
+				if (SetProperty(ref _keyGesture, value)) {
+					if (Command != null)
+						AddInputBinding();
+				}
+			}
 		}
 
-        public string Description { get; set; }
+		public void AddInputBinding() {
+			Application.Current.MainWindow.InputBindings.Add(new KeyBinding(Command, KeyGesture));
+			if (GestureText == null)
+				GestureText = KeyGesture.GetDisplayStringForCulture(CultureInfo.CurrentUICulture);
+		}
+
+		public string Description { get; set; }
 
         public bool IsCheckable { get; set; }
 

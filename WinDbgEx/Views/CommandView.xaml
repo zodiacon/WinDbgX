@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WinDbgEx.Views"
-             xmlns:ui="clr-namespace:WinDbgEx.UICore;assembly=WinDbgEx.UICore"
+             xmlns:c="clr-namespace:WinDbgEx.UICore.Controls;assembly=WinDbgEx.UICore"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -12,7 +12,7 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ui:CommandResultHistory />
+        <c:CommandResultHistory />
         <DockPanel Grid.Row="1">
             <Button Content="Execute" DockPanel.Dock="Right" VerticalAlignment="Center"/>
             <TextBlock Text="{Binding Prompt}" DockPanel.Dock="Left" VerticalAlignment="Center" />

@@ -7,8 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace WinDbgEx.UICore {
-    public partial class CommandResultHistory : UserControl {
+namespace WinDbgEx.UICore.Controls {
+    public partial class CommandResultHistory {
 		Paragraph _paragraph = new Paragraph { 
 			TextAlignment = System.Windows.TextAlignment.Left,
 			IsHyphenationEnabled = false,

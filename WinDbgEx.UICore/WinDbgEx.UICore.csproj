@@ -94,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandHistoryItem.cs" />
-    <Compile Include="CommandResultHistory.xaml.cs">
+    <Compile Include="Controls\CommandResultHistory.xaml.cs">
       <DependentUpon>CommandResultHistory.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\IconConverter.cs" />
@@ -128,7 +128,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="CommandResultHistory.xaml">
+    <Page Include="Controls\CommandResultHistory.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

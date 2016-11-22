@@ -78,12 +78,12 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dragablz, Version=0.0.3.169, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dragablz.0.0.3.169\lib\net45\Dragablz.dll</HintPath>
+    <Reference Include="Dragablz, Version=0.0.3.178, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dragablz.0.0.3.178\lib\net45\Dragablz.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MahApps.Metro, Version=1.3.0.188, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.3.0-ALPHA188\lib\net45\MahApps.Metro.dll</HintPath>
+    <Reference Include="MahApps.Metro, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA030\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Diagnostics.Runtime, Version=0.8.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -99,7 +99,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.3.0-ALPHA188\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA030\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
@@ -114,8 +114,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Zodiacon.WPF, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Zodiacon.WPF.1.0.6\lib\net45\Zodiacon.WPF.dll</HintPath>
+    <Reference Include="Zodiacon.WPF, Version=1.1.6161.33016, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Zodiacon.WPF.1.1.11\lib\net45\Zodiacon.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -125,9 +125,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commands\DebugCommands.cs" />
+    <Compile Include="Commands\OptionsCommands.cs" />
     <Compile Include="DebugContext.cs" />
     <Compile Include="Commands\FileCommands.cs" />
     <Compile Include="Extensions\CommandContextExtension.cs" />
+    <Compile Include="GenericWindow.xaml.cs">
+      <DependentUpon>GenericWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\CommandViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\CommandView.xaml.cs">
@@ -137,6 +141,10 @@
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Page Include="Data\Defaults.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GenericWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -152,6 +160,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Resources\Templates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CommandView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -200,7 +212,90 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Icons\" />
+    <Resource Include="Icons\bullet_ball_blue.ico" />
+    <Resource Include="Icons\bullet_ball_red.ico" />
+    <Resource Include="Icons\bullet_ball_yellow.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Break.ico" />
+    <Resource Include="Icons\Run.ico" />
+    <Resource Include="Icons\Stop.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\breakpoint.ico" />
+    <Resource Include="Icons\breakpoints.ico" />
+    <Resource Include="Icons\breakpoints_delete.ico" />
+    <Resource Include="Icons\breakpoint_delete.ico" />
+    <Resource Include="Icons\breakpoint_edit.ico" />
+    <Resource Include="Icons\breakpoint_error.ico" />
+    <Resource Include="Icons\breakpoint_new.ico" />
+    <Resource Include="Icons\breakpoint_run.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\component.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\console.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\cpu.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\copy.ico" />
+    <Resource Include="Icons\data.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\debug_into.ico" />
+    <Resource Include="Icons\debug_next.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\disk_blue.ico" />
+    <Resource Include="Icons\disk_blue_window.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\find.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\error.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\find_again.ico" />
+    <Resource Include="Icons\find_next.ico" />
+    <Resource Include="Icons\find_previous.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\folder_out.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\gear.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\package.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\PCI-card.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\table_view.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\text_code_c.ico" />
+    <Resource Include="Icons\text_code_cplusplus.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\debug_run.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\debug.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\debug_attach.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\data_out.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\thread.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

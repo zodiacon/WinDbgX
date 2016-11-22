@@ -5,7 +5,7 @@
              xmlns:local="clr-namespace:WinDbgEx.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:WinDbgEx.UICore;assembly=WinDbgEx.UICore"
-             xmlns:z="clr-namespace:Zodiacon.WPF;assembly=Zodiacon.WPF"
+             xmlns:z="http://zodiacon.wpf/2016"
              xmlns:conv="clr-namespace:WinDbgEx.UICore.Converters;assembly=WinDbgEx.UICore"
              xmlns:root="clr-namespace:WinDbgEx"
              xmlns:ext="clr-namespace:WinDbgEx.Extensions"
@@ -26,7 +26,7 @@
                 <MenuItem Header="{Binding Text}" Command="{Binding Command}" 
                           ToolTip="{Binding Description}" IsCheckable="{Binding IsCheckable}" IsChecked="{Binding IsChecked}"
                           ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
-                          CommandParameter="{Binding CommandParameter, TargetNullValue={ext:CommandContext}}" InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item"
+                          InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item"
                           Icon="{Binding Icon, Converter={StaticResource iconConverter}}">
                 </MenuItem>
             </HierarchicalDataTemplate>

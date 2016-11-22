@@ -1,7 +1,7 @@
 ﻿using DebuggerEngine.Interop;
 
 namespace DebuggerEngine {
-    public class ModuleInfo {
+    public sealed class ModuleInfo {
         public string Name { get; internal set; }
         public ulong BaseAddress { get; internal set; }
         public uint Checksum { get; internal set; }

@@ -5,9 +5,9 @@
                     >
     <ui:MenuItemCollectionViewModel x:Key="DefaultMenu">
         <ui:MenuItemViewModel Text="_File" >
-            <ui:MenuItemViewModel Text="_Run Executable..." Command="cmds:FileCommands.RunExecutable" GestureText="Ctrl+R"  />
-            <ui:MenuItemViewModel Text="Attach to _Process..." Command="cmds:FileCommands.AttachToProcess" />
-            <ui:MenuItemViewModel Text="Open Dump File..." Command="cmds:FileCommands.OpenDumpFile"/>
+            <ui:MenuItemViewModel Text="_Run Executable..." KeyGesture="Ctrl+R" Icon="/icons/debug_run.ico" Command="cmds:FileCommands.RunExecutable" />
+            <ui:MenuItemViewModel Text="Attach to _Process..." Icon="/icons/debug_attach.ico" Command="cmds:FileCommands.AttachToProcess" />
+            <ui:MenuItemViewModel Text="Open Dump File..." Icon="/icons/data_out.ico" Command="cmds:FileCommands.OpenDumpFile" KeyGesture="Ctrl+D"/>
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Attach to _Local Kernel" Command="cmds:FileCommands.AttachToLocalKernel"  />
             <ui:MenuItemViewModel Text="Attach to _Kernel..." Command="cmds:FileCommands.AttachToKernel" />
@@ -15,11 +15,20 @@
             <ui:MenuItemViewModel Text="E_xit" Command="cmds:FileCommands.Exit"/>
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Edit" >
-            <ui:MenuItemViewModel Text="_Copy" Command="Copy" />
+            <ui:MenuItemViewModel Text="_Copy" Command="Copy" Icon="/icons/copy.ico" KeyGesture="Ctrl+C" />
+            <ui:MenuItemViewModel IsSeparator="True" />
+            <ui:MenuItemViewModel Text="_Find..." Icon="/icons/find.ico" KeyGesture="Ctrl+F"/>
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Debug">
-            <ui:MenuItemViewModel Text="_Go" GestureText="F5" />
-            <ui:MenuItemViewModel Text="Step _Over" GestureText="F10" />
+            <ui:MenuItemViewModel Text="_Go" KeyGesture="F5" Icon="/icons/run.ico" />
+            <ui:MenuItemViewModel Text="Sto_p" KeyGesture="Shift+F5" />
+            <ui:MenuItemViewModel Text="Step _Over" KeyGesture="F10" />
+            <ui:MenuItemViewModel Text="Step _Into" KeyGesture="F11" />
+            <ui:MenuItemViewModel IsSeparator="True" />
+            <ui:MenuItemViewModel Text="Breakpoints..." Icon="/icons/breakpoints.ico" KeyGesture="Alt+F9"/>
+        </ui:MenuItemViewModel>
+        <ui:MenuItemViewModel Text="_Options">
+            <ui:MenuItemViewModel Text="Always on Top" IsCheckable="True" Command="cmds:OptionsCommands.AlwaysOnTop" />
         </ui:MenuItemViewModel>
     </ui:MenuItemCollectionViewModel>
 </ResourceDictionary>
