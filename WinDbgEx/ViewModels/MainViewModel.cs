@@ -11,35 +11,43 @@ using DebuggerEngine;
 using Prism.Mvvm;
 using WinDbgEx.UICore;
 using Zodiacon.WPF;
+using WinDbgEx.Models;
+using Prism;
+using System.Windows.Input;
+using Prism.Commands;
 
 namespace WinDbgEx.ViewModels {
-    [Export]
-    class MainViewModel : BindableBase, IDisposable {
-        MenuItemCollectionViewModel _menuItems = new MenuItemCollectionViewModel();
-        public DebugClient Debugger { get; private set; }
+	[Export]
+	class MainViewModel : BindableBase {
+		MenuViewModel _menu;
+		ObservableCollection<TabViewModelBase> _tabItems = new ObservableCollection<TabViewModelBase>();
 
-        public static MainViewModel Instance { get; private set; }
+		public IList<TabViewModelBase> TabItems => _tabItems;
 
-        [Import]
-        public IFileDialogService FileDialogService { get; private set; }
+		public string Title => Constants.Title + (Helpers.IsAdmin ? " (Administrator)" : string.Empty);
 
-        public MainViewModel() {
-            Instance = this;
-        }
+		public bool IsMain { get; }
+		public IWindow Window { get; }
 
-        public void Init() {
-            Debugger = DebugClient.CreateAsync().Result;
-            DebugContext = new DebugContext(Debugger) {
-                FileDialogService = FileDialogService
-            };
-        }
+		public MainViewModel(bool main, IWindow window) {
+			IsMain = main;
+			Window = window;
 
-        public MenuItemCollectionViewModel MenuItems => _menuItems;
+			if (IsMain) {
+				_tabItems.Add(new CommandViewModel());
+				_tabItems.Add(new ModulesViewModel());
+			}
+		}
 
-        public DebugContext DebugContext { get; private set; }
+		public MenuViewModel Menu {
+			get {
+				if (_menu == null) {
+					_menu = Window.FindResource<MenuViewModel>("DefaultMenu");
+				}
+				return _menu;
+			}
+		}
 
-        public void Dispose() {
-            Debugger.Dispose();
-        }
-    }
+		public ICommand ActivateCommand => new DelegateCommand(() => DebugContext.Instance.UI.Current = this);
+	}
 }

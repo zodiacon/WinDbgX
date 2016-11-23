@@ -7,7 +7,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using WinDbgEx.Models;
+using WinDbgEx.UICore;
 using WinDbgEx.ViewModels;
+using WinDbgEx.Windows;
 using Zodiacon.WPF;
 
 namespace WinDbgEx {
@@ -15,7 +18,7 @@ namespace WinDbgEx {
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
-        MainViewModel _mainViewModel;
+		public static CompositionContainer Container { get; private set; }
 
         protected override void OnStartup(StartupEventArgs e) {
             base.OnStartup(e);
@@ -25,14 +28,16 @@ namespace WinDbgEx {
                     new AssemblyCatalog(typeof(IFileDialogService).Assembly),
                     new AssemblyCatalog(Assembly.GetExecutingAssembly())));
 
-            var vm = _mainViewModel = container.GetExportedValue<MainViewModel>();
-            vm.Init();
-            var win = new MainWindow { DataContext = vm };
+			Container = container;
+			var win = new MainWindow();
+			var vm = new MainViewModel(true, new IWindowImpl(win));
+			win.DataContext = vm;
+
             win.Show();
         }
 
         protected override void OnExit(ExitEventArgs e) {
-            _mainViewModel.Dispose();
+			DebugContext.Instance.Dispose();
             base.OnExit(e);
         }
     }

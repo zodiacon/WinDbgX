@@ -10,7 +10,8 @@ using System.ComponentModel.Composition;
 
 namespace WinDbgEx.ViewModels {
 	[Export]
-    class CommandViewModel : BindableBase {
+	[TabItem("Command", Icon = "/icons/console.ico", CanClose = false)]
+    class CommandViewModel : TabViewModelBase {
 		readonly ObservableCollection<CommandHistoryItem> _history = new ObservableCollection<CommandHistoryItem>();
 		private string _commandText;
 

@@ -9,10 +9,11 @@ using System.Windows.Markup;
 using Prism.Mvvm;
 using System.Windows;
 using System.Globalization;
+using System.Collections.Specialized;
 
 namespace WinDbgEx.UICore {
     [ContentProperty("Items")]
-
+	[DictionaryKeyProperty("Key")]
 	public class MenuItemViewModel : BindableBase {
 		private string _text;
 
@@ -20,6 +21,8 @@ namespace WinDbgEx.UICore {
 			get { return _text; }
 			set { SetProperty(ref _text, value); }
 		}
+
+		public string Key { get; set; }
 
 		private string _icon;
 
@@ -35,12 +38,14 @@ namespace WinDbgEx.UICore {
 			set { SetProperty(ref _isSeparator, value); }
 		}
 
-		private MenuItemCollectionViewModel _items;
+		internal MenuItemCollectionViewModel _items;
 
 		public MenuItemCollectionViewModel Items {
-			get { 
-				if(_items == null)
+			get {
+				if (_items == null) {
 					_items = new MenuItemCollectionViewModel();
+
+				}
 				return _items; 
 			}
 		}
@@ -95,6 +100,6 @@ namespace WinDbgEx.UICore {
         public string GestureText { get; set; }
     }
 
-    public sealed class MenuItemCollectionViewModel : ObservableCollection<MenuItemViewModel> {
-    }
+    public class MenuItemCollectionViewModel : ObservableCollection<MenuItemViewModel> {
+	}
 }

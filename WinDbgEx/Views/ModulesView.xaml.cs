@@ -13,13 +13,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WinDbgEx {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow {
-        public MainWindow() {
-            InitializeComponent();
-        }
-    }
+namespace WinDbgEx.Views {
+	/// <summary>
+	/// Interaction logic for ModulesView.xaml
+	/// </summary>
+	public partial class ModulesView : UserControl {
+		public ModulesView() {
+			InitializeComponent();
+		}
+	}
 }

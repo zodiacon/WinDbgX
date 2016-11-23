@@ -126,29 +126,38 @@
     </ApplicationDefinition>
     <Compile Include="Commands\DebugCommands.cs" />
     <Compile Include="Commands\OptionsCommands.cs" />
-    <Compile Include="DebugContext.cs" />
+    <Compile Include="Commands\ViewCommands.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="CustomTabClient.cs" />
+    <Compile Include="Extensions\OwnerWindowExtension.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="Models\DebugContext.cs" />
     <Compile Include="Commands\FileCommands.cs" />
-    <Compile Include="Extensions\CommandContextExtension.cs" />
-    <Compile Include="GenericWindow.xaml.cs">
+    <Compile Include="Models\UIContext.cs" />
+    <Compile Include="Windows\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\CommandViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\ModulesViewModel.cs" />
     <Compile Include="Views\CommandView.xaml.cs">
       <DependentUpon>CommandView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ModulesView.xaml.cs">
+      <DependentUpon>ModulesView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Data\Defaults.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GenericWindow.xaml">
+    <Page Include="Windows\GenericWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -156,7 +165,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -169,6 +178,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ModulesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -296,6 +309,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\thread.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Icons\components.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

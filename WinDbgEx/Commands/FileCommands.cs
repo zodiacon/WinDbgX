@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Prism.Commands;
+using WinDbgEx.Models;
 
 namespace WinDbgEx.Commands {
     static class FileCommands {
@@ -13,7 +14,7 @@ namespace WinDbgEx.Commands {
                 await context.Debugger.AttachToLocalKernel();
             }
             catch(Exception ex) {
-
+				context.ReportError(ex);
             }
         });
 

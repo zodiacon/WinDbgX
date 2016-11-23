@@ -2,18 +2,20 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:WinDbgEx.Views"
+             xmlns:local="clr-namespace:WinDbgEx"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:WinDbgEx.UICore;assembly=WinDbgEx.UICore"
              xmlns:z="http://zodiacon.wpf/2016"
+             xmlns:drgblz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:conv="clr-namespace:WinDbgEx.UICore.Converters;assembly=WinDbgEx.UICore"
              xmlns:root="clr-namespace:WinDbgEx"
+             xmlns:models="clr-namespace:WinDbgEx.Models"
              xmlns:ext="clr-namespace:WinDbgEx.Extensions"
              d:DesignHeight="300"
              d:DesignWidth="300" x:Name="This"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <!--<z:BindingProxy x:Key="Proxy" Data="{Binding}" />-->
+        <z:BindingProxy x:Key="Proxy" Data="{Binding}" />
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
@@ -23,10 +25,10 @@
             <ui:MenuItemTemplateSelector x:Key="menuItemTemplateSelector" MenuItemTemplateKey="menuItemTemplate" SeparatorTemplateKey="seperatorDataTemplate" />
             <conv:IconConverter x:Key="iconConverter" />
             <HierarchicalDataTemplate x:Key="menuItemTemplate" ItemsSource="{Binding Items}">
-                <MenuItem Header="{Binding Text}" Command="{Binding Command}" 
+                <MenuItem Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{x:Static models:DebugContext.Instance}"
                           ToolTip="{Binding Description}" IsCheckable="{Binding IsCheckable}" IsChecked="{Binding IsChecked}"
                           ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
-                          InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item"
+                          InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item" Tag="{Binding ElementName=This}"
                           Icon="{Binding Icon, Converter={StaticResource iconConverter}}">
                 </MenuItem>
             </HierarchicalDataTemplate>
@@ -37,10 +39,28 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Menu ItemsSource="{Binding Source={StaticResource DefaultMenu}}" UsesItemContainerTemplate="True" 
+        <Menu ItemsSource="{Binding Menu}" UsesItemContainerTemplate="True" 
               FontSize="{Binding Settings.Fonts.MenuFont.FontSize}" FontFamily="{Binding Settings.Fonts.MenuFont.FontFamily}"
               ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}">
         </Menu>
-        <TabControl Grid.Row="2" />
+        <drgblz:TabablzControl ItemsSource="{Binding TabItems}" Grid.Row="2" x:FieldModifier="internal" x:Name="TabablzControl" Margin="4 0 4 4"
+                               ItemContainerStyle="{StaticResource TrapezoidDragableTabItemStyle}"
+                               ShowDefaultCloseButton="{Binding CanClose}">
+            <drgblz:TabablzControl.HeaderItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding Icon}" Width="16" Height="16" />
+                        <TextBlock Margin="4,0,0,0" VerticalAlignment="Center" Text="{Binding Title}" />
+                    </StackPanel>
+                </DataTemplate>
+            </drgblz:TabablzControl.HeaderItemTemplate>
+            <drgblz:TabablzControl.InterTabController>
+                <drgblz:InterTabController >
+                    <drgblz:InterTabController.InterTabClient>
+                        <local:CustomTabClient />
+                    </drgblz:InterTabController.InterTabClient>
+                </drgblz:InterTabController>
+            </drgblz:TabablzControl.InterTabController>
+        </drgblz:TabablzControl>
     </Grid>
 </UserControl>
