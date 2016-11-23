@@ -88,14 +88,11 @@ namespace WinDbgEx.UICore {
 		}
 
 		public void AddInputBinding() {
-			Application.Current.MainWindow.InputBindings.Add(new KeyBinding(Command, KeyGesture));
 			if (GestureText == null)
 				GestureText = KeyGesture.GetDisplayStringForCulture(CultureInfo.CurrentUICulture);
 		}
 
 		public string Description { get; set; }
-
-        public bool IsCheckable { get; set; }
 
         public string GestureText { get; set; }
     }

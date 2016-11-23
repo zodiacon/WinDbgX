@@ -34,7 +34,6 @@ namespace WinDbgEx.Commands {
 
             await context.Debugger.OpenDumpFile(dlg);
             ulong miState = await context.Debugger.GetGlobalAddress("nt", "MiState");
-            int zz = 9;
         });
 
     }

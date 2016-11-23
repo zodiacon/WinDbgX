@@ -41,6 +41,7 @@ namespace WinDbgEx.Models {
 			get {
 				if (_context == null) {
 					_context = App.Container.GetExportedValue<DebugContext>();
+					Debug.Assert(_context != null);
 				}
 				return _context;
 			}

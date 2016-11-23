@@ -14,5 +14,18 @@ namespace WinDbgEx.Models {
 		ObservableCollection<MainViewModel> _windows = new ObservableCollection<MainViewModel>();
 		public MainViewModel Current { get; internal set; }
 
+		public IList<MainViewModel> Windows => _windows;
+
+		public T FindTab<T>(out MainViewModel vm) where T : TabViewModelBase {
+			vm = null;
+			foreach (var win in Windows) {
+				var tab = win.TabItems.OfType<T>().FirstOrDefault();
+				if (tab != null) {
+					vm = win;
+					return tab;
+				}
+			}
+			return null;
+		}
 	}
 }

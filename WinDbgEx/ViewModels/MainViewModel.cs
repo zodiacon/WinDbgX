@@ -36,18 +36,46 @@ namespace WinDbgEx.ViewModels {
 			if (IsMain) {
 				_tabItems.Add(new CommandViewModel());
 				_tabItems.Add(new ModulesViewModel());
+				SelectedTab = _tabItems[0];
 			}
+
+			DebugContext.Instance.UI.Windows.Add(this);
 		}
 
 		public MenuViewModel Menu {
 			get {
 				if (_menu == null) {
 					_menu = Window.FindResource<MenuViewModel>("DefaultMenu");
+					if (_menu != null)
+						_menu.AddKeyBindings(Window.WindowObject, DebugContext.Instance);
 				}
 				return _menu;
 			}
 		}
 
+		private TabViewModelBase _selectedTab;
+
+		public TabViewModelBase SelectedTab {
+			get { return _selectedTab; }
+			set {
+				var old = _selectedTab;
+				if (SetProperty(ref _selectedTab, value)) {
+					if (old != null)
+						old.IsActive = false;
+					if (value != null)
+						value.IsActive = true;
+				}
+			}
+		}
+
 		public ICommand ActivateCommand => new DelegateCommand(() => DebugContext.Instance.UI.Current = this);
+
+		public ICommand CloseTabCommand => new DelegateCommand<TabViewModelBase>(tab => TabItems.Remove(tab));
+
+		public void AddItem(TabViewModelBase tab, bool select = true) {
+			TabItems.Add(tab);
+			if (select)
+				SelectedTab = tab;
+		}
 	}
 }

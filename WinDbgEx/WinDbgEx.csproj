@@ -129,11 +129,14 @@
     <Compile Include="Commands\ViewCommands.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="CustomTabClient.cs" />
-    <Compile Include="Extensions\OwnerWindowExtension.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Models\DebugContext.cs" />
     <Compile Include="Commands\FileCommands.cs" />
     <Compile Include="Models\UIContext.cs" />
+    <Compile Include="ViewModels\RegistersViewModel.cs" />
+    <Compile Include="Views\RegistersView.xaml.cs">
+      <DependentUpon>RegistersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
     </Compile>
@@ -150,6 +153,10 @@
       <DependentUpon>ModulesView.xaml</DependentUpon>
     </Compile>
     <Page Include="Data\Defaults.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RegistersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -310,9 +317,17 @@
   <ItemGroup>
     <Resource Include="Icons\thread.ico" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Icons\components.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\close.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\memory.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

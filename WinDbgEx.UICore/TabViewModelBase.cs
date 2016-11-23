@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Prism;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,17 +18,34 @@ namespace WinDbgEx.UICore {
 		public bool CanClose { get; set; } = true;
 	}
 
-	public abstract class TabViewModelBase : BindableBase {
+	public abstract class TabViewModelBase : BindableBase, IActiveAware {
 		public virtual string Title { get; } = "Item";
 		public virtual string Icon { get; } = null;
 		public virtual bool CanClose { get; } = true;
+
+		private bool _isActive;
+
+		public bool IsActive {
+			get { return _isActive; }
+			set {
+				if (SetProperty(ref _isActive, value)) {
+					OnActive(value);
+					IsActiveChanged?.Invoke(this, EventArgs.Empty);
+				}
+			}
+		}
+
+		protected virtual void OnActive(bool active) { }
 
 		public TabViewModelBase() {
 			var attr = GetType().GetCustomAttribute<TabItemAttribute>();
 			if (attr != null) {
 				Title = attr.Title;
 				Icon = attr.Icon;
+				CanClose = attr.CanClose;
 			}
 		}
+
+		public event EventHandler IsActiveChanged;
 	}
 }

@@ -9,4 +9,7 @@
     <DataTemplate DataType="{x:Type vm:ModulesViewModel}">
         <view:ModulesView />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:RegistersViewModel}">
+        <view:RegistersView />
+    </DataTemplate>
 </ResourceDictionary>

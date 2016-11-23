@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ui="clr-namespace:WinDbgEx.UICore;assembly=WinDbgEx.UICore"
-                    xmlns:ext="clr-namespace:WinDbgEx.Extensions"
+                    
                     xmlns:cmds="clr-namespace:WinDbgEx.Commands"
                     >
     <ui:MenuViewModel x:Key="DefaultMenu" x:Shared="False">
@@ -21,11 +21,12 @@
             <ui:MenuItemViewModel Text="_Find..." Icon="/icons/find.ico" KeyGesture="Ctrl+F"/>
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_View">
-            <ui:MenuItemViewModel Text="Command" Icon="/icons/console.ico"/>
-            <ui:MenuItemViewModel Text="Threads" Icon="/icons/thread.ico"/>
-            <ui:MenuItemViewModel Text="Modules" Icon="/icons/components.ico"/>
+            <ui:MenuItemViewModel Text="Command" Icon="/icons/console.ico" Command="cmds:ViewCommands.Command" KeyGesture="Alt+1"/>
+            <ui:MenuItemViewModel Text="Threads" Icon="/icons/thread.ico" />
+            <ui:MenuItemViewModel Text="Modules" Icon="/icons/components.ico" Command="cmds:ViewCommands.Modules"/>
             <ui:MenuItemViewModel Text="Processes" Icon="/icons/gear.ico" />
-            <ui:MenuItemViewModel Text="Memory" />
+            <ui:MenuItemViewModel Text="Memory" Icon="/icons/memory.ico"/>
+            <ui:MenuItemViewModel Text="Registers" Icon="/icons/cpu.ico" Command="cmds:ViewCommands.Registers"/>
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Debug">
             <ui:MenuItemViewModel Text="_Go" KeyGesture="F5" Icon="/icons/run.ico" />
