@@ -78,6 +78,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DebugClient.cs" />
+    <Compile Include="DebugClient.DebugControl.cs" />
+    <Compile Include="DebugClient.EventCallbacks.cs" />
+    <Compile Include="DebugClient.OutputCallbacks.cs" />
+    <Compile Include="DebugClient.Targets.cs" />
+    <Compile Include="DebugClientEvents.cs" />
     <Compile Include="DebugUtilities.cs" />
     <Compile Include="EventCallbacks.cs" />
     <Compile Include="Extensions.cs" />
@@ -127,6 +132,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SingleThreadedTaskScheduler.cs" />
     <Compile Include="SymbolInfo.cs" />
+    <Compile Include="DebugTarget.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

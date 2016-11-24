@@ -39,8 +39,14 @@ namespace DebuggerEngine {
 			Symbols = (IDebugSymbols5)client;
 			Advanced = (IDebugAdvanced3)client;
 
-			Client.SetEventCallbacksWide(new EventCallbacks(Control)).ThrowIfFailed();
-			Client.SetOutputCallbacksWide(new OutputCallbacks()).ThrowIfFailed();
+			Client.SetEventCallbacksWide(this).ThrowIfFailed();
+			Client.SetOutputCallbacksWide(this).ThrowIfFailed();
+
+			Control.AddEngineOptions(DEBUG_ENGOPT.INITIAL_BREAK);
+		}
+
+		public Task Break() {
+			return Task.Run(() => Control.SetInterrupt(DEBUG_INTERRUPT.ACTIVE));
 		}
 
 		[DllImport("dbgeng", PreserveSig = true)]
@@ -96,6 +102,21 @@ namespace DebuggerEngine {
 				WaitForEvent();
 			});
 		}
+
+		public Task DebugProcess(string commandLine, string args, AttachProcessFlags attachFlags, bool debugChildProcesses = false) {
+			return RunAsync(() => {
+				var options = new DEBUG_CREATE_PROCESS_OPTIONS {
+					CreateFlags = DEBUG_CREATE_PROCESS.DEBUG_PROCESS
+				};
+				if (!debugChildProcesses)
+					options.CreateFlags |= DEBUG_CREATE_PROCESS.DEBUG_ONLY_THIS_PROCESS;
+
+				Client.CreateProcessAndAttach2Wide(0, commandLine + " " + (args ?? string.Empty), ref options, (uint)Marshal.SizeOf<DEBUG_CREATE_PROCESS_OPTIONS>(), 
+					null, null, 0, (DEBUG_ATTACH)attachFlags).ThrowIfFailed();
+				WaitForEvent();
+			});
+		}
+
 		public Task OpenDumpFile(string file) {
 			return RunAsync(() => {
 				Client.OpenDumpFileWide(file, 0).ThrowIfFailed();
@@ -136,10 +157,45 @@ namespace DebuggerEngine {
 			});
 		}
 
-		public Task ExecuteAsync(string command) {
+		public Task Execute(string command) {
 			return RunAsync(() => {
 				Control.ExecuteWide(DEBUG_OUTCTL.ALL_CLIENTS, command, DEBUG_EXECUTE.ECHO);
+				DoPostCommand();
 			});
+		}
+
+		private bool DoPostCommand() {
+			var status = UpdateStatus();
+
+			if (status == DEBUG_STATUS.NO_DEBUGGEE) {
+				return false;
+			}
+
+			if (status == DEBUG_STATUS.GO || status == DEBUG_STATUS.STEP_BRANCH || status == DEBUG_STATUS.STEP_INTO || status == DEBUG_STATUS.STEP_OVER) {
+				if (Control.WaitForEvent(DEBUG_WAIT.DEFAULT, uint.MaxValue) < 0) {
+					UpdateStatus();
+					if (Status == DEBUG_STATUS.NO_DEBUGGEE)
+						return false;
+				}
+				Control.OutputCurrentState(DEBUG_OUTCTL.THIS_CLIENT, DEBUG_CURRENT.DEFAULT);
+				_stateChanged = true;
+			}
+
+			if (_stateChanged) {
+				//UpdateStatus();
+				if (Status == DEBUG_STATUS.NO_DEBUGGEE)
+					return false;
+
+				_stateChanged = false;
+				if (_breakpointHit) {
+					//Control.OutputCurrentState(DEBUG_OUTCTL.THIS_CLIENT, DEBUG_CURRENT.DEFAULT);
+					_breakpointHit = false;
+
+					UpdateStatus();
+				}
+				Control.OutputPromptWide(DEBUG_OUTCTL.THIS_CLIENT, null);
+			}
+			return true;
 		}
 
 		const int S_OK = 0;
@@ -557,6 +613,29 @@ namespace DebuggerEngine {
 			}
 
 			return FieldAddress;
+		}
+
+		public Task OutputPrompt(DEBUG_OUTCTL outControl = DEBUG_OUTCTL.THIS_CLIENT, string format = null) {
+			return RunAsync(() => Control.OutputPromptWide(outControl, format));
+		}
+
+		public event EventHandler<StatusChangedEventArgs> StatusChanged;
+
+		private void OnStatusChanged(StatusChangedEventArgs e) {
+			StatusChanged?.Invoke(this, e);
+		}
+
+		public DEBUG_STATUS Status { get; private set; } = DEBUG_STATUS.NO_DEBUGGEE;
+
+		private DEBUG_STATUS UpdateStatus(bool force = false) {
+			DEBUG_STATUS status;
+			Control.GetExecutionStatus(out status);
+			if (force || Status != status) {
+				var args = new StatusChangedEventArgs(Status, status);
+				Status = status;
+				OnStatusChanged(args);
+			}
+			return Status;
 		}
 
 		public void Dispose() {

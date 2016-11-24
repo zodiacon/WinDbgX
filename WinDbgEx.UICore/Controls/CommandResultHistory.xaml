@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <FlowDocumentScrollViewer x:Name="_scroller">
-        <FlowDocument x:Name="_document" FontFamily="Consolas">
+        <FlowDocument x:Name="_document" >
         </FlowDocument>
     </FlowDocumentScrollViewer>
 

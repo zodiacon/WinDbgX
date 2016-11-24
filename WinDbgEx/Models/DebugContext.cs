@@ -17,6 +17,7 @@ namespace WinDbgEx.Models {
 		
         private DebugContext() {
 			Debugger = DebugClient.CreateAsync().Result;
+
         }
 
 		[Import]

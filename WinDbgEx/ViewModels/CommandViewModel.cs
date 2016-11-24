@@ -7,12 +7,19 @@ using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using WinDbgEx.UICore;
 using System.ComponentModel.Composition;
+using WinDbgEx.Models;
+using DebuggerEngine;
+using DebuggerEngine.Interop;
+using System.Windows.Threading;
+using System.Windows.Input;
+using Prism.Commands;
 
 namespace WinDbgEx.ViewModels {
 	[Export]
 	[TabItem("Command", Icon = "/icons/console.ico", CanClose = false)]
-    class CommandViewModel : TabViewModelBase {
+	class CommandViewModel : TabViewModelBase {
 		readonly ObservableCollection<CommandHistoryItem> _history = new ObservableCollection<CommandHistoryItem>();
+		Dictionary<DEBUG_OUTPUT, RgbColor> _historyColors;
 		private string _commandText;
 
 		public string CommandText {
@@ -29,5 +36,62 @@ namespace WinDbgEx.ViewModels {
 			set { SetProperty(ref _prompt, value); }
 		}
 
+		DebugClient _debugger;
+		Dispatcher _dispatcher;
+
+		public CommandViewModel() {
+			_dispatcher = Dispatcher.CurrentDispatcher;
+			_historyColors = new Dictionary<DEBUG_OUTPUT, RgbColor> {
+				[DEBUG_OUTPUT.ERROR] = new RgbColor { R = 255 },
+				[DEBUG_OUTPUT.EXTENSION_WARNING] = new RgbColor { R = 128 },
+				[DEBUG_OUTPUT.WARNING] = new RgbColor { R = 128, G = 128 },
+				[DEBUG_OUTPUT.DEBUGGEE] = new RgbColor { B = 255 },
+				[DEBUG_OUTPUT.SYMBOLS] = new RgbColor { G = 128 }
+			};
+
+			_debugger = DebugContext.Instance.Debugger;
+			_debugger.StatusChanged += _debugger_StatusChanged;
+			_debugger.OutputCallback += _debugger_OutputCallback;
+		}
+
+		private void _debugger_OutputCallback(object sender, OutputCallbackEventArgs e) {
+			_dispatcher.InvokeAsync(() => {
+				if (e.Type == DEBUG_OUTPUT.PROMPT) {
+					Prompt = e.Text;
+				}
+				else {
+					History.Add(new CommandHistoryItem { Text = e.Text, Color = ColorFromType(e.Type) });
+				}
+			});
+		}
+
+		private RgbColor ColorFromType(DEBUG_OUTPUT type) {
+			RgbColor color;
+			if (_historyColors.TryGetValue(type, out color))
+				return color;
+
+			return null;
+		}
+
+		private bool _isNotBusy = false;
+
+		public bool IsNotBusy {
+			get { return _isNotBusy; }
+			set { SetProperty(ref _isNotBusy, value); }
+		}
+
+		private void _debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
+			var state = e.NewStatus;
+			_debugger.OutputPrompt();
+			_dispatcher.InvokeAsync(() => {
+				IsNotBusy = state == DEBUG_STATUS.BREAK;
+			});
+		}
+
+		public ICommand ExecuteCommand => new DelegateCommand(() => {
+			_debugger.Execute(CommandText);
+			CommandText = string.Empty;
+		}, () => !string.IsNullOrWhiteSpace(CommandText))
+			.ObservesProperty(() => CommandText);
 	}
 }

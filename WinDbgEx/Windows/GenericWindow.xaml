@@ -11,5 +11,5 @@
         BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}"
         SizeToContent="{Binding SizeToContent}"
         TitleCaps="False" Icon="{Binding Icon}" ResizeMode="{Binding ResizeMode}"
-        Width="{Binding Width}" Height="{Binding Height}">
+        Width="{Binding Width}" Height="{Binding Height}" MaxWidth="{Binding MaxWidth}" MaxHeight="{Binding MaxHeight}">
 </metro:MetroWindow>

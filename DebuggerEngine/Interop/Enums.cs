@@ -331,6 +331,7 @@ namespace DebuggerEngine.Interop
     [Flags]
     public enum DEBUG_ATTACH : uint
     {
+		DEFAULT = 0,
         KERNEL_CONNECTION = 0,
         LOCAL_KERNEL = 1,
         EXDI_DRIVER = 2,
@@ -370,6 +371,8 @@ namespace DebuggerEngine.Interop
         DEFAULT = 0,
         NO_DEBUG_HEAP = 0x00000400, /* CREATE_UNICODE_ENVIRONMENT */
         THROUGH_RTL = 0x00010000, /* STACK_SIZE_PARAM_IS_A_RESERVATION */
+		DEBUG_PROCESS = 1,
+		DEBUG_ONLY_THIS_PROCESS = 2,
     }
 
     [Flags]

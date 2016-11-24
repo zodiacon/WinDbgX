@@ -84,5 +84,8 @@
                 </drgblz:InterTabController>
             </drgblz:TabablzControl.InterTabController>
         </drgblz:TabablzControl>
+        <StatusBar Grid.Row="3">
+            
+        </StatusBar>
     </Grid>
 </UserControl>

@@ -97,7 +97,8 @@ namespace WinDbgEx.UICore.Controls {
 				_paragraph.Inlines.Add(new Run {
 					Foreground = item.Color != null ? new SolidColorBrush(Color.FromRgb(item.Color.R, item.Color.G, item.Color.B)) : DefaultForeground,
 					Text = item.Text,
-					FontWeight = item.Bold ? FontWeights.Bold : FontWeights.Normal
+					FontWeight = item.Bold ? FontWeights.Bold : FontWeights.Normal,
+					FontFamily = FontFamily
 				});
 			}
 
