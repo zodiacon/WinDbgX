@@ -70,7 +70,7 @@ namespace WinDbgEx.ViewModels {
 			if (_historyColors.TryGetValue(type, out color))
 				return color;
 
-			return null;
+			return new RgbColor();
 		}
 
 		private bool _isNotBusy = false;
@@ -82,15 +82,24 @@ namespace WinDbgEx.ViewModels {
 
 		private void _debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
 			var state = e.NewStatus;
-			_debugger.OutputPrompt();
-			_dispatcher.InvokeAsync(() => {
+			_dispatcher.InvokeAsync(async () => {
 				IsNotBusy = state == DEBUG_STATUS.BREAK;
+				await _debugger.OutputPrompt();
+
+				if (state == DEBUG_STATUS.NO_DEBUGGEE)
+					Prompt = Constants.NoTarget;
+				else if (!IsNotBusy)
+					Prompt = Constants.Busy;
 			});
 		}
 
-		public ICommand ExecuteCommand => new DelegateCommand(() => {
-			_debugger.Execute(CommandText);
+		public ICommand ExecuteCommand => new DelegateCommand(async () => {
+			var target = await _debugger.Execute(CommandText);
+			_history.Add(new CommandHistoryItem { Text = Prompt + " " + CommandText + Environment.NewLine, Color = ColorFromType(DEBUG_OUTPUT.NORMAL) });
+
 			CommandText = string.Empty;
+			if (!target)
+				Prompt = Constants.NoTarget;
 		}, () => !string.IsNullOrWhiteSpace(CommandText))
 			.ObservesProperty(() => CommandText);
 	}

@@ -133,6 +133,8 @@
     <Compile Include="SingleThreadedTaskScheduler.cs" />
     <Compile Include="SymbolInfo.cs" />
     <Compile Include="DebugTarget.cs" />
+    <Compile Include="TargetProcess.cs" />
+    <Compile Include="TargetThread.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

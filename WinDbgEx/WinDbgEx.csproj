@@ -134,13 +134,19 @@
     <Compile Include="Models\DebugContext.cs" />
     <Compile Include="Commands\FileCommands.cs" />
     <Compile Include="Models\UIContext.cs" />
+    <Compile Include="ViewModels\ProcessViewModel.cs" />
     <Compile Include="ViewModels\RegistersViewModel.cs" />
     <Compile Include="ViewModels\RunExecutableViewModel.cs" />
+    <Compile Include="ViewModels\ThreadsViewModel.cs" />
+    <Compile Include="ViewModels\ThreadViewModel.cs" />
     <Compile Include="Views\RegistersView.xaml.cs">
       <DependentUpon>RegistersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RunExecutableView.xaml.cs">
       <DependentUpon>RunExecutableView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThreadsView.xaml.cs">
+      <DependentUpon>ThreadsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
@@ -166,6 +172,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RunExecutableView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ThreadsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -340,6 +350,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\breakpoint_add.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\gears.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

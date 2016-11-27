@@ -1,5 +1,6 @@
 ﻿using DebuggerEngine.Interop;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,7 +22,36 @@ namespace DebuggerEngine {
 				var targets = (IList<DebugTarget>)Enumerable.Range(0, (int)processes).Select(i => GetTarget(i)).ToList();
 				SystemObjects.SetCurrentProcessId(current);
 				return targets;
+			});
+		}
 
+		ulong GetThreadTeb(uint index) {
+			uint id;
+			ulong teb;
+			SystemObjects.GetCurrentThreadId(out id).ThrowIfFailed();
+			SystemObjects.SetCurrentThreadId(index).ThrowIfFailed();
+			SystemObjects.GetCurrentThreadTeb(out teb);
+			return teb;
+		}
+
+		public Task<TargetThread[]> GetThreads(int start = 0, int count = 0) {
+			return RunAsync(() => {
+				uint total, largest;
+				SystemObjects.GetTotalNumberThreads(out total, out largest).ThrowIfFailed();
+				if (count == 0)
+					count = (int)total;
+				uint[] id = new uint[count];
+				uint[] osid = new uint[count];
+				SystemObjects.GetThreadIdsByIndex((uint)start, (uint)count, id, osid).ThrowIfFailed();
+				var threads = new TargetThread[count];
+				for (int i = 0; i < count; i++) {
+					threads[i] = new TargetThread {
+						Index = id[i],
+						OSID = osid[i],
+						Teb = GetThreadTeb(id[i])
+					};
+				}
+				return threads;
 			});
 		}
 
@@ -35,15 +65,15 @@ namespace DebuggerEngine {
 			return hr < 0 ? null : _targets.FirstOrDefault(t => t.Index == id);
 		}
 
-		//public Task<TargetThread> GetCurrentThreadAsync() {
-		//	return StartTask(() => GetCurrentThread());
-		//}
+		public Task<int> GetCurrentThreadIndex() {
+			return RunAsync(() => GetCurrentThreadInternal());
+		}
 
-		//internal TargetThread GetCurrentThread() {
-		//	uint id;
-		//	System.GetCurrentThreadId(out id);
-		//	return GetCurrentTarget()?.Threads.FirstOrDefault(t => t.Index == id);
-		//}
+		internal int GetCurrentThreadInternal() {
+			uint id;
+			SystemObjects.GetCurrentThreadId(out id);
+			return (int)id;
+		}
 
 		private DebugTarget GetTarget(int i) {
 			if (SystemObjects.SetCurrentProcessId((uint)i) < 0)
@@ -71,6 +101,32 @@ namespace DebuggerEngine {
 					SystemObjects.SetCurrentProcessId((uint)id);
 					Control.OutputPromptWide(DEBUG_OUTCTL.THIS_CLIENT, null);
 				}
+			});
+		}
+
+		public Task<int> SetCurrentThreadIndex(int index) {
+			return RunAsync(() => {
+				uint id;
+				SystemObjects.GetCurrentThreadId(out id).ThrowIfFailed();
+				SystemObjects.SetCurrentThreadId((uint)index).ThrowIfFailed();
+				return (int)id;
+			});
+		}
+
+		public Task<TargetThread> SetThreadExtraInfo(TargetThread thread) {
+			return RunAsync(() => {
+				// get extra information from the TEB
+				if (thread.Teb == 0)
+					return thread;
+
+				uint tebTypeId;
+				ulong ntdllModulebase;
+				if (SUCCEEDED(GetSymbolTypeIdWide("ntdll!_teb", out tebTypeId, out ntdllModulebase))) {
+					ulong pid;
+					GetFieldValue(ntdllModulebase, tebTypeId, "ClientId.UniqueProcess", thread.Teb, out pid);
+					thread.ProcessId = (int)pid;
+				}
+				return thread;
 			});
 		}
 	}

@@ -22,9 +22,8 @@
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_View">
             <ui:MenuItemViewModel Text="Command" Icon="/icons/console.ico" Command="cmds:ViewCommands.Command" KeyGesture="Alt+1"/>
-            <ui:MenuItemViewModel Text="Threads" Icon="/icons/thread.ico" />
+            <ui:MenuItemViewModel Text="Processes and Threads" Icon="/icons/gears.ico" Command="cmds:ViewCommands.Threads" />
             <ui:MenuItemViewModel Text="Modules" Icon="/icons/components.ico" Command="cmds:ViewCommands.Modules"/>
-            <ui:MenuItemViewModel Text="Processes" Icon="/icons/gear.ico" />
             <ui:MenuItemViewModel Text="Memory" Icon="/icons/memory.ico"/>
             <ui:MenuItemViewModel Text="Registers" Icon="/icons/cpu.ico" Command="cmds:ViewCommands.Registers"/>
             <ui:MenuItemViewModel Text="Breakpoints" Icon="/icons/breakpoints.ico" KeyGesture="Alt+F9"/>
@@ -34,14 +33,14 @@
             <ui:MenuItemViewModel Text="Break" KeyGesture="Ctrl+Break" Icon="/icons/break.ico" Command="cmds:DebugCommands.Break"/>
             <ui:MenuItemViewModel Text="Sto_p" KeyGesture="Shift+F5" />
             <ui:MenuItemViewModel Text="Detach" />
-            <ui:MenuItemViewModel Text="Step _Over" KeyGesture="F10" Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver"/>
+            <ui:MenuItemViewModel Text="Step _Over" KeyGesture="F10" Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver" />
             <ui:MenuItemViewModel Text="Step _Into" KeyGesture="F11" Icon="/icons/debug_into.ico" Command="cmds:DebugCommands.StepInto" />
             <ui:MenuItemViewModel Text="Step Out" KeyGesture="Shift+F11" Command="cmds:DebugCommands.StepOut" />
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Advanced Step">
-                <ui:MenuItemViewModel Text="Step to Branch" />
-                <ui:MenuItemViewModel Text="Step to Call" />
-                <ui:MenuItemViewModel Text="Step to Return" />
+                <ui:MenuItemViewModel Text="Step to Branch" Command="cmds:DebugCommands.StepToBranch" />
+                <ui:MenuItemViewModel Text="Step to Call" Command="cmds:DebugCommands.StepToCall" />
+                <ui:MenuItemViewModel Text="Step to Return" Command="cmds:DebugCommands.StepToReturn" />
             </ui:MenuItemViewModel>
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Breakpoints">

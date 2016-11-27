@@ -71,8 +71,8 @@ namespace DebuggerEngine {
 			return Task.Factory.StartNew(method, CancellationToken.None, TaskCreationOptions.None, _scheduler);
 		}
 
-		private void WaitForEvent(uint msec = uint.MaxValue) {
-			Control.WaitForEvent(DEBUG_WAIT.DEFAULT, msec).ThrowIfFailed();
+		private int WaitForEvent(uint msec = uint.MaxValue) {
+			return Control.WaitForEvent(DEBUG_WAIT.DEFAULT, msec);
 		}
 
 		public Task AttachToLocalKernel() {
@@ -99,7 +99,7 @@ namespace DebuggerEngine {
 		public Task AttachToProcess(int pid, AttachProcessFlags attachFlag = AttachProcessFlags.Invasive) {
 			return RunAsync(() => {
 				Client.AttachProcess(0, (uint)pid, (DEBUG_ATTACH)attachFlag).ThrowIfFailed();
-				WaitForEvent();
+				WaitForEvent().ThrowIfFailed();
 			});
 		}
 
@@ -113,7 +113,7 @@ namespace DebuggerEngine {
 
 				Client.CreateProcessAndAttach2Wide(0, commandLine + " " + (args ?? string.Empty), ref options, (uint)Marshal.SizeOf<DEBUG_CREATE_PROCESS_OPTIONS>(), 
 					null, null, 0, (DEBUG_ATTACH)attachFlags).ThrowIfFailed();
-				WaitForEvent();
+				WaitForEvent().ThrowIfFailed();
 			});
 		}
 
@@ -157,10 +157,10 @@ namespace DebuggerEngine {
 			});
 		}
 
-		public Task Execute(string command) {
+		public Task<bool> Execute(string command) {
 			return RunAsync(() => {
-				Control.ExecuteWide(DEBUG_OUTCTL.ALL_CLIENTS, command, DEBUG_EXECUTE.ECHO);
-				DoPostCommand();
+				Control.ExecuteWide(DEBUG_OUTCTL.ALL_CLIENTS, command, DEBUG_EXECUTE.DEFAULT);
+				return DoPostCommand();
 			});
 		}
 
@@ -168,6 +168,7 @@ namespace DebuggerEngine {
 			var status = UpdateStatus();
 
 			if (status == DEBUG_STATUS.NO_DEBUGGEE) {
+				Client.EndSession(DEBUG_END.ACTIVE_TERMINATE);
 				return false;
 			}
 
@@ -306,7 +307,7 @@ namespace DebuggerEngine {
 			return hr;
 		}
 
-		public unsafe int GetSymbolTypeIdWide(string symbolName, out UInt32 typeId, out ulong moduleBase) {
+		public unsafe int GetSymbolTypeIdWide(string symbolName, out uint typeId, out ulong moduleBase) {
 			symbolName = symbolName.TrimEnd();
 			while (symbolName.EndsWith("*")) {
 				symbolName = symbolName.Substring(0, symbolName.Length - 1).TrimEnd();
@@ -630,7 +631,7 @@ namespace DebuggerEngine {
 		private DEBUG_STATUS UpdateStatus(bool force = false) {
 			DEBUG_STATUS status;
 			Control.GetExecutionStatus(out status);
-			if (force || Status != status) {
+			if (Status != status) {
 				var args = new StatusChangedEventArgs(Status, status);
 				Status = status;
 				OnStatusChanged(args);
@@ -650,7 +651,7 @@ namespace DebuggerEngine {
 			if (isDisposing) {
 				GC.SuppressFinalize(this);
 			}
-			await RunAsync(() => Client.DetachProcesses().ThrowIfFailed());
+			await RunAsync(() => Client.DetachProcesses());
 			((IDisposable)_scheduler)?.Dispose();
 		}
 	}

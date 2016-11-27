@@ -17,8 +17,9 @@
         <c:CommandResultHistory Items="{Binding History}" FontFamily="{Binding Settings.Fonts.CommandFontFamily, FallbackValue=Consolas}"/>
         <DockPanel Grid.Row="1">
             <Button Content="Execute" DockPanel.Dock="Right" VerticalAlignment="Center" IsDefault="True" Command="{Binding ExecuteCommand}"/>
-            <TextBlock Text="{Binding Prompt}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold"/>
-            <TextBox Text="{Binding CommandText, UpdateSourceTrigger=PropertyChanged}" Margin="4,0" FontFamily="{Binding Settings.Fonts.CommandTextFontFamily, FallbackValue=Consolas}" IsEnabled="{Binding IsNotBusy}" MaxLength="100">
+            <TextBlock Text="{Binding Prompt}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" FontFamily="{Binding Settings.Fonts.CommandFontFamily, FallbackValue=Consolas}"/>
+            <TextBox Text="{Binding CommandText, UpdateSourceTrigger=PropertyChanged}" Margin="4,0" FontFamily="{Binding Settings.Fonts.CommandTextFontFamily, FallbackValue=Consolas}" 
+                     IsEnabled="{Binding IsNotBusy}" MaxLength="100" FontSize="{Binding Settings.Fonts.CommandTextFontSize, FallbackValue=12}">
                 <i:Interaction.Behaviors>
                     <b:FocusOnKeyDownBehavior Key="Esc" />
                 </i:Interaction.Behaviors>

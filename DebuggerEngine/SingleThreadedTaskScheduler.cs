@@ -14,9 +14,10 @@ namespace DebuggerEngine {
 		public SingleThreadedTaskScheduler(ThreadPriority priority = ThreadPriority.Normal) {
 			_tasks = new BlockingCollection<Task>();
 			_thread = new Thread(() => {
-				foreach(var task in _tasks.GetConsumingEnumerable()) {
-					if(base.TryExecuteTask(task))
+				foreach (var task in _tasks.GetConsumingEnumerable()) {
+					if (base.TryExecuteTask(task)) {
 						task.Wait();
+					}
 				}
 			});
 			_thread.Priority = priority;

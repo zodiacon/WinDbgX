@@ -15,6 +15,8 @@ using WinDbgEx.Models;
 using Prism;
 using System.Windows.Input;
 using Prism.Commands;
+using WinDbgEx.Commands;
+using System.Reflection;
 
 namespace WinDbgEx.ViewModels {
 	[Export]
@@ -29,6 +31,18 @@ namespace WinDbgEx.ViewModels {
 		public bool IsMain { get; }
 		public IWindow Window { get; }
 
+		static readonly List<DelegateCommandBase> _commands = new List<DelegateCommandBase>(32);
+
+		static MainViewModel() {
+			Type[] types = {
+				typeof(FileCommands), typeof(ViewCommands), typeof(OptionsCommands), typeof(DebugCommands)
+			};
+			foreach(var type in types)
+				_commands.AddRange(type.GetProperties(BindingFlags.Public | BindingFlags.Static)
+					.Where(pi => pi.PropertyType == typeof(DelegateCommandBase))
+					.Select(pi => pi.GetValue(null) as DelegateCommandBase));
+		}
+
 		public MainViewModel(bool main, IWindow window) {
 			IsMain = main;
 			Window = window;
@@ -37,9 +51,19 @@ namespace WinDbgEx.ViewModels {
 				_tabItems.Add(new CommandViewModel());
 				_tabItems.Add(new ModulesViewModel());
 				SelectedTab = _tabItems[0];
+
+				DebugContext.Instance.Debugger.StatusChanged += Debugger_StatusChanged;
 			}
 
 			DebugContext.Instance.UI.Windows.Add(this);
+		}
+
+		private static void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
+			if (e.NewStatus == e.OldStatus)
+				return;
+
+			foreach (var cmd in _commands)
+				cmd.RaiseCanExecuteChanged();
 		}
 
 		public MenuViewModel Menu {

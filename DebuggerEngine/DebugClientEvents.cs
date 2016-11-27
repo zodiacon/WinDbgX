@@ -8,13 +8,27 @@ using System.Threading.Tasks;
 namespace DebuggerEngine {
 	public sealed class StatusChangedEventArgs : EventArgs {
 		public readonly DEBUG_STATUS OldStatus, NewStatus;
-//		public readonly DebuggerTarget CurrentTarget;
 
 		internal StatusChangedEventArgs(DEBUG_STATUS oldStatus, DEBUG_STATUS newStatus) {
 			OldStatus = oldStatus;
 			NewStatus = newStatus;
-			//if (newStatus == DEBUG_STATUS.BREAK)
-			//	CurrentTarget = client.GetCurrentTarget();
 		}
 	}
+
+	public sealed class ProcessCreatedEventArgs : EventArgs {
+		public readonly TargetProcess Process;
+
+		internal ProcessCreatedEventArgs(TargetProcess process) {
+			Process = process;
+		}
+	}
+
+	public sealed class ThreadCreatedEventArgs : EventArgs {
+		public readonly TargetThread Thread;
+
+		internal ThreadCreatedEventArgs(TargetThread thread) {
+			Thread = thread;
+		}
+	}
+
 }

@@ -1,10 +1,23 @@
 ﻿using DebuggerEngine.Interop;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace DebuggerEngine {
 	partial class DebugClient : IDebugEventCallbacksWide {
 		bool _stateChanged;
 		bool _breakpointHit;
+
+		public event EventHandler<ProcessCreatedEventArgs> ProcessCreated;
+		public event EventHandler<ThreadCreatedEventArgs> ThreadCreated;
+
+		void OnProcessCreated(TargetProcess process) {
+			ProcessCreated?.Invoke(this, new ProcessCreatedEventArgs(process));
+		}
+
+		void OnThreadCreated(TargetThread thread) {
+			ThreadCreated?.Invoke(this, new ThreadCreatedEventArgs(thread));
+		}
 
 		int IDebugEventCallbacksWide.GetInterestMask(out DEBUG_EVENT Mask) {
 			Mask = DEBUG_EVENT.BREAKPOINT | DEBUG_EVENT.CHANGE_DEBUGGEE_STATE | DEBUG_EVENT.CHANGE_ENGINE_STATE | DEBUG_EVENT.CHANGE_SYMBOL_STATE | DEBUG_EVENT.CREATE_PROCESS
@@ -62,6 +75,28 @@ namespace DebuggerEngine {
 		int IDebugEventCallbacksWide.CreateProcess(ulong ImageFileHandle, ulong Handle, ulong BaseOffset, uint ModuleSize, string ModuleName, string ImageName,
 			uint CheckSum, uint TimeDateStamp, ulong InitialThreadHandle, ulong ThreadDataOffset, ulong StartOffset) {
 			Debug.WriteLine("IDebugEventCallbacksWide.CreateProcess");
+
+			uint id;
+			SystemObjects.GetCurrentProcessId(out id);
+			ulong peb;
+			SystemObjects.GetCurrentProcessPeb(out peb);
+			uint pid;
+			SystemObjects.GetCurrentProcessSystemId(out pid);
+
+			var process = new TargetProcess {
+				PID = (int)pid,
+				hProcess = Handle,
+				hFile = ImageFileHandle,
+				BaseOffset = BaseOffset,
+				ModuleSize = ModuleSize,
+				ImageName = ImageName,
+				TimeStamp = DateTime.FromFileTime(TimeDateStamp),
+				ModuleName = ModuleName,
+				Index = (int)id,
+				Peb = peb
+			};
+
+			OnProcessCreated(process);
 
 			//var target = DebuggerTarget.LiveUser(this, (int)WindowsAPI.GetProcessId(new IntPtr((long)Handle)), ImageName);
 			//_targets.Add(target);

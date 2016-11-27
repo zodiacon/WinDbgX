@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <FlowDocumentScrollViewer x:Name="_scroller">
+    <FlowDocumentScrollViewer x:Name="_scroller" IsToolBarVisible="True">
         <FlowDocument x:Name="_document" >
         </FlowDocument>
     </FlowDocumentScrollViewer>
