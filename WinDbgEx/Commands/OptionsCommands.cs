@@ -10,10 +10,11 @@ using WinDbgEx.Models;
 namespace WinDbgEx.Commands {
 	class OptionsCommands {
 		public static DelegateCommandBase AlwaysOnTop { get; } 
-			= new DelegateCommand<DebugContext>(context => {
-				bool ontop = !context.UI.Current.Window.Topmost;
-				context.UI.Current.Window.Topmost = ontop;
-				context.UI.Current.Menu["AlwaysOnTop"].IsChecked = ontop; 
+			= new DelegateCommand<AppManager>(app => {
+
+				bool ontop = !app.UI.CurrentWindow.Window.Topmost;
+				app.UI.CurrentWindow.Window.Topmost = ontop;
+				app.UI.CurrentWindow.Menu["AlwaysOnTop"].IsChecked = ontop; 
 			});
 	}
 }

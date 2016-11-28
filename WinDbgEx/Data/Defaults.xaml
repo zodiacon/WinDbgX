@@ -13,6 +13,12 @@
             <ui:MenuItemViewModel Text="Attach to _Local Kernel" Command="cmds:FileCommands.AttachToLocalKernel"  />
             <ui:MenuItemViewModel Text="Attach to _Kernel..." Command="cmds:FileCommands.AttachToKernel" />
             <ui:MenuItemViewModel IsSeparator="True" />
+            <ui:MenuItemViewModel Text="Load Workspace..." />
+            <ui:MenuItemViewModel Text="Save Workspace" />
+            <ui:MenuItemViewModel Text="Save Workspace As..." />
+            <ui:MenuItemViewModel IsSeparator="True" />
+            <ui:MenuItemViewModel Text="Recent Workspaces" />
+            <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="E_xit" Command="cmds:FileCommands.Exit"/>
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Edit" >
@@ -23,6 +29,7 @@
         <ui:MenuItemViewModel Text="_View">
             <ui:MenuItemViewModel Text="Command" Icon="/icons/console.ico" Command="cmds:ViewCommands.Command" KeyGesture="Alt+1"/>
             <ui:MenuItemViewModel Text="Processes and Threads" Icon="/icons/gears.ico" Command="cmds:ViewCommands.Threads" />
+            <ui:MenuItemViewModel Text="Event Log" Icon="/icons/flash.ico" Command="cmds:ViewCommands.EventLog"/>
             <ui:MenuItemViewModel Text="Modules" Icon="/icons/components.ico" Command="cmds:ViewCommands.Modules"/>
             <ui:MenuItemViewModel Text="Memory" Icon="/icons/memory.ico"/>
             <ui:MenuItemViewModel Text="Registers" Icon="/icons/cpu.ico" Command="cmds:ViewCommands.Registers"/>
@@ -47,9 +54,20 @@
                 <ui:MenuItemViewModel Text="New Breakpoint..." Icon="/icons/breakpoint_add.ico" KeyGesture="Ctrl+B" />
                 <ui:MenuItemViewModel Text="Delete All Breakpoints" Icon="/icons/breakpoints_delete.ico" KeyGesture="Ctrl+Shift+F9" />
             </ui:MenuItemViewModel>
+            <ui:MenuItemViewModel IsSeparator="True" />
+            <ui:MenuItemViewModel Text="Events..." />
+            <ui:MenuItemViewModel Text="Exceptions..." />
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Options">
             <ui:MenuItemViewModel Text="Always on Top" Key="AlwaysOnTop" Command="cmds:OptionsCommands.AlwaysOnTop" />
+        </ui:MenuItemViewModel>
+        <ui:MenuItemViewModel Text="_Window">
+            <ui:MenuItemViewModel Text="Consollidate to this Window" />
+            <ui:MenuItemViewModel Text="Close All Tabs" />
+            <ui:MenuItemViewModel Text="Close All Windows but This" />
+        </ui:MenuItemViewModel>
+        <ui:MenuItemViewModel Text="_Help">
+            <ui:MenuItemViewModel Text="_About WinDbgEx..." />
         </ui:MenuItemViewModel>
     </ui:MenuViewModel>
 </ResourceDictionary>

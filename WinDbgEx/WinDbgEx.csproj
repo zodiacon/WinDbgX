@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WinDbgEx</RootNamespace>
     <AssemblyName>WinDbgEx</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -83,7 +83,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA030\lib\net45\MahApps.Metro.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA033\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Diagnostics.Runtime, Version=0.8.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -99,7 +99,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA030\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA033\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
@@ -114,8 +114,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Zodiacon.WPF, Version=1.1.6161.33016, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Zodiacon.WPF.1.1.11\lib\net45\Zodiacon.WPF.dll</HintPath>
+    <Reference Include="Zodiacon.WPF, Version=1.1.6176.20033, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Zodiacon.WPF.1.1.13\lib\net45\Zodiacon.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -124,21 +124,30 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Behaviors\FocusOnKeyDownBehavior.cs" />
     <Compile Include="Commands\DebugCommands.cs" />
     <Compile Include="Commands\OptionsCommands.cs" />
     <Compile Include="Commands\ViewCommands.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Converters\EventLogItemToStringConverter.cs" />
     <Compile Include="CustomTabClient.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="Models\DebugContext.cs" />
+    <Compile Include="Models\AppManager.cs" />
+    <Compile Include="Models\DebugManager.cs" />
     <Compile Include="Commands\FileCommands.cs" />
-    <Compile Include="Models\UIContext.cs" />
+    <Compile Include="Models\EventLogItem.cs" />
+    <Compile Include="Models\UIManager.cs" />
+    <Compile Include="Models\Workspace.cs" />
+    <Compile Include="Models\WorkspaceTab.cs" />
+    <Compile Include="Models\WorkspaceWindow.cs" />
+    <Compile Include="ViewModels\EventLogViewModel.cs" />
     <Compile Include="ViewModels\ProcessViewModel.cs" />
     <Compile Include="ViewModels\RegistersViewModel.cs" />
     <Compile Include="ViewModels\RunExecutableViewModel.cs" />
     <Compile Include="ViewModels\ThreadsViewModel.cs" />
     <Compile Include="ViewModels\ThreadViewModel.cs" />
+    <Compile Include="Views\EventLogView.xaml.cs">
+      <DependentUpon>EventLogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\RegistersView.xaml.cs">
       <DependentUpon>RegistersView.xaml</DependentUpon>
     </Compile>
@@ -164,6 +173,10 @@
       <DependentUpon>ModulesView.xaml</DependentUpon>
     </Compile>
     <Page Include="Data\Defaults.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EventLogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -346,6 +359,7 @@
     <Resource Include="Icons\memory.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Behaviors\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
@@ -353,6 +367,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\gears.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\flash.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

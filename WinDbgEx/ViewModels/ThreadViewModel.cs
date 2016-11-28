@@ -15,8 +15,8 @@ namespace WinDbgEx.ViewModels {
 		}
 
 		public int Index => (int)Thread.Index;
-		public int OSID => (int)Thread.OSID;
+		public int OSID => (int)Thread.TID;
 		public ulong Teb => Thread.Teb;
-
+		public ulong StartAddress => Thread.StartAddress;
 	}
 }

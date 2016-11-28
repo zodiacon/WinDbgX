@@ -10,6 +10,8 @@ namespace DebuggerEngine {
 
 		public event EventHandler<ProcessCreatedEventArgs> ProcessCreated;
 		public event EventHandler<ThreadCreatedEventArgs> ThreadCreated;
+		public event EventHandler<ProcessExitedEventArgs> ProcessExited;
+		public event EventHandler<ThreadExitedEventArgs> ThreadExited;
 
 		void OnProcessCreated(TargetProcess process) {
 			ProcessCreated?.Invoke(this, new ProcessCreatedEventArgs(process));
@@ -17,6 +19,14 @@ namespace DebuggerEngine {
 
 		void OnThreadCreated(TargetThread thread) {
 			ThreadCreated?.Invoke(this, new ThreadCreatedEventArgs(thread));
+		}
+
+		void OnProcessExited(ProcessExitedEventArgs e) {
+			ProcessExited?.Invoke(this, e);
+		}
+
+		void OnThreadExited(ThreadExitedEventArgs e) {
+			ThreadExited?.Invoke(this, e);
 		}
 
 		int IDebugEventCallbacksWide.GetInterestMask(out DEBUG_EVENT Mask) {
@@ -49,25 +59,33 @@ namespace DebuggerEngine {
 		}
 
 		int IDebugEventCallbacksWide.CreateThread(ulong Handle, ulong DataOffset, ulong StartOffset) {
-			//uint id, tid;
-			//SystemObjects.GetCurrentThreadId(out id);
-			//SystemObjects.GetCurrentThreadSystemId(out tid);
-			//var thread = new TargetThread {
-			//	Index = id,
-			//	Tid = tid,
-			//	StartAddress = StartOffset,
-			//	Teb = DataOffset
-			//};
-			//GetCurrentTarget().Threads.Add(thread);
+			uint id, tid, pindex;
+			SystemObjects.GetCurrentProcessId(out pindex);
+			SystemObjects.GetCurrentThreadId(out id);
+			SystemObjects.GetCurrentThreadSystemId(out tid);
+			Debug.Assert(tid > 0);
+
+			var thread = new TargetThread {
+				Index = id,
+				TID = tid,
+				StartAddress = StartOffset,
+				Teb = DataOffset,
+				Handle = Handle,
+				ProcessIndex = pindex
+			};
+
+			OnThreadCreated(thread);
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
 
 		int IDebugEventCallbacksWide.ExitThread(uint ExitCode) {
-			//uint id;
-			//SystemObjects.GetCurrentThreadId(out id);
-			//var threads = GetCurrentTarget().Threads;
-			//threads.Remove(threads.First(t => t.Index == id));
+			uint id, pid, tid;
+			SystemObjects.GetCurrentThreadId(out id);
+			SystemObjects.GetCurrentProcessId(out pid);
+			SystemObjects.GetCurrentThreadSystemId(out tid);
+
+			OnThreadExited(new ThreadExitedEventArgs(id, tid, pid, ExitCode));
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
@@ -84,7 +102,7 @@ namespace DebuggerEngine {
 			SystemObjects.GetCurrentProcessSystemId(out pid);
 
 			var process = new TargetProcess {
-				PID = (int)pid,
+				PID = pid,
 				hProcess = Handle,
 				hFile = ImageFileHandle,
 				BaseOffset = BaseOffset,
@@ -98,21 +116,19 @@ namespace DebuggerEngine {
 
 			OnProcessCreated(process);
 
-			//var target = DebuggerTarget.LiveUser(this, (int)WindowsAPI.GetProcessId(new IntPtr((long)Handle)), ImageName);
-			//_targets.Add(target);
-			//OnTargetAdded(new TargetAddedEventArgs(target));
+			uint tindex, tid;
+			SystemObjects.GetCurrentThreadId(out tindex);
+			SystemObjects.GetCurrentThreadSystemId(out tid);
+			var thread = new TargetThread {
+				Index = tindex,
+				TID = tid,
+				StartAddress = StartOffset,
+				Teb = ThreadDataOffset,
+				Handle = InitialThreadHandle,
+				ProcessIndex = id
+			};
 
-			//uint id, tid;
-			//SystemObjects.GetCurrentThreadId(out id);
-			//SystemObjects.GetCurrentThreadSystemId(out tid);
-
-			//var thread = new TargetThread {
-			//	Tid = tid,
-			//	Index = id,
-			//	StartAddress = StartOffset,
-			//	Teb = ThreadDataOffset
-			//};
-			//target.Threads.Add(thread);
+			OnThreadCreated(thread);
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
@@ -120,7 +136,9 @@ namespace DebuggerEngine {
 		int IDebugEventCallbacksWide.ExitProcess(uint ExitCode) {
 			Debug.WriteLine("IDebugEventCallbacksWide.ExitProcess");
 
-			//_targets.Remove(GetCurrentTarget());
+			uint index;
+			SystemObjects.GetCurrentProcessId(out index);
+			OnProcessExited(new ProcessExitedEventArgs(index, ExitCode));
 
 			UpdateStatus();
 			return (int)DEBUG_STATUS.NO_CHANGE;

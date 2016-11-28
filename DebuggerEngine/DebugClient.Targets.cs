@@ -47,7 +47,7 @@ namespace DebuggerEngine {
 				for (int i = 0; i < count; i++) {
 					threads[i] = new TargetThread {
 						Index = id[i],
-						OSID = osid[i],
+						TID = osid[i],
 						Teb = GetThreadTeb(id[i])
 					};
 				}
@@ -124,7 +124,6 @@ namespace DebuggerEngine {
 				if (SUCCEEDED(GetSymbolTypeIdWide("ntdll!_teb", out tebTypeId, out ntdllModulebase))) {
 					ulong pid;
 					GetFieldValue(ntdllModulebase, tebTypeId, "ClientId.UniqueProcess", thread.Teb, out pid);
-					thread.ProcessId = (int)pid;
 				}
 				return thread;
 			});

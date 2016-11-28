@@ -55,7 +55,10 @@ namespace WinDbgEx.ViewModels {
 		});
 
 		public ICommand BrowseDirectoryCommand => new DelegateCommand(() => {
-
+			var folder = _fileDialogService.GetFolder();
+			if (folder != null) {
+				StartDirectory = folder;
+			}
 		});
 	}
 }

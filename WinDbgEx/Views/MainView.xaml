@@ -37,7 +37,7 @@
             <ui:MenuItemTemplateSelector x:Key="menuItemTemplateSelector" MenuItemTemplateKey="menuItemTemplate" SeparatorTemplateKey="seperatorDataTemplate" />
             <conv:IconConverter x:Key="iconConverter" />
             <HierarchicalDataTemplate x:Key="menuItemTemplate" ItemsSource="{Binding Items}">
-                <MenuItem Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{x:Static models:DebugContext.Instance}"
+                <MenuItem Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{Binding Data.AppManager, Source={StaticResource Proxy}}"
                           ToolTip="{Binding Description}" IsChecked="{Binding IsChecked}"
                           ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
                           InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item" Tag="{Binding ElementName=This}"

@@ -31,4 +31,26 @@ namespace DebuggerEngine {
 		}
 	}
 
+	public sealed class ProcessExitedEventArgs : EventArgs {
+		public readonly uint Index;
+		public readonly uint ExitCode;
+
+		internal ProcessExitedEventArgs(uint index, uint exitCode) {
+			Index = index;
+			ExitCode = exitCode;
+		}
+	}
+
+	public sealed class ThreadExitedEventArgs : EventArgs {
+		public readonly uint Index, ProcessIndex;
+		public readonly uint ExitCode;
+		public readonly uint TID;
+
+		internal ThreadExitedEventArgs(uint index, uint tid, uint processIndex, uint exitCode) {
+			Index = index;
+			ProcessIndex = processIndex;
+			ExitCode = exitCode;
+			TID = tid;
+		}
+	}
 }

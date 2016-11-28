@@ -28,6 +28,7 @@
                                         <DataGridTextColumn Header="Index" Binding="{Binding Index}" />
                                         <DataGridTextColumn Header="OS ID" Binding="{Binding OSID}" />
                                         <DataGridTextColumn Header="TEB" Binding="{Binding Teb, StringFormat=0x\{0:X\}}" />
+                                        <DataGridTextColumn Header="Start Address" Binding="{Binding StartAddress, StringFormat=0x\{0:X\}}" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Expander>

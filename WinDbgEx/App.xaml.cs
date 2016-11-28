@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Configuration;
 using System.Data;
@@ -28,6 +29,13 @@ namespace WinDbgEx {
                     new AssemblyCatalog(typeof(IFileDialogService).Assembly),
                     new AssemblyCatalog(Assembly.GetExecutingAssembly())));
 
+			var defaults = new UIServicesDefaults();
+			container.ComposeExportedValue(defaults.DialogService);
+			container.ComposeExportedValue(defaults.FileDialogService);
+			container.ComposeExportedValue(defaults.MessageBoxService);
+
+			var appManager = container.GetExportedValue<AppManager>();
+
 			Container = container;
 			var win = new MainWindow();
 			var vm = new MainViewModel(true, new IWindowImpl(win));
@@ -37,7 +45,7 @@ namespace WinDbgEx {
         }
 
         protected override void OnExit(ExitEventArgs e) {
-			DebugContext.Instance.Dispose();
+			Container.GetExportedValue<DebugManager>().Dispose();
             base.OnExit(e);
         }
     }

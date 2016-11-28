@@ -15,6 +15,9 @@
     <DataTemplate DataType="{x:Type vm:ThreadsViewModel}">
         <view:ThreadsView />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:EventLogViewModel}">
+        <view:EventLogView />
+    </DataTemplate>
     <DataTemplate DataType="{x:Type vm:RunExecutableViewModel}">
         <view:RunExecutableView Margin="12" />
     </DataTemplate>

@@ -4,11 +4,14 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WinDbgEx.UICore;
 
-namespace WinDbgEx.ViewModels {
-	[TabItem("Registers", Icon = "/icons/cpu.ico")]
+namespace WinDbgEx.Models {
 	[Export]
-	class RegistersViewModel : TabViewModelBase {
+	class AppManager {
+		[Import]
+		public DebugManager Debug { get; private set; }
+
+		[Import]
+		public UIManager UI { get; private set; }
 	}
 }

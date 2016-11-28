@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DebuggerEngine {
 	public class TargetProcess {
-		public int PID { get; internal set; }
+		public uint PID { get; internal set; }
 		public ulong Peb { get; internal set; }
 		public int Index { get; internal set; }
 		public ulong hProcess { get; internal set; }
@@ -17,6 +17,7 @@ namespace DebuggerEngine {
 		public string ImageName { get; internal set; }
 		public string ModuleName { get; internal set; }
 		public DateTime TimeStamp { get; internal set; }
+		public uint ExitCode { get; set; }
 
 		List<TargetThread> _threads = new List<TargetThread>();
 

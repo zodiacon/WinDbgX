@@ -39,7 +39,11 @@ namespace WinDbgEx.ViewModels {
 		DebugClient _debugger;
 		Dispatcher _dispatcher;
 
-		public CommandViewModel() {
+		readonly DebugManager DebugManager;
+
+		[ImportingConstructor]
+		public CommandViewModel(DebugManager debug) {
+			DebugManager = debug;
 			_dispatcher = Dispatcher.CurrentDispatcher;
 			_historyColors = new Dictionary<DEBUG_OUTPUT, RgbColor> {
 				[DEBUG_OUTPUT.ERROR] = new RgbColor { R = 255 },
@@ -49,7 +53,7 @@ namespace WinDbgEx.ViewModels {
 				[DEBUG_OUTPUT.SYMBOLS] = new RgbColor { G = 128 }
 			};
 
-			_debugger = DebugContext.Instance.Debugger;
+			_debugger = DebugManager.Debugger;
 			_debugger.StatusChanged += _debugger_StatusChanged;
 			_debugger.OutputCallback += _debugger_OutputCallback;
 		}

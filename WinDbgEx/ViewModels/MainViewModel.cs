@@ -31,39 +31,25 @@ namespace WinDbgEx.ViewModels {
 		public bool IsMain { get; }
 		public IWindow Window { get; }
 
-		static readonly List<DelegateCommandBase> _commands = new List<DelegateCommandBase>(32);
+		readonly UIManager UIManager;
+		readonly DebugManager DebugManager;
 
-		static MainViewModel() {
-			Type[] types = {
-				typeof(FileCommands), typeof(ViewCommands), typeof(OptionsCommands), typeof(DebugCommands)
-			};
-			foreach(var type in types)
-				_commands.AddRange(type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-					.Where(pi => pi.PropertyType == typeof(DelegateCommandBase))
-					.Select(pi => pi.GetValue(null) as DelegateCommandBase));
-		}
+		public AppManager AppManager { get; }
 
 		public MainViewModel(bool main, IWindow window) {
 			IsMain = main;
 			Window = window;
+			AppManager = App.Container.GetExportedValue<AppManager>();
+			DebugManager = AppManager.Debug;
+			UIManager = AppManager.UI;
+
+			UIManager.Windows.Add(this);
 
 			if (IsMain) {
-				_tabItems.Add(new CommandViewModel());
-				_tabItems.Add(new ModulesViewModel());
-				SelectedTab = _tabItems[0];
-
-				DebugContext.Instance.Debugger.StatusChanged += Debugger_StatusChanged;
+				var commandView = App.Container.GetExportedValue<CommandViewModel>();
+				AddItem(commandView);
+				SelectedTab = commandView;
 			}
-
-			DebugContext.Instance.UI.Windows.Add(this);
-		}
-
-		private static void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
-			if (e.NewStatus == e.OldStatus)
-				return;
-
-			foreach (var cmd in _commands)
-				cmd.RaiseCanExecuteChanged();
 		}
 
 		public MenuViewModel Menu {
@@ -71,7 +57,7 @@ namespace WinDbgEx.ViewModels {
 				if (_menu == null) {
 					_menu = Window.FindResource<MenuViewModel>("DefaultMenu");
 					if (_menu != null)
-						_menu.AddKeyBindings(Window.WindowObject, DebugContext.Instance);
+						_menu.AddKeyBindings(Window.WindowObject, DebugManager);
 				}
 				return _menu;
 			}
@@ -92,7 +78,7 @@ namespace WinDbgEx.ViewModels {
 			}
 		}
 
-		public ICommand ActivateCommand => new DelegateCommand(() => DebugContext.Instance.UI.Current = this);
+		public ICommand ActivateCommand => new DelegateCommand<AppManager>(context => context.UI.CurrentWindow = this);
 
 		public ICommand CloseTabCommand => new DelegateCommand<TabViewModelBase>(tab => TabItems.Remove(tab));
 

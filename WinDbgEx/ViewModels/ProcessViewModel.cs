@@ -24,13 +24,16 @@ namespace WinDbgEx.ViewModels {
 		}
 
 		[DisplayName("Process ID")]
-		public int ProcessId => Process.PID;
+		public uint ProcessId => Process.PID;
 
 		[DisplayName("PEB")]
 		public string Peb => "0x" + Process.Peb.ToString("X");
 
 		[DisplayName("Image Name")]
 		public string ImageName => Process.ImageName;
+
+		[DisplayName("Checksum")]
+		public string Checksum => "0x" + Process.Checksum.ToString("X");
 
 		IEnumerable<object> _properties;
 		public IEnumerable<object> Properties => _properties ?? ((
