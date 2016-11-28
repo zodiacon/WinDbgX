@@ -19,8 +19,10 @@ namespace WinDbgEx.ViewModels {
 	[TabItem("Command", Icon = "/icons/console.ico", CanClose = false)]
 	class CommandViewModel : TabViewModelBase {
 		readonly ObservableCollection<CommandHistoryItem> _history = new ObservableCollection<CommandHistoryItem>();
+		ObservableCollection<string> _commandHistory = new ObservableCollection<string>();
 		Dictionary<DEBUG_OUTPUT, RgbColor> _historyColors;
 		private string _commandText;
+		int _commandHistoryIndex;
 
 		public string CommandText {
 			get { return _commandText; }
@@ -99,8 +101,13 @@ namespace WinDbgEx.ViewModels {
 
 		public ICommand ExecuteCommand => new DelegateCommand(() => {
 			_dispatcher.InvokeAsync(async () => {
-				_history.Add(new CommandHistoryItem { Text = Prompt + " " + CommandText + Environment.NewLine, Color = ColorFromType(DEBUG_OUTPUT.NORMAL) });
+				_history.Add(new CommandHistoryItem {
+					Text = Prompt + " " + CommandText + Environment.NewLine,
+					Color = ColorFromType(DEBUG_OUTPUT.NORMAL)
+				});
+				_commandHistory.Add(CommandText);
 				var target = await _debugger.Execute(CommandText);
+				_commandHistoryIndex = _commandHistory.Count;
 
 				CommandText = string.Empty;
 				if (!target)
@@ -108,5 +115,17 @@ namespace WinDbgEx.ViewModels {
 			});
 		}, () => !string.IsNullOrWhiteSpace(CommandText))
 			.ObservesProperty(() => CommandText);
+
+		public ICommand NextCommand => new DelegateCommand(() => {
+			if (_commandHistoryIndex >= _commandHistory.Count - 1)
+				return;
+			CommandText = _commandHistory[++_commandHistoryIndex];
+		});
+
+		public ICommand PreviousCommand => new DelegateCommand(() => {
+			if (_commandHistoryIndex == 0)
+				return;
+			CommandText = _commandHistory[--_commandHistoryIndex];
+		});
 	}
 }

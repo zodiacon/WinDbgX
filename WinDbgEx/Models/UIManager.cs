@@ -37,7 +37,7 @@ namespace WinDbgEx.Models {
 		}
 
 		DebugManager DebugManager;
-		Dispatcher _dispatcher  =Dispatcher.CurrentDispatcher;
+		Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
 		[ImportingConstructor]
 		private UIManager(DebugManager debugManager) {
@@ -59,7 +59,7 @@ namespace WinDbgEx.Models {
 			MessageBoxService.ShowMessage(ex.Message, Constants.Title);
 		}
 
-		DEBUG_STATUS _status;
+		DEBUG_STATUS _status = DEBUG_STATUS.NO_DEBUGGEE;
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
 			_dispatcher.InvokeAsync(() => {
 				if (e.NewStatus == _status)

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:z="http://zodiacon.wpf/2016"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:WinDbgEx.Views"
              xmlns:c="clr-namespace:WinDbgEx.UICore.Controls;assembly=WinDbgEx.UICore"
              mc:Ignorable="d" 
@@ -15,11 +16,15 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <c:CommandResultHistory Items="{Binding History}" FontFamily="{Binding Settings.Fonts.CommandFontFamily, FallbackValue=Consolas}"/>
-        <DockPanel Grid.Row="1">
-            <Button Content="Execute" DockPanel.Dock="Right" VerticalAlignment="Center" IsDefault="True" Command="{Binding ExecuteCommand}"/>
+        <DockPanel Grid.Row="1" TextElement.FontSize="{Binding Settings.Fonts.CommandTextFontSize, FallbackValue=14}">
+            <Button Content="Execute" DockPanel.Dock="Right" VerticalAlignment="Center" IsDefault="True" Command="{Binding ExecuteCommand}" Padding="8,2"/>
             <TextBlock Text="{Binding Prompt}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" FontFamily="{Binding Settings.Fonts.CommandFontFamily, FallbackValue=Consolas}"/>
             <TextBox Text="{Binding CommandText, UpdateSourceTrigger=PropertyChanged}" Margin="4,0" FontFamily="{Binding Settings.Fonts.CommandTextFontFamily, FallbackValue=Consolas}" 
-                     IsEnabled="{Binding IsNotBusy}" MaxLength="100" FontSize="{Binding Settings.Fonts.CommandTextFontSize, FallbackValue=12}">
+                     IsEnabled="{Binding IsNotBusy}" MaxLength="100" metro:TextBoxHelper.ClearTextButton="True">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Down" Command="{Binding NextCommand}" />
+                    <KeyBinding Key="Up" Command="{Binding PreviousCommand}" />
+                </TextBox.InputBindings>
                 <i:Interaction.Behaviors>
                     <z:FocusOnKeyDownBehavior Key="Esc" />
                 </i:Interaction.Behaviors>
