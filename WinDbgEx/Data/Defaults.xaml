@@ -42,7 +42,7 @@
             <ui:MenuItemViewModel Text="Detach" />
             <ui:MenuItemViewModel Text="Step _Over" KeyGesture="F10" Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver" />
             <ui:MenuItemViewModel Text="Step _Into" KeyGesture="F11" Icon="/icons/debug_into.ico" Command="cmds:DebugCommands.StepInto" />
-            <ui:MenuItemViewModel Text="Step Out" KeyGesture="Shift+F11" Command="cmds:DebugCommands.StepOut" />
+            <ui:MenuItemViewModel Text="Step Out" KeyGesture="Shift+F11" Icon="/icons/debug_out.ico" Command="cmds:DebugCommands.StepOut" />
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Advanced Step">
                 <ui:MenuItemViewModel Text="Step to Branch" Command="cmds:DebugCommands.StepToBranch" />
@@ -60,6 +60,11 @@
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Options">
             <ui:MenuItemViewModel Text="Always on Top" Key="AlwaysOnTop" Command="cmds:OptionsCommands.AlwaysOnTop" />
+            <ui:MenuItemViewModel IsSeparator="True" />
+            <ui:MenuItemViewModel Text="_General..." />
+            <ui:MenuItemViewModel Text="_Colors..." />
+            <ui:MenuItemViewModel Text="_Fonts..." />
+            <ui:MenuItemViewModel Text="_All Options..." />
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Window">
             <ui:MenuItemViewModel Text="Consollidate to this Window" />
@@ -70,4 +75,16 @@
             <ui:MenuItemViewModel Text="_About WinDbgEx..." />
         </ui:MenuItemViewModel>
     </ui:MenuViewModel>
+    
+    <ui:ToolbarItems x:Key="DefaultToolbar" x:Shared="False">
+        <ui:ToolBarButtonViewModel Icon="/icons/run.ico" Command="cmds:DebugCommands.Go" LeftMargin="2" ToolTip="Run (F5)"/>
+        <ui:ToolBarButtonViewModel Icon="/icons/break.ico" Command="cmds:DebugCommands.Break" LeftMargin="2" ToolTip="Break" />
+        <ui:ToolBarButtonViewModel Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver" LeftMargin="2" ToolTip="Step Over (F10)"/>
+        <ui:ToolBarButtonViewModel Icon="/icons/debug_into.ico" Command="cmds:DebugCommands.StepInto" LeftMargin="2" ToolTip="Step Into (F11)"/>
+        <ui:ToolBarButtonViewModel Icon="/icons/debug_out.ico" Command="cmds:DebugCommands.StepOut" LeftMargin="2" ToolTip="Step Out (Shift+F11)"/>
+
+        <ui:ToolBarButtonViewModel Icon="/icons/console.ico" Command="cmds:ViewCommands.Command" LeftMargin="10" ToolTip="Command" />
+        <ui:ToolBarButtonViewModel Icon="/icons/gears.ico" Command="cmds:ViewCommands.Threads" LeftMargin="2" ToolTip="Threads and Processes" />
+        <ui:ToolBarButtonViewModel Icon="/icons/components.ico" Command="cmds:ViewCommands.Modules" LeftMargin="2" ToolTip="Modules" />
+    </ui:ToolbarItems>
 </ResourceDictionary>

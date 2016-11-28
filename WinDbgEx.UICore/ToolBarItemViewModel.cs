@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Prism.Mvvm;
 using System.Windows.Markup;
+using System.Collections.ObjectModel;
 
 namespace WinDbgEx.UICore {
 	public abstract class ToolBarItemViewModel : BindableBase {
@@ -13,13 +14,6 @@ namespace WinDbgEx.UICore {
 		public string Text {
 			get { return _text; }
 			set { SetProperty(ref _text, value); }
-		}
-
-		private bool _isSeparator;
-
-		public bool IsSeparator {
-			get { return _isSeparator; }
-			set { SetProperty(ref _isSeparator, value); }
 		}
 
 		private string _toolTip;
@@ -48,6 +42,9 @@ namespace WinDbgEx.UICore {
 
 	}
 
+	public sealed class ToolbarItems : ObservableCollection<ToolBarItemViewModel> {
+	}
+
 	public class ToolBarButtonViewModel : ToolBarItemViewModel {
 		private string _icon;
 
@@ -62,14 +59,6 @@ namespace WinDbgEx.UICore {
 			get { return _command; }
 			set { SetProperty(ref _command, value); }
 		}
-
-		protected object _commandParameter;
-
-		public object CommandParameter {
-			get { return _commandParameter; }
-			set { SetProperty(ref _commandParameter, value); }
-		}
-
 	}
 
 	[ContentProperty("Items")]

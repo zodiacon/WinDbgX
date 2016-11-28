@@ -11,7 +11,6 @@ namespace WinDbgEx.Commands {
 	class OptionsCommands {
 		public static DelegateCommandBase AlwaysOnTop { get; } 
 			= new DelegateCommand<AppManager>(app => {
-
 				bool ontop = !app.UI.CurrentWindow.Window.Topmost;
 				app.UI.CurrentWindow.Window.Topmost = ontop;
 				app.UI.CurrentWindow.Menu["AlwaysOnTop"].IsChecked = ontop; 

@@ -33,6 +33,7 @@ namespace WinDbgEx {
 			container.ComposeExportedValue(defaults.DialogService);
 			container.ComposeExportedValue(defaults.FileDialogService);
 			container.ComposeExportedValue(defaults.MessageBoxService);
+			container.ComposeExportedValue(container);
 
 			var appManager = container.GetExportedValue<AppManager>();
 
@@ -41,7 +42,7 @@ namespace WinDbgEx {
 			var vm = new MainViewModel(true, new IWindowImpl(win));
 			win.DataContext = vm;
 
-            win.Show();
+			win.Show();
         }
 
         protected override void OnExit(ExitEventArgs e) {

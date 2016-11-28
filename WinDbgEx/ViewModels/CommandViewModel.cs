@@ -97,13 +97,15 @@ namespace WinDbgEx.ViewModels {
 			});
 		}
 
-		public ICommand ExecuteCommand => new DelegateCommand(async () => {
-			var target = await _debugger.Execute(CommandText);
-			_history.Add(new CommandHistoryItem { Text = Prompt + " " + CommandText + Environment.NewLine, Color = ColorFromType(DEBUG_OUTPUT.NORMAL) });
+		public ICommand ExecuteCommand => new DelegateCommand(() => {
+			_dispatcher.InvokeAsync(async () => {
+				_history.Add(new CommandHistoryItem { Text = Prompt + " " + CommandText + Environment.NewLine, Color = ColorFromType(DEBUG_OUTPUT.NORMAL) });
+				var target = await _debugger.Execute(CommandText);
 
-			CommandText = string.Empty;
-			if (!target)
-				Prompt = Constants.NoTarget;
+				CommandText = string.Empty;
+				if (!target)
+					Prompt = Constants.NoTarget;
+			});
 		}, () => !string.IsNullOrWhiteSpace(CommandText))
 			.ObservesProperty(() => CommandText);
 	}

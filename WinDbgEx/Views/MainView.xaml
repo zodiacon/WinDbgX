@@ -9,10 +9,8 @@
              xmlns:drgblz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:conv="clr-namespace:WinDbgEx.UICore.Converters;assembly=WinDbgEx.UICore"
              xmlns:root="clr-namespace:WinDbgEx"
-             xmlns:models="clr-namespace:WinDbgEx.Models"
-             
-             d:DesignHeight="300"
-             d:DesignWidth="300" x:Name="This"
+             xmlns:models="clr-namespace:WinDbgEx.Models"            
+             d:DesignHeight="300" d:DesignWidth="300" x:Name="This"
              mc:Ignorable="d">
     <UserControl.Resources>
         <z:BindingProxy x:Key="Proxy" Data="{Binding}" />
@@ -27,10 +25,25 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <DataTemplate DataType="{x:Type ui:ToolBarButtonViewModel}">
+            <Button Command="{Binding Command}" CommandParameter="{Binding Data.AppManager, Source={StaticResource Proxy}}" Margin="{Binding Margin}" 
+                        ToolTip="{Binding ToolTip}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{Binding Icon}" Width="20" Height="20" />
+                    <TextBlock Margin="4,0,0,0" Text="{Binding Text}" VerticalAlignment="Center" x:Name="_tb"/>
+                </StackPanel>
+            </Button>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Text}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed" TargetName="_tb" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
 
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
+
             <DataTemplate x:Key="seperatorDataTemplate">
                 <Separator />
             </DataTemplate>
@@ -52,10 +65,13 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Menu ItemsSource="{Binding Menu}" UsesItemContainerTemplate="True" 
-              FontSize="{Binding Settings.Fonts.MenuFont.FontSize}" FontFamily="{Binding Settings.Fonts.MenuFont.FontFamily}"
+              FontSize="{Binding Settings.Fonts.MenuFontSize, FallbackValue=12}" FontFamily="{Binding Settings.Fonts.MenuFontFamily}"
               ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}">
         </Menu>
-        <drgblz:TabablzControl ItemsSource="{Binding TabItems}" Grid.Row="2" x:FieldModifier="internal" x:Name="TabablzControl" Margin="4 0 4 4"
+
+        <ToolBar Grid.Row="1" ItemsSource="{Binding Toolbar}" />
+        
+        <drgblz:TabablzControl ItemsSource="{Binding TabItems}" Grid.Row="2" x:FieldModifier="internal" x:Name="TabablzControl" Margin="2"
                                SelectedItem="{Binding SelectedTab, Mode=TwoWay}" AdjacentHeaderItemOffset="-4"
                                ItemContainerStyle="{StaticResource TrapezoidDragableTabItemStyle}" 
                                ShowDefaultCloseButton="False" ClosingItemCallback="{Binding TabClosingCallback}"

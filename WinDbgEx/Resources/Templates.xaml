@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:vm="clr-namespace:WinDbgEx.ViewModels"
+                    xmlns:ui="clr-namespace:WinDbgEx.UICore;assembly=WinDbgEx.UICore"
                     xmlns:view="clr-namespace:WinDbgEx.Views"
                     >
     <DataTemplate DataType="{x:Type vm:CommandViewModel}">
@@ -21,4 +22,5 @@
     <DataTemplate DataType="{x:Type vm:RunExecutableViewModel}">
         <view:RunExecutableView Margin="12" />
     </DataTemplate>
+
 </ResourceDictionary>

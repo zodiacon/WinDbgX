@@ -1,4 +1,5 @@
 ﻿using DebuggerEngine;
+using DebuggerEngine.Interop;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Threading;
 using WinDbgEx.Commands;
 using WinDbgEx.UICore;
 using WinDbgEx.ViewModels;
@@ -16,7 +19,7 @@ using Zodiacon.WPF;
 
 namespace WinDbgEx.Models {
 	[Export]
-	sealed class UIManager {
+	sealed class UIManager : IPartImportsSatisfiedNotification {
 		ObservableCollection<MainViewModel> _windows = new ObservableCollection<MainViewModel>();
 		ObservableCollection<string> _recentWorkspaces = new ObservableCollection<string>();
 		static readonly List<DelegateCommandBase> _commands = new List<DelegateCommandBase>(32);
@@ -34,6 +37,7 @@ namespace WinDbgEx.Models {
 		}
 
 		DebugManager DebugManager;
+		Dispatcher _dispatcher  =Dispatcher.CurrentDispatcher;
 
 		[ImportingConstructor]
 		private UIManager(DebugManager debugManager) {
@@ -55,12 +59,15 @@ namespace WinDbgEx.Models {
 			MessageBoxService.ShowMessage(ex.Message, Constants.Title);
 		}
 
-		private static void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
-			if (e.NewStatus == e.OldStatus)
-				return;
+		DEBUG_STATUS _status;
+		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
+			_dispatcher.InvokeAsync(() => {
+				if (e.NewStatus == _status)
+					return;
 
-			foreach (var cmd in _commands)
-				cmd.RaiseCanExecuteChanged();
+				_status = e.NewStatus;
+				UpdateCommands();
+			});
 		}
 
 		public IReadOnlyList<string> RecentWorkspaces => _recentWorkspaces;
@@ -82,6 +89,16 @@ namespace WinDbgEx.Models {
 		}
 
 		public void LoadWorkspace(string path) {
+		}
+
+		public void OnImportsSatisfied() {
+			UpdateCommands();
+		}
+
+		private void UpdateCommands() {
+			foreach (var cmd in _commands)
+				cmd.RaiseCanExecuteChanged();
+
 		}
 	}
 }

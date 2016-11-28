@@ -19,8 +19,7 @@ using WinDbgEx.Commands;
 using System.Reflection;
 
 namespace WinDbgEx.ViewModels {
-	[Export]
-	class MainViewModel : BindableBase {
+	sealed class MainViewModel : BindableBase {
 		MenuViewModel _menu;
 		ObservableCollection<TabViewModelBase> _tabItems = new ObservableCollection<TabViewModelBase>();
 
@@ -48,7 +47,12 @@ namespace WinDbgEx.ViewModels {
 			if (IsMain) {
 				var commandView = App.Container.GetExportedValue<CommandViewModel>();
 				AddItem(commandView);
-				SelectedTab = commandView;
+			}
+		}
+
+		public object Hello {
+			get {
+				return AppManager;
 			}
 		}
 
@@ -57,9 +61,20 @@ namespace WinDbgEx.ViewModels {
 				if (_menu == null) {
 					_menu = Window.FindResource<MenuViewModel>("DefaultMenu");
 					if (_menu != null)
-						_menu.AddKeyBindings(Window.WindowObject, DebugManager);
+						_menu.AddKeyBindings(Window.WindowObject, AppManager);
 				}
 				return _menu;
+			}
+		}
+
+		ToolbarItems _toolbar;
+
+		public ToolbarItems Toolbar {
+			get {
+				if (_toolbar == null) {
+					_toolbar = Window.FindResource<ToolbarItems>("DefaultToolbar");
+				}
+				return _toolbar;
 			}
 		}
 

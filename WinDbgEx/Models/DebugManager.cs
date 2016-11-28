@@ -70,23 +70,21 @@ namespace WinDbgEx.Models {
 		}
 
 		private void Debugger_ProcessCreated(object sender, ProcessCreatedEventArgs e) {
-			_dispatcher.InvokeAsync(() => _processes.Add(e.Process));
-			_log.Add(new EventLogItem<TargetProcess>(EventLogItemType.ProcessCreate, DateTime.Now, e.Process));
+			_dispatcher.InvokeAsync(() => {
+				_processes.Add(e.Process);
+				_log.Add(new EventLogItem<TargetProcess>(EventLogItemType.ProcessCreate, DateTime.Now, e.Process));
+			});
 		}
 
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
 			_dispatcher.InvokeAsync(() => Status = e.NewStatus);
 		}
-
 		
 		private DEBUG_STATUS _status = DEBUG_STATUS.NO_DEBUGGEE;
 
 		public DEBUG_STATUS Status {
 			get { return _status; }
-			private set {
-				if (SetProperty(ref _status, value)) {
-				}
-			}
+			private set { SetProperty(ref _status, value); }
 		}
 
 		public void Dispose() {
