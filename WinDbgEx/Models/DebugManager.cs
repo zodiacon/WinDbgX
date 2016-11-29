@@ -18,13 +18,13 @@ namespace WinDbgEx.Models {
 	[Export]
 	sealed class DebugManager : BindableBase, IDisposable {
 		public readonly DebugClient Debugger;
-		ObservableCollection<TargetProcess> _processes = new ObservableCollection<TargetProcess>();
-		Dispatcher _dispatcher;
 		ObservableCollection<EventLogItem> _log = new ObservableCollection<EventLogItem>();
+
+		Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
 		public IReadOnlyList<EventLogItem> Log => _log;
 
-		public IReadOnlyList<TargetProcess> Processes => _processes;
+		public IReadOnlyList<TargetProcess> Processes => Debugger.Processes;
 
 		public void ClearLog() {
 			_log.Clear();
@@ -37,41 +37,33 @@ namespace WinDbgEx.Models {
 			Debugger.ThreadCreated += Debugger_ThreadCreated;
 			Debugger.ThreadExited += Debugger_ThreadExited;
 			Debugger.ProcessExited += Debugger_ProcessExited;
+			Debugger.ModuleLoaded += Debugger_ModuleLoaded;
+		}
 
-			_dispatcher = Dispatcher.CurrentDispatcher;
+		private void Debugger_ModuleLoaded(object sender, ModuleLoadedEventArgs e) {
+			
 		}
 
 		private void Debugger_ProcessExited(object sender, ProcessExitedEventArgs e) {
 			_dispatcher.InvokeAsync(() => {
-				var process = _processes[(int)e.Index];
-				process.ExitCode = e.ExitCode;
-				_log.Add(new EventLogItem<TargetProcess>(EventLogItemType.ProcessExit, DateTime.Now, process));
-				_processes.RemoveAt((int)e.Index);
+				_log.Add(new EventLogItem<TargetProcess>(EventLogItemType.ProcessExit, DateTime.Now, e.Process));
 			});
 		}
 
 		private void Debugger_ThreadExited(object sender, ThreadExitedEventArgs e) {
 			_dispatcher.InvokeAsync(() => {
-				var process = _processes[(int)e.ProcessIndex];
-				var thread = process.Threads.FirstOrDefault(t => t.TID == e.TID);
-				Debug.Assert(thread != null);
-
-				thread.ExitCode = e.ExitCode;
-				_log.Add(new EventLogItem<TargetThread>(EventLogItemType.ThreadExit, DateTime.Now, thread));
-				process.Threads.Remove(thread);
+				_log.Add(new EventLogItem<TargetThread>(EventLogItemType.ThreadExit, DateTime.Now, e.Thread));
 			});
 		}
 
 		private void Debugger_ThreadCreated(object sender, ThreadCreatedEventArgs e) {
 			_dispatcher.InvokeAsync(() => {
-				_processes[(int)e.Thread.ProcessIndex].Threads.Add(e.Thread);
 				_log.Add(new EventLogItem<TargetThread>(EventLogItemType.ThreadCreate, DateTime.Now, e.Thread));
 			});
 		}
 
 		private void Debugger_ProcessCreated(object sender, ProcessCreatedEventArgs e) {
 			_dispatcher.InvokeAsync(() => {
-				_processes.Add(e.Process);
 				_log.Add(new EventLogItem<TargetProcess>(EventLogItemType.ProcessCreate, DateTime.Now, e.Process));
 			});
 		}

@@ -49,6 +49,14 @@ namespace DebuggerEngine {
 			return Task.Run(() => Control.SetInterrupt(DEBUG_INTERRUPT.ACTIVE));
 		}
 
+		public Task Stop() {
+			return Task.Run(() => {
+				Control.SetInterrupt(DEBUG_INTERRUPT.ACTIVE);
+				Client.TerminateProcesses().ThrowIfFailed();
+			});
+		}
+
+
 		[DllImport("dbgeng", PreserveSig = true)]
 		private static extern int DebugCreate(ref Guid iid, [MarshalAs(UnmanagedType.Interface)] out object iface);
 
@@ -143,7 +151,7 @@ namespace DebuggerEngine {
 			Symbols.EndSymbolMatch(handle);
 		}
 
-		public Task<ModuleInfo[]> GetModules() {
+		public Task<TargetModule[]> GetModules() {
 			return RunAsync(() => {
 				uint loaded, unloaded;
 				Symbols.GetNumberModules(out loaded, out unloaded).ThrowIfFailed();
@@ -153,7 +161,7 @@ namespace DebuggerEngine {
 				}
 				var modules = new DEBUG_MODULE_PARAMETERS[loaded + unloaded];
 				Symbols.GetModuleParameters(loaded + unloaded, null, 0, modules).ThrowIfFailed();
-				return modules.Select(param => ModuleInfo.FromModuleParameters(param)).ToArray();
+				return modules.Select(param => TargetModule.FromModuleParameters(param)).ToArray();
 			});
 		}
 

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WinDbgEx.Views"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" x:Name="This"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
@@ -23,7 +23,7 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Expander ExpandDirection="Down" IsExpanded="True" Header="Threads">
-                                <DataGrid IsReadOnly="True" Grid.Row="1" ItemsSource="{Binding Threads}" AutoGenerateColumns="False">
+                                <DataGrid IsReadOnly="True" Grid.Row="1" ItemsSource="{Binding Threads}" AutoGenerateColumns="False" >
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Index" Binding="{Binding Index}" />
                                         <DataGridTextColumn Header="OS ID" Binding="{Binding OSID}" />

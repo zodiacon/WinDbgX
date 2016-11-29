@@ -92,8 +92,10 @@ namespace WinDbgEx.ViewModels {
 				IsNotBusy = state == DEBUG_STATUS.BREAK;
 				await _debugger.OutputPrompt();
 
-				if (state == DEBUG_STATUS.NO_DEBUGGEE)
+				if (state == DEBUG_STATUS.NO_DEBUGGEE) {
 					Prompt = Constants.NoTarget;
+					CommandText = string.Empty;
+				}
 				else if (!IsNotBusy)
 					Prompt = Constants.Busy;
 			});

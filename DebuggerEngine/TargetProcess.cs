@@ -19,8 +19,22 @@ namespace DebuggerEngine {
 		public DateTime TimeStamp { get; internal set; }
 		public uint ExitCode { get; set; }
 
-		List<TargetThread> _threads = new List<TargetThread>();
+		List<TargetThread> _threads = new List<TargetThread>(8);
+		List<TargetModule> _modules = new List<TargetModule>(32);
 
-		public IList<TargetThread> Threads => _threads;
+		public IReadOnlyList<TargetThread> Threads => _threads;
+		public IReadOnlyList<TargetModule> Modules => _modules;
+
+		internal bool RemoveThread(TargetThread thread) {
+			return _threads.Remove(thread);
+		}
+
+		internal void AddThread(TargetThread thread) {
+			_threads.Add(thread);
+		}
+
+		internal void AddModule(TargetModule module) {
+			_modules.Add(module);
+		}
 	}
 }

@@ -43,13 +43,15 @@ namespace WinDbgEx.ViewModels {
 		}
 
 		private void Debugger_ProcessExited(object sender, ProcessExitedEventArgs e) {
-			_dispatcher.InvokeAsync(() => _processes.RemoveAt((int)e.Index));
+			_dispatcher.InvokeAsync(() => {
+				_processes.Remove(_processes.First(p => p.ProcessId == e.Process.PID));
+			});
 		}
 
 		private void Debugger_ThreadExited(object sender, ThreadExitedEventArgs e) {
 			_dispatcher.InvokeAsync(() => {
-				var threads = _processes[(int)e.ProcessIndex].Threads;
-				threads.Remove(threads.First(th => th.OSID == e.TID));
+				var threads = _processes.First(p => p.ProcessId == e.Process.PID).Threads;
+				threads.Remove(threads.First(th => th.OSID == e.Thread.TID));
 			});
 		}
 
@@ -67,21 +69,23 @@ namespace WinDbgEx.ViewModels {
 
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
 			Status = e.NewStatus;
+			if (Status == DEBUG_STATUS.NO_DEBUGGEE) {
+				_dispatcher.InvokeAsync(() => Processes.Clear());
+			}
 		}
 
 		private DEBUG_STATUS _status;
 
 		public DEBUG_STATUS Status {
 			get { return _status; }
-			private set { SetProperty(ref _status, value); }
+			private set {
+				if (SetProperty(ref _status, value)) {
+					OnPropertyChanged(nameof(IsEnabled));
+				}
+			}
 		}
 
-		private bool _isEnabled;
-
-		public bool IsEnabled {
-			get { return _isEnabled; }
-			set { SetProperty(ref _isEnabled, value); }
-		}
+		public bool IsEnabled => Status == DEBUG_STATUS.BREAK;
 
 	}
 }

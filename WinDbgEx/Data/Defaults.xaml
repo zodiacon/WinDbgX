@@ -38,7 +38,7 @@
         <ui:MenuItemViewModel Text="_Debug">
             <ui:MenuItemViewModel Text="_Go" KeyGesture="F5" Icon="/icons/run.ico" Command="cmds:DebugCommands.Go"/>
             <ui:MenuItemViewModel Text="Break" KeyGesture="Ctrl+Break" Icon="/icons/break.ico" Command="cmds:DebugCommands.Break"/>
-            <ui:MenuItemViewModel Text="Sto_p" KeyGesture="Shift+F5" />
+            <ui:MenuItemViewModel Text="Sto_p" KeyGesture="Shift+F5" Icon="/icons/stop.ico" Command="cmds:DebugCommands.Stop"/>
             <ui:MenuItemViewModel Text="Detach" />
             <ui:MenuItemViewModel Text="Step _Over" KeyGesture="F10" Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver" />
             <ui:MenuItemViewModel Text="Step _Into" KeyGesture="F11" Icon="/icons/debug_into.ico" Command="cmds:DebugCommands.StepInto" />
@@ -79,7 +79,8 @@
     <ui:ToolbarItems x:Key="DefaultToolbar" x:Shared="False">
         <ui:ToolBarButtonViewModel Icon="/icons/run.ico" Command="cmds:DebugCommands.Go" LeftMargin="2" ToolTip="Run (F5)"/>
         <ui:ToolBarButtonViewModel Icon="/icons/break.ico" Command="cmds:DebugCommands.Break" LeftMargin="2" ToolTip="Break" />
-        <ui:ToolBarButtonViewModel Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver" LeftMargin="2" ToolTip="Step Over (F10)"/>
+        <ui:ToolBarButtonViewModel Icon="/icons/stop.ico" Command="cmds:DebugCommands.Stop" LeftMargin="2" ToolTip="Stop Debugging" />
+        <ui:ToolBarButtonViewModel Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver" LeftMargin="4" ToolTip="Step Over (F10)"/>
         <ui:ToolBarButtonViewModel Icon="/icons/debug_into.ico" Command="cmds:DebugCommands.StepInto" LeftMargin="2" ToolTip="Step Into (F11)"/>
         <ui:ToolBarButtonViewModel Icon="/icons/debug_out.ico" Command="cmds:DebugCommands.StepOut" LeftMargin="2" ToolTip="Step Out (Shift+F11)"/>
 

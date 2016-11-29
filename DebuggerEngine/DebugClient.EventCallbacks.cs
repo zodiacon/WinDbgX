@@ -2,16 +2,23 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace DebuggerEngine {
 	partial class DebugClient : IDebugEventCallbacksWide {
+		List<TargetProcess> _processes = new List<TargetProcess>(2);
+
 		bool _stateChanged;
 		bool _breakpointHit;
+
+		public IReadOnlyList<TargetProcess> Processes => _processes;
 
 		public event EventHandler<ProcessCreatedEventArgs> ProcessCreated;
 		public event EventHandler<ThreadCreatedEventArgs> ThreadCreated;
 		public event EventHandler<ProcessExitedEventArgs> ProcessExited;
 		public event EventHandler<ThreadExitedEventArgs> ThreadExited;
+		public event EventHandler<ModuleLoadedEventArgs> ModuleLoaded;
+		//public event EventHandler<ModuleLoadedEventArgs> ModuleUnoaded;
 
 		void OnProcessCreated(TargetProcess process) {
 			ProcessCreated?.Invoke(this, new ProcessCreatedEventArgs(process));
@@ -27,6 +34,10 @@ namespace DebuggerEngine {
 
 		void OnThreadExited(ThreadExitedEventArgs e) {
 			ThreadExited?.Invoke(this, e);
+		}
+
+		void OnModuleLoaded(ModuleLoadedEventArgs e) {
+			ModuleLoaded?.Invoke(this, e);
 		}
 
 		int IDebugEventCallbacksWide.GetInterestMask(out DEBUG_EVENT Mask) {
@@ -51,19 +62,20 @@ namespace DebuggerEngine {
 			_breakpointHit = Exception.ExceptionCode == 0x80000004 || Exception.ExceptionCode == 0x80000003 || FirstChance == 0;
 			_stateChanged = true;
 
-			if (_breakpointHit)
-				Control.OutputCurrentState(DEBUG_OUTCTL.THIS_CLIENT, DEBUG_CURRENT.DEFAULT);
+			//if (_breakpointHit)
+			//	Control.OutputCurrentState(DEBUG_OUTCTL.THIS_CLIENT, DEBUG_CURRENT.DEFAULT);
 
 			//UpdateStatus();
 			return _breakpointHit ? (int)DEBUG_STATUS.BREAK : (int)DEBUG_STATUS.NO_CHANGE;
 		}
 
 		int IDebugEventCallbacksWide.CreateThread(ulong Handle, ulong DataOffset, ulong StartOffset) {
-			uint id, tid, pindex;
+			uint id, tid, pindex, pid;
 			SystemObjects.GetCurrentProcessId(out pindex);
 			SystemObjects.GetCurrentThreadId(out id);
+			SystemObjects.GetCurrentProcessSystemId(out pid);
 			SystemObjects.GetCurrentThreadSystemId(out tid);
-			Debug.Assert(tid > 0);
+			Debug.Assert(tid > 0 && pid > 0);
 
 			var thread = new TargetThread {
 				Index = id,
@@ -74,18 +86,28 @@ namespace DebuggerEngine {
 				ProcessIndex = pindex
 			};
 
+			var process = _processes.First(p => p.PID == pid);
+			process.AddThread(thread);
+
 			OnThreadCreated(thread);
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
 
 		int IDebugEventCallbacksWide.ExitThread(uint ExitCode) {
-			uint id, pid, tid;
+			uint id, pindex, tid, pid;
 			SystemObjects.GetCurrentThreadId(out id);
-			SystemObjects.GetCurrentProcessId(out pid);
+			SystemObjects.GetCurrentProcessId(out pindex);
+			SystemObjects.GetCurrentProcessSystemId(out pid);
 			SystemObjects.GetCurrentThreadSystemId(out tid);
 
-			OnThreadExited(new ThreadExitedEventArgs(id, tid, pid, ExitCode));
+			var process = _processes.First(p => p.PID == pid);
+			var thread = process.Threads.First(t => t.TID == tid);
+			thread.ExitCode = ExitCode;
+
+			process.RemoveThread(thread);
+
+			OnThreadExited(new ThreadExitedEventArgs(thread, process));
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
@@ -114,6 +136,8 @@ namespace DebuggerEngine {
 				Peb = peb
 			};
 
+			_processes.Add(process);
+
 			OnProcessCreated(process);
 
 			uint tindex, tid;
@@ -128,6 +152,8 @@ namespace DebuggerEngine {
 				ProcessIndex = id
 			};
 
+			process.AddThread(thread);
+
 			OnThreadCreated(thread);
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
@@ -136,21 +162,34 @@ namespace DebuggerEngine {
 		int IDebugEventCallbacksWide.ExitProcess(uint ExitCode) {
 			Debug.WriteLine("IDebugEventCallbacksWide.ExitProcess");
 
-			uint index;
-			SystemObjects.GetCurrentProcessId(out index);
-			OnProcessExited(new ProcessExitedEventArgs(index, ExitCode));
+			uint pid;
+			SystemObjects.GetCurrentProcessSystemId(out pid);
+			var process = _processes.First(p => p.PID == pid);
+			process.ExitCode = ExitCode;
+
+			OnProcessExited(new ProcessExitedEventArgs(process));
 
 			UpdateStatus();
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
 
 		int IDebugEventCallbacksWide.LoadModule(ulong ImageFileHandle, ulong BaseOffset, uint ModuleSize, string ModuleName, string ImageName, uint CheckSum, uint TimeDateStamp) {
+			uint id, pid;
+			SystemObjects.GetCurrentProcessId(out id);
+			SystemObjects.GetCurrentProcessSystemId(out pid);
 
-			//GetCurrentTarget().Modules.Add(new TargetModule {
-			//	Path = ImageName,
-			//	Name = ModuleName,
-			//	LoadAddress = BaseOffset
-			//});
+			var module = new TargetModule {
+				ImageName = ImageName,
+				Name = ModuleName,
+				BaseAddress = BaseOffset,
+				Size = ModuleSize,
+				TimeStamp = TimeDateStamp,
+				Handle = ImageFileHandle,
+				ProcessIndex = id,
+				PID = pid
+			};
+
+			OnModuleLoaded(new ModuleLoadedEventArgs(module));
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
