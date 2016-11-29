@@ -4,6 +4,7 @@
                     xmlns:ui="clr-namespace:WinDbgEx.UICore;assembly=WinDbgEx.UICore"
                     xmlns:view="clr-namespace:WinDbgEx.Views"
                     >
+
     <DataTemplate DataType="{x:Type vm:CommandViewModel}">
         <view:CommandView />
     </DataTemplate>
@@ -21,6 +22,9 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:RunExecutableViewModel}">
         <view:RunExecutableView Margin="12" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:AttachToProcessViewModel}">
+        <view:AttachToProcessView Margin="12" />
     </DataTemplate>
 
 </ResourceDictionary>

@@ -29,6 +29,12 @@ namespace DebuggerEngine {
 
 		readonly TaskScheduler _scheduler;
 
+		public event EventHandler<ErrorEventArgs> Error;
+
+		void OnError(ErrorEventArgs e) {
+			Error?.Invoke(this, e);
+		}
+
 		private DebugClient(object client, TaskScheduler scheduler) {
 			_scheduler = scheduler;
 
@@ -83,25 +89,32 @@ namespace DebuggerEngine {
 			return Control.WaitForEvent(DEBUG_WAIT.DEFAULT, msec);
 		}
 
-		public Task AttachToLocalKernel() {
-			return RunAsync(() => {
-				Client.AttachKernel(DEBUG_ATTACH.LOCAL_KERNEL, null).ThrowIfFailed();
+		public void AttachToLocalKernel() {
+			RunAsync(() => {
+				int hr = Client.AttachKernel(DEBUG_ATTACH.LOCAL_KERNEL, null);
+				if (FAILED(hr))
+					OnError(new ErrorEventArgs(DebuggerError.LocalKernelAttachFailed, hr));
+				else
+					WaitForEvent();
+			});
+		}
+
+		public void AttachToKernel(string options) {
+			RunAsync(() => {
+				int hr = Client.AttachKernelWide(DEBUG_ATTACH.KERNEL_CONNECTION, options);
+				if (FAILED(hr)) {
+					OnError(new ErrorEventArgs(DebuggerError.KernelAttachFailed, hr, options));
+					return;
+				}
 				WaitForEvent();
 			});
 		}
 
-		public Task AttachToKernel(string options) {
-			return RunAsync(() => {
-				Client.AttachKernelWide(DEBUG_ATTACH.KERNEL_CONNECTION, options).ThrowIfFailed();
-				WaitForEvent();
-			});
-		}
-
-		public Task AttachToKernelWithComPipeAsync(string pipeName, string serverName = ".", bool reconnect = true, int resets = 0) {
+		public void AttachToKernelWithComPipe(string pipeName, string serverName = ".", bool reconnect = true, int resets = 0) {
 			var connection = string.Format(@"com:pipe,port=\\{0}\pipe\{1},resets={2}", serverName, pipeName, resets);
 			if (reconnect)
 				connection += ",reconnect";
-			return AttachToKernel(connection);
+			AttachToKernel(connection);
 		}
 
 		public Task AttachToProcess(int pid, AttachProcessFlags attachFlag = AttachProcessFlags.Invasive) {

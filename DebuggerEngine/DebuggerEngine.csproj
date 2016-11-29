@@ -77,6 +77,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Breakpoint.cs" />
     <Compile Include="DebugClient.cs" />
     <Compile Include="DebugClient.DebugControl.cs" />
     <Compile Include="DebugClient.EventCallbacks.cs" />

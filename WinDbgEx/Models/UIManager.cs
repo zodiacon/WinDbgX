@@ -16,6 +16,7 @@ using WinDbgEx.Commands;
 using WinDbgEx.UICore;
 using WinDbgEx.ViewModels;
 using Zodiacon.WPF;
+using System.Windows;
 
 namespace WinDbgEx.Models {
 	[Export]
@@ -43,6 +44,22 @@ namespace WinDbgEx.Models {
 		private UIManager(DebugManager debugManager) {
 			DebugManager = debugManager;
 			DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
+			DebugManager.Debugger.Error += Debugger_Error;
+		}
+
+		private void Debugger_Error(object sender, ErrorEventArgs e) {
+			_dispatcher.InvokeAsync(() => {
+				MessageBoxService.SetOwner(Application.Current.MainWindow);
+				MessageBoxService.ShowMessage($"Error: {ErrorToString(e)}", Constants.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+			});
+		}
+
+		private object ErrorToString(ErrorEventArgs e) {
+			switch (e.Error) {
+				case DebuggerError.LocalKernelAttachFailed:
+					return "Failed to attach to Local Kernel";
+			}
+			return e.Error.ToString();
 		}
 
 		[Import]

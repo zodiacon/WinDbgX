@@ -40,7 +40,7 @@ namespace WinDbgEx.Models {
 			Debugger.ModuleLoaded += Debugger_ModuleLoaded;
 		}
 
-		private void Debugger_ModuleLoaded(object sender, ModuleLoadedEventArgs e) {
+		private void Debugger_ModuleLoaded(object sender, ModuleEventArgs e) {
 			
 		}
 

@@ -14,8 +14,13 @@ using System.Reflection;
 
 namespace WinDbgEx.Commands {
     static class FileCommands {
-		public static DelegateCommandBase AttachToLocalKernel { get; } = new DelegateCommand<AppManager>(context => {
+		public static DelegateCommandBase AttachToLocalKernel { get; } = new DelegateCommand<AppManager>(async context => {
 			try {
+				if (! await context.Debug.Debugger.IsLocalKernelEnabled()) {
+					context.UI.MessageBoxService.ShowMessage("Local kernel debugging is unavailable. Use bcdedit -debug on, and restart the system.",
+						Constants.Title, MessageBoxButton.OK, MessageBoxImage.Information);
+					return;
+				}
 				context.Debug.Debugger.AttachToLocalKernel();
 			}
 			catch (Exception ex) {
@@ -24,7 +29,9 @@ namespace WinDbgEx.Commands {
 		}, context => context.Debug.Status == DEBUG_STATUS.NO_DEBUGGEE);
 
         public static DelegateCommandBase AttachToProcess { get; } = new DelegateCommand<AppManager>(context => {
-            
+			var vm = context.UI.DialogService.CreateDialog<AttachToProcessViewModel, GenericWindow>();
+			if (vm.ShowDialog() == true) {
+			}
         }, context => context.Debug.Status == DEBUG_STATUS.NO_DEBUGGEE);
 
         public static DelegateCommandBase AttachToKernel { get; } = new DelegateCommand<AppManager>(context => { });

@@ -36,5 +36,9 @@ namespace DebuggerEngine {
 		internal void AddModule(TargetModule module) {
 			_modules.Add(module);
 		}
+
+		internal void RemoveModule(TargetModule module) {
+			_modules.Remove(module);
+		}
 	}
 }

@@ -17,8 +17,8 @@ namespace DebuggerEngine {
 		public event EventHandler<ThreadCreatedEventArgs> ThreadCreated;
 		public event EventHandler<ProcessExitedEventArgs> ProcessExited;
 		public event EventHandler<ThreadExitedEventArgs> ThreadExited;
-		public event EventHandler<ModuleLoadedEventArgs> ModuleLoaded;
-		//public event EventHandler<ModuleLoadedEventArgs> ModuleUnoaded;
+		public event EventHandler<ModuleEventArgs> ModuleLoaded;
+		public event EventHandler<ModuleEventArgs> ModuleUnloaded;
 
 		void OnProcessCreated(TargetProcess process) {
 			ProcessCreated?.Invoke(this, new ProcessCreatedEventArgs(process));
@@ -36,8 +36,12 @@ namespace DebuggerEngine {
 			ThreadExited?.Invoke(this, e);
 		}
 
-		void OnModuleLoaded(ModuleLoadedEventArgs e) {
+		void OnModuleLoaded(ModuleEventArgs e) {
 			ModuleLoaded?.Invoke(this, e);
+		}
+
+		void OnModuleUnloaded(ModuleEventArgs e) {
+			ModuleUnloaded?.Invoke(this, e);
 		}
 
 		int IDebugEventCallbacksWide.GetInterestMask(out DEBUG_EVENT Mask) {
@@ -189,12 +193,25 @@ namespace DebuggerEngine {
 				PID = pid
 			};
 
-			OnModuleLoaded(new ModuleLoadedEventArgs(module));
+			var process = _processes.First(p => p.PID == pid);
+			process.AddModule(module);
+
+			OnModuleLoaded(new ModuleEventArgs(process, module));
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
 
 		int IDebugEventCallbacksWide.UnloadModule(string ImageBaseName, ulong BaseOffset) {
+			uint id, pid;
+			SystemObjects.GetCurrentProcessId(out id);
+			SystemObjects.GetCurrentProcessSystemId(out pid);
+
+			var process = _processes.First(p => p.PID == pid);
+			var module = process.Modules.First(m => m.BaseAddress == BaseOffset);
+
+			process.RemoveModule(module);
+			OnModuleUnloaded(new ModuleEventArgs(process, module));
+			 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,8 @@ namespace WinDbgEx.ViewModels {
 	[TabItem("Modules", Icon = "/icons/components.ico")]
 	[Export]
 	class ModulesViewModel : TabViewModelBase {
+		ObservableCollection<ProcessViewModel> _processes = new ObservableCollection<ProcessViewModel>();
+
+		public IList<ProcessViewModel> Processes => _processes;
 	}
 }

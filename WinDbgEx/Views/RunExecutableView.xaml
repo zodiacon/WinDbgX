@@ -28,7 +28,7 @@
         <TextBlock Text="Executable:" VerticalAlignment="Center"/>
         <DockPanel Grid.Column="2">
             <Button Content="..." Width="40" DockPanel.Dock="Right" Command="{Binding BrowseCommand}" Margin="4,0,0,0"/>
-            <TextBox Text="{Binding ExecutablePath}" MinWidth="380" x:Name="_exePath" metro:TextBoxHelper.SelectAllOnFocus="True" metro:TextBoxHelper.Watermark="Path to executable" 
+            <TextBox Text="{Binding ExecutablePath, UpdateSourceTrigger=PropertyChanged}" MinWidth="380" x:Name="_exePath" metro:TextBoxHelper.SelectAllOnFocus="True" metro:TextBoxHelper.Watermark="Path to executable" 
                      metro:TextBoxHelper.ClearTextButton="True" z:FocusProperties.FocusOnLoad="True" />
         </DockPanel>
 

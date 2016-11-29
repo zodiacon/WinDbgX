@@ -139,12 +139,17 @@
     <Compile Include="Models\Workspace.cs" />
     <Compile Include="Models\WorkspaceTab.cs" />
     <Compile Include="Models\WorkspaceWindow.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="ViewModels\AttachToProcessViewModel.cs" />
     <Compile Include="ViewModels\EventLogViewModel.cs" />
     <Compile Include="ViewModels\ProcessViewModel.cs" />
     <Compile Include="ViewModels\RegistersViewModel.cs" />
     <Compile Include="ViewModels\RunExecutableViewModel.cs" />
     <Compile Include="ViewModels\ThreadsViewModel.cs" />
     <Compile Include="ViewModels\ThreadViewModel.cs" />
+    <Compile Include="Views\AttachToProcessView.xaml.cs">
+      <DependentUpon>AttachToProcessView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EventLogView.xaml.cs">
       <DependentUpon>EventLogView.xaml</DependentUpon>
     </Compile>
@@ -173,6 +178,10 @@
       <DependentUpon>ModulesView.xaml</DependentUpon>
     </Compile>
     <Page Include="Data\Defaults.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AttachToProcessView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

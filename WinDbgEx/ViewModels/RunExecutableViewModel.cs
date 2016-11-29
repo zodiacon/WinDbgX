@@ -14,6 +14,9 @@ namespace WinDbgEx.ViewModels {
 
 		public RunExecutableViewModel(Window dialog, IFileDialogService fileDialogService) : base(dialog) {
 			_fileDialogService = fileDialogService;
+
+			CanExecuteOKCommand = () => !string.IsNullOrWhiteSpace(ExecutablePath);
+			OKCommand.ObservesProperty(() => ExecutablePath);
 		}
 
 		public ResizeMode ResizeMode => ResizeMode.NoResize;

@@ -49,11 +49,31 @@ namespace DebuggerEngine {
 		}
 	}
 
-	public sealed class ModuleLoadedEventArgs : EventArgs {
+	public sealed class ModuleEventArgs : EventArgs {
 		public readonly TargetModule Module;
+		public readonly TargetProcess Process;
 
-		internal ModuleLoadedEventArgs(TargetModule module) {
+		internal ModuleEventArgs(TargetProcess process, TargetModule module) {
 			Module = module;
+			Process = process;
+		}
+	}
+
+	public enum DebuggerError {
+		None,
+		LocalKernelAttachFailed,
+		KernelAttachFailed
+	}
+
+	public sealed class ErrorEventArgs : EventArgs {
+		public readonly DebuggerError Error;
+		public readonly int Hresult;
+		public readonly object Data;
+
+		internal ErrorEventArgs(DebuggerError error, int hr, object data = null) {
+			Error = error;
+			Hresult = hr;
+			Data = data;
 		}
 	}
 }
