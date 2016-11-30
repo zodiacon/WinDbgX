@@ -33,7 +33,7 @@ namespace WinDbgEx.UICore {
 			}
 		}
 
-		private Thickness _margin;
+		private Thickness _margin = new Thickness(2, 0, 0, 0);
 
 		public Thickness Margin {
 			get { return _margin; }
@@ -59,6 +59,14 @@ namespace WinDbgEx.UICore {
 			get { return _command; }
 			set { SetProperty(ref _command, value); }
 		}
+
+		private object _commandParameter;
+
+		public object CommandParameter {
+			get { return _commandParameter; }
+			set { SetProperty(ref _commandParameter, value); }
+		}
+
 	}
 
 	[ContentProperty("Items")]

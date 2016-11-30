@@ -13,9 +13,9 @@ using Zodiacon.WPF;
 
 namespace WinDbgEx.ViewModels {
 	class AttachToProcessViewModel : DialogViewModelBase {
-		AppManager _appManager;
-		public AttachToProcessViewModel(Window dialog, AppManager appManager) : base(dialog) {
-			_appManager = appManager;
+		public AttachToProcessViewModel(Window dialog) : base(dialog) {
+			CanExecuteOKCommand = () => SelectedProcess != null;
+			OKCommand.ObservesProperty(() => SelectedProcess);
 		}
 
 		public string Title => "Attach to Process";
@@ -25,7 +25,9 @@ namespace WinDbgEx.ViewModels {
 		public double MinHeight => 300;
 		public ResizeMode ResizeMode => ResizeMode.NoResize;
 
-		public ToolbarItems Toolbar => _appManager.UI.CurrentWindow.Window.FindResource<ToolbarItems>("AttachToProcessToolbar");
+		public ToolbarItems Toolbar => new ToolbarItems {
+			new ToolBarButtonViewModel { Text = "Refresh", Icon = Icons.Refresh, Command = RefreshCommand }
+		};
 
 		internal class ProcessViewModel {
 			Process Process { get; }
@@ -37,6 +39,13 @@ namespace WinDbgEx.ViewModels {
 			public string Name => Process.ProcessName;
 			public int Session => Process.SessionId;
 			public string Username => Process.StartInfo.UserName;
+		}
+
+		private ProcessViewModel _selectedProcess;
+
+		public ProcessViewModel SelectedProcess {
+			get { return _selectedProcess; }
+			set { SetProperty(ref _selectedProcess, value); }
 		}
 
 		public IEnumerable<ProcessViewModel> Processes {

@@ -41,26 +41,26 @@ namespace DebuggerEngine {
 			return teb;
 		}
 
-		public Task<TargetThread[]> GetThreads(int start = 0, int count = 0) {
-			return RunAsync(() => {
-				uint total, largest;
-				SystemObjects.GetTotalNumberThreads(out total, out largest).ThrowIfFailed();
-				if (count == 0)
-					count = (int)total;
-				uint[] id = new uint[count];
-				uint[] osid = new uint[count];
-				SystemObjects.GetThreadIdsByIndex((uint)start, (uint)count, id, osid).ThrowIfFailed();
-				var threads = new TargetThread[count];
-				for (int i = 0; i < count; i++) {
-					threads[i] = new TargetThread {
-						Index = id[i],
-						TID = osid[i],
-						Teb = GetThreadTeb(id[i])
-					};
-				}
-				return threads;
-			});
-		}
+		//public Task<TargetThread[]> GetThreads(int start = 0, int count = 0) {
+		//	return RunAsync(() => {
+		//		uint total, largest;
+		//		SystemObjects.GetTotalNumberThreads(out total, out largest).ThrowIfFailed();
+		//		if (count == 0)
+		//			count = (int)total;
+		//		uint[] id = new uint[count];
+		//		uint[] osid = new uint[count];
+		//		SystemObjects.GetThreadIdsByIndex((uint)start, (uint)count, id, osid).ThrowIfFailed();
+		//		var threads = new TargetThread[count];
+		//		for (int i = 0; i < count; i++) {
+		//			threads[i] = new TargetThread(process) {
+		//				Index = id[i],
+		//				TID = osid[i],
+		//				Teb = GetThreadTeb(id[i])
+		//			};
+		//		}
+		//		return threads;
+		//	});
+		//}
 
 		public Task<DebugTarget> GetCurrentTarget() {
 			return RunAsync(() => GetCurrentTargetInternal());

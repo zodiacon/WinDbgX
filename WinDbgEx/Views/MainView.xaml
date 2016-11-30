@@ -25,20 +25,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <DataTemplate DataType="{x:Type ui:ToolBarButtonViewModel}">
-            <Button Command="{Binding Command}" CommandParameter="{Binding Data.AppManager, Source={StaticResource Proxy}}" Margin="{Binding Margin}" 
-                        ToolTip="{Binding ToolTip}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="{Binding Icon}" Width="20" Height="20" />
-                    <TextBlock Margin="4,0,0,0" Text="{Binding Text}" VerticalAlignment="Center" x:Name="_tb"/>
-                </StackPanel>
-            </Button>
-            <DataTemplate.Triggers>
-                <DataTrigger Binding="{Binding Text}" Value="{x:Null}">
-                    <Setter Property="Visibility" Value="Collapsed" TargetName="_tb" />
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
 
     </UserControl.Resources>
     <Grid>
@@ -50,7 +36,7 @@
             <ui:MenuItemTemplateSelector x:Key="menuItemTemplateSelector" MenuItemTemplateKey="menuItemTemplate" SeparatorTemplateKey="seperatorDataTemplate" />
             <conv:IconConverter x:Key="iconConverter" />
             <HierarchicalDataTemplate x:Key="menuItemTemplate" ItemsSource="{Binding Items}">
-                <MenuItem Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{Binding Data.AppManager, Source={StaticResource Proxy}}"
+                <MenuItem Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{x:Static models:AppManager.Instance}"
                           ToolTip="{Binding Description}" IsChecked="{Binding IsChecked}"
                           ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
                           InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item" Tag="{Binding ElementName=This}"

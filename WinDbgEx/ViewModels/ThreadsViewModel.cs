@@ -68,10 +68,13 @@ namespace WinDbgEx.ViewModels {
 		}
 
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
-			Status = e.NewStatus;
-			if (Status == DEBUG_STATUS.NO_DEBUGGEE) {
-				_dispatcher.InvokeAsync(() => Processes.Clear());
-			}
+			var status = e.NewStatus;
+			_dispatcher.InvokeAsync(() => {
+				Status = status;
+				if (Status == DEBUG_STATUS.NO_DEBUGGEE) {
+					_dispatcher.InvokeAsync(() => Processes.Clear());
+				}
+			});
 		}
 
 		private DEBUG_STATUS _status;

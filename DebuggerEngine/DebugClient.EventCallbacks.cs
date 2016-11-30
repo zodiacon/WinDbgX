@@ -24,8 +24,8 @@ namespace DebuggerEngine {
 			ProcessCreated?.Invoke(this, new ProcessCreatedEventArgs(process));
 		}
 
-		void OnThreadCreated(TargetThread thread) {
-			ThreadCreated?.Invoke(this, new ThreadCreatedEventArgs(thread));
+		void OnThreadCreated(ThreadCreatedEventArgs e) {
+			ThreadCreated?.Invoke(this, e);
 		}
 
 		void OnProcessExited(ProcessExitedEventArgs e) {
@@ -81,7 +81,9 @@ namespace DebuggerEngine {
 			SystemObjects.GetCurrentThreadSystemId(out tid);
 			Debug.Assert(tid > 0 && pid > 0);
 
-			var thread = new TargetThread {
+			var process = _processes.First(p => p.PID == pid);
+
+			var thread = new TargetThread(process) {
 				Index = id,
 				TID = tid,
 				StartAddress = StartOffset,
@@ -90,10 +92,9 @@ namespace DebuggerEngine {
 				ProcessIndex = pindex
 			};
 
-			var process = _processes.First(p => p.PID == pid);
 			process.AddThread(thread);
 
-			OnThreadCreated(thread);
+			OnThreadCreated(new ThreadCreatedEventArgs(thread, process));
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}
@@ -147,7 +148,7 @@ namespace DebuggerEngine {
 			uint tindex, tid;
 			SystemObjects.GetCurrentThreadId(out tindex);
 			SystemObjects.GetCurrentThreadSystemId(out tid);
-			var thread = new TargetThread {
+			var thread = new TargetThread (process) {
 				Index = tindex,
 				TID = tid,
 				StartAddress = StartOffset,
@@ -158,7 +159,7 @@ namespace DebuggerEngine {
 
 			process.AddThread(thread);
 
-			OnThreadCreated(thread);
+			OnThreadCreated(new ThreadCreatedEventArgs(thread, process));
 
 			return (int)DEBUG_STATUS.NO_CHANGE;
 		}

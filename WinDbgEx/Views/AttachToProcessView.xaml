@@ -13,7 +13,9 @@
             <RowDefinition Height="12" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row="1" IsReadOnly="True" SelectionMode="Single" ItemsSource="{Binding Processes}" AutoGenerateColumns="False" VirtualizingPanel.IsVirtualizing="False">
+        <ToolBar ItemsSource="{Binding Toolbar}" />
+        <DataGrid Grid.Row="1" IsReadOnly="True" SelectionMode="Single" ItemsSource="{Binding Processes}" AutoGenerateColumns="False" VirtualizingPanel.IsVirtualizing="False"
+                  SelectedItem="{Binding SelectedProcess, Mode=TwoWay}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" />
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" FontWeight="Bold" />

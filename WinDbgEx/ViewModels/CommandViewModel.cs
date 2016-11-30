@@ -13,6 +13,7 @@ using DebuggerEngine.Interop;
 using System.Windows.Threading;
 using System.Windows.Input;
 using Prism.Commands;
+using System.IO;
 
 namespace WinDbgEx.ViewModels {
 	[Export]
@@ -31,7 +32,7 @@ namespace WinDbgEx.ViewModels {
 
 		public IList<CommandHistoryItem> History => _history;
 
-		private string _prompt;
+		private string _prompt = Constants.NoTarget;
 
 		public string Prompt {
 			get { return _prompt; }
@@ -42,10 +43,13 @@ namespace WinDbgEx.ViewModels {
 		Dispatcher _dispatcher;
 
 		readonly DebugManager DebugManager;
+		readonly UIManager UI;
 
 		[ImportingConstructor]
-		public CommandViewModel(DebugManager debug) {
+		public CommandViewModel(DebugManager debug, UIManager ui) {
 			DebugManager = debug;
+			UI = ui;
+
 			_dispatcher = Dispatcher.CurrentDispatcher;
 			_historyColors = new Dictionary<DEBUG_OUTPUT, RgbColor> {
 				[DEBUG_OUTPUT.ERROR] = new RgbColor { R = 255 },
@@ -79,18 +83,34 @@ namespace WinDbgEx.ViewModels {
 			return new RgbColor();
 		}
 
-		private bool _isNotBusy = false;
+		private bool _isNotBusy;
 
 		public bool IsNotBusy {
 			get { return _isNotBusy; }
 			set { SetProperty(ref _isNotBusy, value); }
 		}
 
+		public ToolbarItems Toolbar => new ToolbarItems {
+			new ToolBarButtonViewModel { Text = "Clear", Command = ClearHistoryCommand, Icon = Icons.Delete },
+			new ToolBarButtonViewModel { Text = "Save...", Command = SaveHistoryCommand, Icon = Icons.SaveAs },
+		};
+
+		public ICommand ClearHistoryCommand => new DelegateCommand(() => _history.Clear());
+
+		public ICommand SaveHistoryCommand => new DelegateCommand(() => {
+			if (_history.Count == 0) return;
+
+			var filename = UI.FileDialogService.GetFileForSave();
+			if (filename == null) return;
+
+			File.WriteAllLines(filename, _history.Select(h => h.Text));
+
+		});
+
 		private void _debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
 			var state = e.NewStatus;
-			_dispatcher.InvokeAsync(async () => {
+			_dispatcher.InvokeAsync(() => {
 				IsNotBusy = state == DEBUG_STATUS.BREAK;
-				await _debugger.OutputPrompt();
 
 				if (state == DEBUG_STATUS.NO_DEBUGGEE) {
 					Prompt = Constants.NoTarget;
@@ -98,6 +118,8 @@ namespace WinDbgEx.ViewModels {
 				}
 				else if (!IsNotBusy)
 					Prompt = Constants.Busy;
+				else
+					_debugger.OutputPrompt();
 			});
 		}
 
@@ -108,12 +130,11 @@ namespace WinDbgEx.ViewModels {
 					Color = ColorFromType(DEBUG_OUTPUT.NORMAL)
 				});
 				_commandHistory.Add(CommandText);
-				var target = await _debugger.Execute(CommandText);
+				var cmd = CommandText;
+				CommandText = string.Empty;
+				var target = await _debugger.Execute(cmd);
 				_commandHistoryIndex = _commandHistory.Count;
 
-				CommandText = string.Empty;
-				if (!target)
-					Prompt = Constants.NoTarget;
 			});
 		}, () => !string.IsNullOrWhiteSpace(CommandText))
 			.ObservesProperty(() => CommandText);

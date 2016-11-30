@@ -12,11 +12,15 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <c:CommandResultHistory Items="{Binding History}" FontFamily="{Binding Settings.Fonts.CommandFontFamily, FallbackValue=Consolas}"/>
-        <DockPanel Grid.Row="1" TextElement.FontSize="{Binding Settings.Fonts.CommandTextFontSize, FallbackValue=14}">
+        <ToolBar ItemsSource="{Binding Toolbar}" Margin="2"/>
+        
+        <c:CommandResultHistory Grid.Row="1" Items="{Binding History}" FontFamily="{Binding Settings.Fonts.CommandFontFamily, FallbackValue=Consolas}"/>
+        
+        <DockPanel Grid.Row="2" TextElement.FontSize="{Binding Settings.Fonts.CommandTextFontSize, FallbackValue=14}">
             <Button Content="Execute" DockPanel.Dock="Right" VerticalAlignment="Center" IsDefault="True" Command="{Binding ExecuteCommand}" Padding="8,2"/>
             <TextBlock Text="{Binding Prompt}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" FontFamily="{Binding Settings.Fonts.CommandFontFamily, FallbackValue=Consolas}"/>
             <TextBox Text="{Binding CommandText, UpdateSourceTrigger=PropertyChanged}" Margin="4,0" FontFamily="{Binding Settings.Fonts.CommandTextFontFamily, FallbackValue=Consolas}" 

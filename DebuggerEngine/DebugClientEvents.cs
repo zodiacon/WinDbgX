@@ -25,9 +25,11 @@ namespace DebuggerEngine {
 
 	public sealed class ThreadCreatedEventArgs : EventArgs {
 		public readonly TargetThread Thread;
+		public readonly TargetProcess Process;
 
-		internal ThreadCreatedEventArgs(TargetThread thread) {
+		internal ThreadCreatedEventArgs(TargetThread thread, TargetProcess process) {
 			Thread = thread;
+			Process = process;
 		}
 	}
 

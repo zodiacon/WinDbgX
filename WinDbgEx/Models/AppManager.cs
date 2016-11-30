@@ -13,5 +13,11 @@ namespace WinDbgEx.Models {
 
 		[Import]
 		public UIManager UI { get; private set; }
+
+		public static AppManager Instance { get; private set; }
+
+		internal AppManager() {
+			Instance = this;
+		}
 	}
 }

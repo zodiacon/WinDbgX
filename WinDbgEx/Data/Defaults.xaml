@@ -7,7 +7,7 @@
     <ui:MenuViewModel x:Key="DefaultMenu" x:Shared="False">
         <ui:MenuItemViewModel Text="_File" >
             <ui:MenuItemViewModel Text="_Run Executable..." KeyGesture="Ctrl+R" Icon="/icons/debug_run.ico" Command="cmds:FileCommands.RunExecutable" />
-            <ui:MenuItemViewModel Text="Attach to _Process..." Icon="/icons/debug_attach.ico" Command="cmds:FileCommands.AttachToProcess" />
+            <ui:MenuItemViewModel Text="Attach to _Process..." KeyGesture="F6" Icon="/icons/debug_attach.ico" Command="cmds:FileCommands.AttachToProcess" />
             <ui:MenuItemViewModel Text="Open Dump File..." Icon="/icons/data_out.ico" Command="cmds:FileCommands.OpenDumpFile" KeyGesture="Ctrl+D"/>
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Attach to _Local Kernel" Command="cmds:FileCommands.AttachToLocalKernel"  />
@@ -88,4 +88,5 @@
         <ui:ToolBarButtonViewModel Icon="/icons/gears.ico" Command="cmds:ViewCommands.Threads" LeftMargin="2" ToolTip="Threads and Processes" />
         <ui:ToolBarButtonViewModel Icon="/icons/components.ico" Command="cmds:ViewCommands.Modules" LeftMargin="2" ToolTip="Modules" />
     </ui:ToolbarItems>
+
 </ResourceDictionary>

@@ -23,13 +23,14 @@ namespace WinDbgEx.Models {
 
 		public EventLogItemType Type { get; }
 		public DateTime Time { get; }
+		public object EventData { get; protected set; }
 	}
 
 	class EventLogItem<T> : EventLogItem {
-		public T EventData { get; }
+		public new T EventData => (T)base.EventData;
 
 		public EventLogItem(EventLogItemType type, DateTime time, T data) : base(type, time) {
-			EventData = data;
+			base.EventData = data;
 		}
 	}
 }

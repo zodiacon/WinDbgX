@@ -31,6 +31,8 @@ namespace WinDbgEx.Commands {
         public static DelegateCommandBase AttachToProcess { get; } = new DelegateCommand<AppManager>(context => {
 			var vm = context.UI.DialogService.CreateDialog<AttachToProcessViewModel, GenericWindow>();
 			if (vm.ShowDialog() == true) {
+				var pid = vm.SelectedProcess.Id;
+				context.Debug.Debugger.AttachToProcess(pid, AttachProcessFlags.Invasive);
 			}
         }, context => context.Debug.Status == DEBUG_STATUS.NO_DEBUGGEE);
 

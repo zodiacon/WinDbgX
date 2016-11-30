@@ -188,6 +188,8 @@ namespace DebuggerEngine {
 		private bool DoPostCommand() {
 			var status = UpdateStatus();
 
+			Control.OutputPromptWide(DEBUG_OUTCTL.THIS_CLIENT, null);
+
 			if (status == DEBUG_STATUS.NO_DEBUGGEE) {
 				Client.EndSession(DEBUG_END.ACTIVE_TERMINATE);
 				return false;
