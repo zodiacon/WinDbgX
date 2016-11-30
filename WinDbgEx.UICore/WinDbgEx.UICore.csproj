@@ -117,7 +117,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="RgbColor.cs" />
-    <Compile Include="TabViewModelBase.cs" />
+    <Compile Include="TabItemViewModelBase.cs" />
     <Compile Include="ToolBarItemViewModel.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

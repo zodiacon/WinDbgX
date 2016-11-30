@@ -21,9 +21,9 @@ using System.Reflection;
 namespace WinDbgEx.ViewModels {
 	sealed class MainViewModel : BindableBase {
 		MenuViewModel _menu;
-		ObservableCollection<TabViewModelBase> _tabItems = new ObservableCollection<TabViewModelBase>();
+		ObservableCollection<TabItemViewModelBase> _tabItems = new ObservableCollection<TabItemViewModelBase>();
 
-		public IList<TabViewModelBase> TabItems => _tabItems;
+		public IList<TabItemViewModelBase> TabItems => _tabItems;
 
 		public string Title => Constants.Title + (Helpers.IsAdmin ? " (Administrator)" : string.Empty);
 
@@ -78,9 +78,9 @@ namespace WinDbgEx.ViewModels {
 			}
 		}
 
-		private TabViewModelBase _selectedTab;
+		private TabItemViewModelBase _selectedTab;
 
-		public TabViewModelBase SelectedTab {
+		public TabItemViewModelBase SelectedTab {
 			get { return _selectedTab; }
 			set {
 				var old = _selectedTab;
@@ -95,9 +95,9 @@ namespace WinDbgEx.ViewModels {
 
 		public ICommand ActivateCommand => new DelegateCommand<AppManager>(context => context.UI.CurrentWindow = this);
 
-		public ICommand CloseTabCommand => new DelegateCommand<TabViewModelBase>(tab => TabItems.Remove(tab));
+		public ICommand CloseTabCommand => new DelegateCommand<TabItemViewModelBase>(tab => TabItems.Remove(tab));
 
-		public void AddItem(TabViewModelBase tab, bool select = true) {
+		public void AddItem(TabItemViewModelBase tab, bool select = true) {
 			TabItems.Add(tab);
 			if (select)
 				SelectedTab = tab;

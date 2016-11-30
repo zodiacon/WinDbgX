@@ -9,6 +9,6 @@ using WinDbgEx.UICore;
 namespace WinDbgEx.ViewModels {
 	[TabItem("Registers", Icon = "/icons/cpu.ico")]
 	[Export]
-	class RegistersViewModel : TabViewModelBase {
+	class RegistersViewModel : TabItemViewModelBase {
 	}
 }

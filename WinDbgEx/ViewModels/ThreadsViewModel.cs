@@ -14,7 +14,7 @@ using WinDbgEx.UICore;
 namespace WinDbgEx.ViewModels {
 	[TabItem("Processes & Threads", Icon = "/icons/gears.ico")]
 	[Export]
-	class ThreadsViewModel : TabViewModelBase {
+	class ThreadsViewModel : TabItemViewModelBase {
 		Dispatcher _dispatcher;
 		ObservableCollection<ProcessViewModel> _processes = new ObservableCollection<ProcessViewModel>();
 

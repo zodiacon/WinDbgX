@@ -10,11 +10,14 @@ using Prism.Mvvm;
 using System.Windows;
 using System.Globalization;
 using System.Collections.Specialized;
+using Prism.Commands;
 
 namespace WinDbgEx.UICore {
     [ContentProperty("Items")]
 	[DictionaryKeyProperty("Key")]
 	public class MenuItemViewModel : BindableBase {
+		private static readonly ICommand EmptyCommand = new DelegateCommand(() => { }, () => false);
+
 		private string _text;
 
 		public string Text {
@@ -60,7 +63,9 @@ namespace WinDbgEx.UICore {
 		private ICommand _command;
 
 		public ICommand Command {
-			get { return _command; }
+			get {
+				return _command ?? (_items == null ? EmptyCommand : null);
+			}
 			set {
 				if (SetProperty(ref _command, value) && value != null && KeyGesture != null) {
 					AddInputBinding();

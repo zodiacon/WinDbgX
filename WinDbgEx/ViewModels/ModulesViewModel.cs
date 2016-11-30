@@ -10,7 +10,7 @@ using WinDbgEx.UICore;
 namespace WinDbgEx.ViewModels {
 	[TabItem("Modules", Icon = "/icons/components.ico")]
 	[Export]
-	class ModulesViewModel : TabViewModelBase {
+	class ModulesViewModel : TabItemViewModelBase {
 		ObservableCollection<ProcessViewModel> _processes = new ObservableCollection<ProcessViewModel>();
 
 		public IList<ProcessViewModel> Processes => _processes;

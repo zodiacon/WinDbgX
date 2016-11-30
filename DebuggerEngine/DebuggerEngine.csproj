@@ -85,7 +85,6 @@
     <Compile Include="DebugClient.Targets.cs" />
     <Compile Include="DebugClientEvents.cs" />
     <Compile Include="DebugUtilities.cs" />
-    <Compile Include="EventCallbacks.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Interop\Enums.cs" />
     <Compile Include="Interop\IDebugAdvanced.cs" />

@@ -78,4 +78,12 @@ namespace DebuggerEngine {
 			Data = data;
 		}
 	}
+
+	public sealed class BreakpointChangedEventArgs : EventArgs {
+		public readonly uint BreakpointId;
+
+		internal BreakpointChangedEventArgs(uint id) {
+			BreakpointId = id;
+		}
+	}
 }

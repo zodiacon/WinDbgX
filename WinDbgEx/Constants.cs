@@ -13,10 +13,11 @@ namespace WinDbgEx {
 	}
 
 	static class Icons {
-		private const string Prefix = "/icons/";
-		public const string Refresh = Prefix + "refresh.ico";
-		public const string SaveAs = Prefix + "save_as.ico";
-		public const string Delete = Prefix + "delete.ico";
+		private const string Base = "/icons/";
+		public const string Refresh = Base + "refresh.ico";
+		public const string SaveAs = Base + "save_as.ico";
+		public const string Delete = Base + "delete.ico";
+		public const string Breakpoints = Base + "breakpoints.ico";
 
 	}
 }

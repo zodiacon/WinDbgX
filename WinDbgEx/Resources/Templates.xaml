@@ -21,6 +21,9 @@
     <DataTemplate DataType="{x:Type vm:EventLogViewModel}">
         <view:EventLogView />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:BreakpointsViewModel}">
+        <view:BreakpointsView />
+    </DataTemplate>
     <DataTemplate DataType="{x:Type vm:RunExecutableViewModel}">
         <view:RunExecutableView Margin="12" />
     </DataTemplate>
@@ -29,6 +32,7 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type ui:ToolBarButtonViewModel}">
         <Button Command="{Binding Command}" CommandParameter="{Binding CommandParameter, TargetNullValue={x:Static models:AppManager.Instance}}" Margin="{Binding Margin}" 
+                ToolTipService.ShowOnDisabled="True"
                         ToolTip="{Binding ToolTip}">
             <StackPanel Orientation="Horizontal">
                 <Image Source="{Binding Icon}" Width="20" Height="20" />

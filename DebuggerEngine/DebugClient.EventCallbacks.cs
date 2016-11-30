@@ -19,6 +19,7 @@ namespace DebuggerEngine {
 		public event EventHandler<ThreadExitedEventArgs> ThreadExited;
 		public event EventHandler<ModuleEventArgs> ModuleLoaded;
 		public event EventHandler<ModuleEventArgs> ModuleUnloaded;
+		public event EventHandler<BreakpointChangedEventArgs> BreakpointChanged;
 
 		void OnProcessCreated(TargetProcess process) {
 			ProcessCreated?.Invoke(this, new ProcessCreatedEventArgs(process));
@@ -42,6 +43,10 @@ namespace DebuggerEngine {
 
 		void OnModuleUnloaded(ModuleEventArgs e) {
 			ModuleUnloaded?.Invoke(this, e);
+		}
+
+		void OnBreakpointChanged(BreakpointChangedEventArgs e) {
+			BreakpointChanged?.Invoke(this, e);
 		}
 
 		int IDebugEventCallbacksWide.GetInterestMask(out DEBUG_EVENT Mask) {
@@ -237,6 +242,11 @@ namespace DebuggerEngine {
 
 		int IDebugEventCallbacksWide.ChangeEngineState(DEBUG_CES Flags, ulong Argument) {
 			Debug.WriteLine("IDebugEventCallbacksWide.ChangeEngineState");
+
+			if (Flags.HasFlag(DEBUG_CES.BREAKPOINTS)) {
+				// some breakpoints changed
+				OnBreakpointChanged(new BreakpointChangedEventArgs((uint)Argument));
+			}
 
 			_stateChanged = true;
 			UpdateStatus(Flags.HasFlag(DEBUG_CES.CURRENT_THREAD));

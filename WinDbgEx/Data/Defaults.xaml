@@ -33,13 +33,14 @@
             <ui:MenuItemViewModel Text="Modules" Icon="/icons/components.ico" Command="cmds:ViewCommands.Modules"/>
             <ui:MenuItemViewModel Text="Memory" Icon="/icons/memory.ico"/>
             <ui:MenuItemViewModel Text="Registers" Icon="/icons/cpu.ico" Command="cmds:ViewCommands.Registers"/>
-            <ui:MenuItemViewModel Text="Breakpoints" Icon="/icons/breakpoints.ico" KeyGesture="Alt+F9"/>
+            <ui:MenuItemViewModel Text="Breakpoints" Icon="/icons/breakpoints.ico" KeyGesture="Alt+F9" Command="cmds:ViewCommands.Breakpoints"/>
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Debug">
             <ui:MenuItemViewModel Text="_Go" KeyGesture="F5" Icon="/icons/run.ico" Command="cmds:DebugCommands.Go"/>
             <ui:MenuItemViewModel Text="Break" KeyGesture="Ctrl+Break" Icon="/icons/break.ico" Command="cmds:DebugCommands.Break"/>
             <ui:MenuItemViewModel Text="Sto_p" KeyGesture="Shift+F5" Icon="/icons/stop.ico" Command="cmds:DebugCommands.Stop"/>
-            <ui:MenuItemViewModel Text="Detach" />
+            <ui:MenuItemViewModel Text="Detach" Command="cmds:DebugCommands.Detach" />
+            <ui:MenuItemViewModel Text="Detach All" Command="cmds:DebugCommands.DetachAll" />
             <ui:MenuItemViewModel Text="Step _Over" KeyGesture="F10" Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver" />
             <ui:MenuItemViewModel Text="Step _Into" KeyGesture="F11" Icon="/icons/debug_into.ico" Command="cmds:DebugCommands.StepInto" />
             <ui:MenuItemViewModel Text="Step Out" KeyGesture="Shift+F11" Icon="/icons/debug_out.ico" Command="cmds:DebugCommands.StepOut" />
@@ -62,6 +63,7 @@
             <ui:MenuItemViewModel Text="Always on Top" Key="AlwaysOnTop" Command="cmds:OptionsCommands.AlwaysOnTop" />
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="_General..." />
+            <ui:MenuItemViewModel Text="Symbols..." />
             <ui:MenuItemViewModel Text="_Colors..." />
             <ui:MenuItemViewModel Text="_Fonts..." />
             <ui:MenuItemViewModel Text="_All Options..." />
@@ -86,6 +88,7 @@
 
         <ui:ToolBarButtonViewModel Icon="/icons/console.ico" Command="cmds:ViewCommands.Command" LeftMargin="10" ToolTip="Command" />
         <ui:ToolBarButtonViewModel Icon="/icons/gears.ico" Command="cmds:ViewCommands.Threads" LeftMargin="2" ToolTip="Threads and Processes" />
+        <ui:ToolBarButtonViewModel Icon="/icons/flash.ico" Command="cmds:ViewCommands.EventLog" ToolTip="Event Log" />
         <ui:ToolBarButtonViewModel Icon="/icons/components.ico" Command="cmds:ViewCommands.Modules" LeftMargin="2" ToolTip="Modules" />
     </ui:ToolbarItems>
 

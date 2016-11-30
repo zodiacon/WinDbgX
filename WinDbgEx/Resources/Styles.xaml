@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    >
+    <Style TargetType="ToolTip">
+        <Setter Property="Background" Value="#b0ffff00" />
+        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+</ResourceDictionary>

@@ -68,7 +68,7 @@ namespace DebuggerEngine.Interop
 		[PreserveSig] new int SetCommandWide(
 			[In, MarshalAs(UnmanagedType.LPWStr)] string Command);
 		[PreserveSig] new int GetOffsetExpressionWide(
-			[Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder Buffer,
+			[In, MarshalAs(UnmanagedType.LPWStr)] StringBuilder Buffer,
 			[In] Int32 BufferSize,
 			[In] UInt32* ExpressionSize);
 		[PreserveSig] new int SetOffsetExpressionWide(

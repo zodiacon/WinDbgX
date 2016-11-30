@@ -18,6 +18,8 @@ using WinDbgEx.ViewModels;
 using Zodiacon.WPF;
 using System.Windows;
 
+#pragma warning disable 649
+
 namespace WinDbgEx.Models {
 	[Export]
 	sealed class UIManager : IPartImportsSatisfiedNotification {
@@ -37,18 +39,16 @@ namespace WinDbgEx.Models {
 					.Select(pi => pi.GetValue(null) as DelegateCommandBase));
 		}
 
+		[Import]
 		DebugManager DebugManager;
-		Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
-		[ImportingConstructor]
-		private UIManager(DebugManager debugManager) {
-			DebugManager = debugManager;
-			DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
-			DebugManager.Debugger.Error += Debugger_Error;
+		public Dispatcher Dispatcher { get; } = Dispatcher.CurrentDispatcher;
+
+		private UIManager() {
 		}
 
 		private void Debugger_Error(object sender, ErrorEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			Dispatcher.InvokeAsync(() => {
 				MessageBoxService.SetOwner(Application.Current.MainWindow);
 				MessageBoxService.ShowMessage($"Error: {ErrorToString(e)}", Constants.Title, MessageBoxButton.OK, MessageBoxImage.Error);
 			});
@@ -78,7 +78,7 @@ namespace WinDbgEx.Models {
 
 		DEBUG_STATUS _status = DEBUG_STATUS.NO_DEBUGGEE;
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			Dispatcher.InvokeAsync(() => {
 				if (e.NewStatus == _status)
 					return;
 
@@ -93,7 +93,7 @@ namespace WinDbgEx.Models {
 
 		public IList<MainViewModel> Windows => _windows;
 
-		public T FindTab<T>(out MainViewModel vm) where T : TabViewModelBase {
+		public T FindTab<T>(out MainViewModel vm) where T : TabItemViewModelBase {
 			vm = null;
 			foreach (var win in Windows) {
 				var tab = win.TabItems.OfType<T>().FirstOrDefault();
@@ -109,6 +109,9 @@ namespace WinDbgEx.Models {
 		}
 
 		public void OnImportsSatisfied() {
+			DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
+			DebugManager.Debugger.Error += Debugger_Error;
+
 			UpdateCommands();
 		}
 

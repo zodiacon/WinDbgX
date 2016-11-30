@@ -20,5 +20,7 @@ namespace WinDbgEx.Commands {
 		public static DelegateCommandBase Break { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Break(), context => context?.Debug.Status == DEBUG_STATUS.GO);
 		public static DelegateCommandBase Stop { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Stop(), context => context != null && context.Debug.Status != DEBUG_STATUS.NO_DEBUGGEE);
 
+		public static DelegateCommandBase Detach { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Detach(), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
+		public static DelegateCommandBase DetachAll { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.DetachAll(), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
 	}
 }

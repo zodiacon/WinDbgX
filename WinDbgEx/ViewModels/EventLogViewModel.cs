@@ -15,7 +15,7 @@ using WinDbgEx.UICore;
 namespace WinDbgEx.ViewModels {
 	[TabItem("Event Log", Icon = "/icons/flash.ico")]
 	[Export]
-	class EventLogViewModel : TabViewModelBase {
+	class EventLogViewModel : TabItemViewModelBase {
 		public IEnumerable<EventLogItem> Log => _appManager.Debug.Log;
 
 		AppManager _appManager;

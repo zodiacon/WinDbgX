@@ -77,11 +77,11 @@ namespace DebuggerEngine {
 		}
 
 
-		private Task<T> RunAsync<T>(Func<T> method) {
+		internal Task<T> RunAsync<T>(Func<T> method) {
 			return Task.Factory.StartNew(() => method(), CancellationToken.None, TaskCreationOptions.None, _scheduler);
 		}
 
-		private Task RunAsync(Action method) {
+		internal Task RunAsync(Action method) {
 			return Task.Factory.StartNew(method, CancellationToken.None, TaskCreationOptions.None, _scheduler);
 		}
 
@@ -183,6 +183,41 @@ namespace DebuggerEngine {
 				Control.ExecuteWide(DEBUG_OUTCTL.ALL_CLIENTS, command, DEBUG_EXECUTE.DEFAULT);
 				return DoPostCommand();
 			});
+		}
+
+		public Task<Breakpoint> CreateBreakpoint(DEBUG_BREAKPOINT_TYPE type, uint id = uint.MaxValue) {
+			return RunAsync(() => {
+				IDebugBreakpoint bp;
+				Control.AddBreakpoint(type, id, out bp).ThrowIfFailed();
+				return new Breakpoint(this, (IDebugBreakpoint3)bp);
+			});
+		}
+
+		public IReadOnlyList<Breakpoint> GetBreakpoints() {
+			return RunAsync(() => {
+				uint count;
+				Control.GetNumberBreakpoints(out count).ThrowIfFailed();
+				var breakpoints = new List<Breakpoint>((int)count);
+
+				for (uint i = 0; i < count; i++) {
+					IDebugBreakpoint bp;
+					Control.GetBreakpointByIndex(i, out bp);
+					breakpoints.Add(new Breakpoint(this, (IDebugBreakpoint3)bp));
+				}
+				return breakpoints;
+			}).Result;
+		}
+
+		public Breakpoint GetBreakpointById(uint breakpointId) {
+			return RunAsync(() => {
+				IDebugBreakpoint bp;
+				Control.GetBreakpointById(breakpointId, out bp).ThrowIfFailed();
+				return new Breakpoint(this, (IDebugBreakpoint3)bp);
+			}).Result; 
+		}
+
+		public void DeleteBreakpoint(Breakpoint bp) {
+			RunAsync(() => bp.Remove());
 		}
 
 		private bool DoPostCommand() {
@@ -463,32 +498,18 @@ namespace DebuggerEngine {
 				int totalSize = sizeof(_EXT_TYPED_DATA) + fieldName.Length + 1; //+1 to account for the null terminator
 				buffer = Marshal.AllocHGlobal(totalSize);
 
-				// Get_Field. This does all the magic.
 				temporaryTypedDataForBufferConstruction.Operation = _EXT_TDOP.EXT_TDOP_GET_FIELD;
-
-				// Pass in the OutData from the first call to Request(), so it knows what symbol to use
 				temporaryTypedDataForBufferConstruction.InData = symbolTypedData.OutData;
-
-				// The index of the string will be immediately following the _EXT_TYPED_DATA structure
 				temporaryTypedDataForBufferConstruction.InStrIndex = (uint)sizeof(_EXT_TYPED_DATA);
-
-				// Source is our _EXT_TYPED_DATA structure, Dest is our empty allocated buffer
 				Utilities.CopyMemory(buffer, (IntPtr)(&temporaryTypedDataForBufferConstruction), sizeof(_EXT_TYPED_DATA));
-
-				// This fails if we use i<MemberName.Length, made it i<= to copy the null terminator.
 				Utilities.CopyMemory(buffer + sizeof(_EXT_TYPED_DATA), memPtr, fieldName.Length + 1);
-
-				// Call Request(), Passing in the buffer we created as the In and Out Parameters
 				if (FAILED(hr = Advanced.Request(DEBUG_REQUEST.EXT_TYPED_DATA_ANSI, (void*)buffer, totalSize, (void*)buffer, totalSize, null))) {
 					return hr;
 				}
 
-				// Convert the returned buffer to a _EXT_TYPED_Data CLASS (since it wont let me convert to a struct)
 				var typedDataInClassForm = (_EXT_TYPED_DATA)Marshal.PtrToStructure(buffer, typeof(_EXT_TYPED_DATA));
 
 				fieldValue = typedDataInClassForm.OutData.Data;
-				//if (fieldName.Contains("RunningThreadGoal")) {
-				//}
 			}
 			finally {
 				Marshal.FreeHGlobal(buffer);
@@ -509,7 +530,7 @@ namespace DebuggerEngine {
 		ulong GetGlobalAddressInternal(string moduleName, string globalName) {
 			moduleName = FixModuleName(moduleName);
 
-			UInt64 tempAddress;
+			ulong tempAddress;
 			int hr = Symbols.GetOffsetByNameWide(moduleName + "!" + globalName, out tempAddress);
 			if (SUCCEEDED(hr)) {
 				if (tempAddress != 0) {
@@ -526,7 +547,6 @@ namespace DebuggerEngine {
 
 			uint typeId;
 
-			// Get the ModuleBase
 			ulong moduleBase;
 			typeName = typeName.TrimEnd();
 			if (typeName.EndsWith("*")) {
@@ -599,23 +619,16 @@ namespace DebuggerEngine {
 				int totalSize = sizeof(_EXT_TYPED_DATA) + fieldName.Length + 1;
 				buffer = Marshal.AllocHGlobal(totalSize);
 
-				// Get_Field. This does all the magic.
 				temporaryTypedDataForBufferConstruction.Operation = _EXT_TDOP.EXT_TDOP_GET_FIELD;
 
-				// Pass in the OutData from the first call to Request(), so it knows what symbol to use
 				temporaryTypedDataForBufferConstruction.InData = symbolTypedData.OutData;
 
-				// The index of the string will be immediately following the _EXT_TYPED_DATA structure
 				temporaryTypedDataForBufferConstruction.InStrIndex = (uint)sizeof(_EXT_TYPED_DATA);
-
-				// Source is our _EXT_TYPED_DATA structure, Dest is our empty allocated buffer
 
 				Utilities.CopyMemory(buffer, (IntPtr)(&temporaryTypedDataForBufferConstruction), sizeof(_EXT_TYPED_DATA));
 
-				// This fails if we use fieldName.Length, made it +1 to copy the null terminator.
 				Utilities.CopyMemory(buffer + sizeof(_EXT_TYPED_DATA), memPtr, fieldName.Length + 1);
 
-				// Call Request(), Passing in the buffer we created as the In and Out Parameters
 				if ((hr = Advanced.Request(DEBUG_REQUEST.EXT_TYPED_DATA_ANSI, (void*)buffer, totalSize, (void*)buffer, totalSize, null)) < 0) {
 					if (offset == 0) {
 						return FieldAddress = savedStructAddr;
@@ -641,6 +654,14 @@ namespace DebuggerEngine {
 
 		public Task OutputPrompt(DEBUG_OUTCTL outControl = DEBUG_OUTCTL.THIS_CLIENT, string format = null) {
 			return RunAsync(() => Control.OutputPromptWide(outControl, format));
+		}
+
+		public Task Detach() {
+			return RunAsync(() => Client.DetachCurrentProcess());
+		}
+
+		public Task DetachAll() {
+			return RunAsync(() => Client.DetachProcesses());
 		}
 
 		public event EventHandler<StatusChangedEventArgs> StatusChanged;

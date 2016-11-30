@@ -16,8 +16,9 @@ namespace WinDbgEx.Commands {
 		public static DelegateCommandBase Registers { get; } = new DelegateCommand<AppManager>(context => ViewTab<RegistersViewModel>(context));
 		public static DelegateCommandBase Threads { get; } = new DelegateCommand<AppManager>(context => ViewTab<ThreadsViewModel>(context));
 		public static DelegateCommandBase EventLog { get; } = new DelegateCommand<AppManager>(context => ViewTab<EventLogViewModel>(context));
+		public static DelegateCommandBase Breakpoints { get; } = new DelegateCommand<AppManager>(context => ViewTab<BreakpointsViewModel>(context));
 
-		static void ViewTab<T>(AppManager context) where T : TabViewModelBase {
+		static void ViewTab<T>(AppManager context) where T : TabItemViewModelBase {
 			MainViewModel vm;
 			var tab = context.UI.FindTab<T>(out vm);
 			if (tab == null) {

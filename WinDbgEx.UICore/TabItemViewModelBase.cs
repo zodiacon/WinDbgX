@@ -18,7 +18,7 @@ namespace WinDbgEx.UICore {
 		public bool CanClose { get; set; } = true;
 	}
 
-	public abstract class TabViewModelBase : BindableBase, IActiveAware {
+	public abstract class TabItemViewModelBase : BindableBase, IActiveAware {
 		public virtual string Title { get; } = "Item";
 		public virtual string Icon { get; } = null;
 		public virtual bool CanClose { get; } = true;
@@ -37,7 +37,7 @@ namespace WinDbgEx.UICore {
 
 		protected virtual void OnActive(bool active) { }
 
-		public TabViewModelBase() {
+		public TabItemViewModelBase() {
 			var attr = GetType().GetCustomAttribute<TabItemAttribute>();
 			if (attr != null) {
 				Title = attr.Title;

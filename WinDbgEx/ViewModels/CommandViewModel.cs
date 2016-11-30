@@ -18,7 +18,7 @@ using System.IO;
 namespace WinDbgEx.ViewModels {
 	[Export]
 	[TabItem("Command", Icon = "/icons/console.ico", CanClose = false)]
-	class CommandViewModel : TabViewModelBase {
+	class CommandViewModel : TabItemViewModelBase {
 		readonly ObservableCollection<CommandHistoryItem> _history = new ObservableCollection<CommandHistoryItem>();
 		ObservableCollection<string> _commandHistory = new ObservableCollection<string>();
 		Dictionary<DEBUG_OUTPUT, RgbColor> _historyColors;
