@@ -10,7 +10,6 @@ namespace DebuggerEngine {
 		public TargetProcess Process { get; }
 
 		public TargetThread(TargetProcess process) {
-			Debug.Assert(process != null);
 			Process = process;
 		}
 

@@ -18,8 +18,8 @@ namespace DebuggerEngine {
 			bp.GetParameters(out _parameters);
 		}
 
-		public Task SetOffset(ulong offset) {
-			return Task.Run(() => _bp.SetOffset(offset));
+		public void SetOffset(ulong offset) {
+			Task.Run(() => _bp.SetOffset(offset)).Wait();
 		}
 
 		static StringBuilder _text = new StringBuilder(128);
@@ -32,26 +32,50 @@ namespace DebuggerEngine {
 			}).Result;
 		}
 
+		public bool IsOneShot {
+			get {
+				return _parameters.Flags.HasFlag(DEBUG_BREAKPOINT_FLAG.ONE_SHOT);
+			}
+			set {
+				_client.RunAsync(() => {
+					if (value) {
+						_bp.AddFlags(DEBUG_BREAKPOINT_FLAG.ONE_SHOT);
+						_parameters.Flags |= DEBUG_BREAKPOINT_FLAG.ONE_SHOT;
+					}
+					else {
+						_bp.RemoveFlags(DEBUG_BREAKPOINT_FLAG.ONE_SHOT);
+						_parameters.Flags &= ~DEBUG_BREAKPOINT_FLAG.ONE_SHOT;
+					}
+				}).Wait();
+			}
+		}
+
 		public ulong Offset => _parameters.Offset;
 		public uint Id => _parameters.Id;
 		public DEBUG_BREAKPOINT_TYPE Type => _parameters.BreakType;
 
 		public void SetThread(TargetThread thread) {
 			_client.RunAsync(() => {
-				uint id;
-				_client.SystemObjects.GetThreadIdBySystemId(thread.TID, out id).ThrowIfFailed();
-				_bp.SetMatchThreadId(id);
-				_thread = thread;
-				thread.Index = id;
+				uint id = uint.MaxValue;
+				if (thread != null) {
+					_client.SystemObjects.GetThreadIdBySystemId(thread.TID, out id).ThrowIfFailed();
+					thread.Index = id;
+				}
+				uint oldid = uint.MaxValue;
+				_bp.GetMatchThreadId(out oldid);
+				if (oldid != id) {
+					_bp.SetMatchThreadId(id);
+					_thread = thread;
+				}
 			}).Wait();
 		}
 
 		public TargetThread GetThread() {
 			return _client.RunAsync(() => {
 				uint id;
-				if (_bp.GetMatchThreadId(out id) < 0)
+				if (_bp.GetMatchThreadId(out id) < 0 || id == uint.MaxValue)
 					return null;
-				return _thread;
+				return (_thread = _client.Processes.SelectMany(p => p.Threads).First(t => t.Index == id));
 			}).Result;
 		}
 
@@ -76,7 +100,5 @@ namespace DebuggerEngine {
 		internal void Remove() {
 			_client.Control.RemoveBreakpoint(_bp).ThrowIfFailed();
 		}
-
-		
 	}
 }

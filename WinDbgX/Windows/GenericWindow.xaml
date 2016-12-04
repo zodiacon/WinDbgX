@@ -1,0 +1,15 @@
+﻿<metro:MetroWindow x:Class="WinDbgX.Windows.GenericWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WinDbgX"
+        mc:Ignorable="d"
+        Title="{Binding Title}" 
+        MinHeight="{Binding MinHeight}" MinWidth="{Binding MinWidth}"
+        BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}"
+        SizeToContent="{Binding SizeToContent}"
+        TitleCaps="False" Icon="{Binding Icon}" ResizeMode="{Binding ResizeMode}"
+        Width="{Binding Width}" Height="{Binding Height}" MaxWidth="{Binding MaxWidth}" MaxHeight="{Binding MaxHeight}">
+</metro:MetroWindow>

@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="WinDbgX.Views.RunExecutableView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:z="http://zodiacon.wpf/2016"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ie="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:local="clr-namespace:WinDbgX.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="8" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="8" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="6" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Executable:" VerticalAlignment="Center"/>
+        <DockPanel Grid.Column="2">
+            <Button Content="..." Width="40" DockPanel.Dock="Right" Command="{Binding BrowseCommand}" Margin="4,0,0,0"/>
+            <TextBox Text="{Binding ExecutablePath, UpdateSourceTrigger=PropertyChanged}" MinWidth="380" x:Name="_exePath" metro:TextBoxHelper.SelectAllOnFocus="True" metro:TextBoxHelper.Watermark="Path to executable" 
+                     metro:TextBoxHelper.ClearTextButton="True" z:FocusProperties.FocusOnLoad="True" />
+        </DockPanel>
+
+        <TextBlock Text="Arguments:" Grid.Row="2" VerticalAlignment="Center" />
+        <TextBox Grid.Column="2" Grid.Row="2" Text="{Binding CommandLineA}" metro:TextBoxHelper.Watermark="Command line arguments" metro:TextBoxHelper.ClearTextButton="True"/>
+
+        <TextBlock Grid.Row="4" Text="Start Directory:" VerticalAlignment="Center"/>
+        <DockPanel Grid.Column="2" Grid.Row="4">
+            <Button Content="..." Width="40" DockPanel.Dock="Right" Command="{Binding BrowseDirectoryCommand}" Margin="4,0,0,0"/>
+            <TextBox Text="{Binding StartDirectory}" metro:TextBoxHelper.Watermark="Current directory for process" />
+        </DockPanel>
+
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="3" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Content="Run" IsDefault="True" Margin="10" Width="70" Command="{Binding OKCommand}"/>
+            <Button Content="Cancel" IsCancel="True" Margin="10" Width="70" Command="{Binding CancelCommand}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

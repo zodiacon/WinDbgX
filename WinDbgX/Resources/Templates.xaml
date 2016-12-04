@@ -1,0 +1,49 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:WinDbgX.ViewModels"
+                    xmlns:models="clr-namespace:WinDbgX.Models"
+                    xmlns:ui="clr-namespace:WinDbgX.UICore;assembly=WinDbgX.UICore"
+                    xmlns:view="clr-namespace:WinDbgX.Views"
+                    >
+
+    <DataTemplate DataType="{x:Type vm:CommandViewModel}">
+        <view:CommandView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:ModulesViewModel}">
+        <view:ModulesView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:RegistersViewModel}">
+        <view:RegistersView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:ThreadsViewModel}">
+        <view:ThreadsView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:EventLogViewModel}">
+        <view:EventLogView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:BreakpointsViewModel}">
+        <view:BreakpointsView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:RunExecutableViewModel}">
+        <view:RunExecutableView Margin="12" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:AttachToProcessViewModel}">
+        <view:AttachToProcessView Margin="12" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type ui:ToolBarButtonViewModel}">
+        <Button Command="{Binding Command}" CommandParameter="{Binding CommandParameter, TargetNullValue={x:Static models:AppManager.Instance}}" Margin="{Binding Margin}" 
+                ToolTipService.ShowOnDisabled="True"
+                        ToolTip="{Binding ToolTip}">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding Icon}" Width="20" Height="20" />
+                <TextBlock Margin="4,0,0,0" Text="{Binding Text}" VerticalAlignment="Center" x:Name="_tb"/>
+            </StackPanel>
+        </Button>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Text}" Value="{x:Null}">
+                <Setter Property="Visibility" Value="Collapsed" TargetName="_tb" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+</ResourceDictionary>

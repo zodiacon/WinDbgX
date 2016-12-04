@@ -217,7 +217,7 @@ namespace DebuggerEngine {
 		}
 
 		public void DeleteBreakpoint(Breakpoint bp) {
-			RunAsync(() => bp.Remove());
+			RunAsync(() => bp.Remove()).Wait();
 		}
 
 		private bool DoPostCommand() {
@@ -241,7 +241,6 @@ namespace DebuggerEngine {
 			}
 
 			if (_stateChanged) {
-				//UpdateStatus();
 				if (Status == DEBUG_STATUS.NO_DEBUGGEE)
 					return false;
 
