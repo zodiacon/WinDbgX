@@ -82,8 +82,12 @@
       <HintPath>..\packages\Dragablz.0.0.3.178\lib\net45\Dragablz.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.5.0.3\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA033\lib\net45\MahApps.Metro.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA035\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Diagnostics.Runtime, Version=0.8.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -99,7 +103,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA033\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA035\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
@@ -128,13 +132,17 @@
     <Compile Include="Commands\OptionsCommands.cs" />
     <Compile Include="Commands\ViewCommands.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Controls\BreakpointMargin.cs" />
+    <Compile Include="Converters\CommandParameterConverter.cs" />
     <Compile Include="Converters\EventLogItemToStringConverter.cs" />
     <Compile Include="CustomTabClient.cs" />
+    <Compile Include="Extensions\CommandExtension.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Models\AppManager.cs" />
     <Compile Include="Models\DebugManager.cs" />
     <Compile Include="Commands\FileCommands.cs" />
     <Compile Include="Models\EventLogItem.cs" />
+    <Compile Include="Models\Executable.cs" />
     <Compile Include="Models\UIManager.cs" />
     <Compile Include="Models\Workspace.cs" />
     <Compile Include="Models\WorkspaceTab.cs" />
@@ -143,10 +151,13 @@
     <Compile Include="ViewModels\AttachToProcessViewModel.cs" />
     <Compile Include="ViewModels\BreakpointsViewModel.cs" />
     <Compile Include="ViewModels\BreakpointViewModel.cs" />
+    <Compile Include="ViewModels\CallStackViewModel.cs" />
     <Compile Include="ViewModels\EventLogViewModel.cs" />
     <Compile Include="ViewModels\ProcessViewModel.cs" />
     <Compile Include="ViewModels\RegistersViewModel.cs" />
     <Compile Include="ViewModels\RunExecutableViewModel.cs" />
+    <Compile Include="ViewModels\SourceCodeViewModel.cs" />
+    <Compile Include="ViewModels\StackFrameViewModel.cs" />
     <Compile Include="ViewModels\ThreadsViewModel.cs" />
     <Compile Include="ViewModels\ThreadViewModel.cs" />
     <Compile Include="Views\AttachToProcessView.xaml.cs">
@@ -154,6 +165,9 @@
     </Compile>
     <Compile Include="Views\BreakpointsView.xaml.cs">
       <DependentUpon>BreakpointsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CallStackView.xaml.cs">
+      <DependentUpon>CallStackView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EventLogView.xaml.cs">
       <DependentUpon>EventLogView.xaml</DependentUpon>
@@ -163,6 +177,9 @@
     </Compile>
     <Compile Include="Views\RunExecutableView.xaml.cs">
       <DependentUpon>RunExecutableView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SourceFileView.xaml.cs">
+      <DependentUpon>SourceFileView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ThreadsView.xaml.cs">
       <DependentUpon>ThreadsView.xaml</DependentUpon>
@@ -198,6 +215,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CallStackView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EventLogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -207,6 +228,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RunExecutableView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SourceFileView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -301,7 +326,7 @@
     <Resource Include="Icons\breakpoints_delete.ico" />
     <Resource Include="Icons\breakpoint_delete.ico" />
     <Resource Include="Icons\breakpoint_edit.ico" />
-    <Resource Include="Icons\breakpoint_error.ico" />
+    <Resource Include="Icons\breakpoint_disable.ico" />
     <Resource Include="Icons\breakpoint_new.ico" />
     <Resource Include="Icons\breakpoint_run.ico" />
   </ItemGroup>
@@ -382,7 +407,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Behaviors\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\breakpoint_add.ico" />
@@ -404,6 +428,18 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\delete.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\breakpoint_enable.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\callstack.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\output.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\code.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

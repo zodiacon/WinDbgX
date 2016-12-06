@@ -6,14 +6,17 @@
         xmlns:local="clr-namespace:WinDbgX"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:view="clr-namespace:WinDbgX.Views"
-        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls" SaveWindowPosition="True"
-                   
+        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls" 
+                   Icon="/icons/debug.ico"
         mc:Ignorable="d"
         Title="{Binding Title}" MinHeight="350" MinWidth="525" BorderThickness="1" BorderBrush="{DynamicResource AccentColorBrush}" TitleCaps="False"
                    >
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Activated">
             <i:InvokeCommandAction Command="{Binding ActivateCommand}" CommandParameter="{Binding AppManager}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Close">
+            <i:InvokeCommandAction Command="{Binding CloseWindowCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <view:MainView x:Name="MainView">

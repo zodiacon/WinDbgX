@@ -25,7 +25,7 @@ namespace WinDbgX.ViewModels {
 
 		public IList<TabItemViewModelBase> TabItems => _tabItems;
 
-		public string Title => Constants.Title + (Helpers.IsAdmin ? " (Administrator)" : string.Empty);
+		public string Title => Constants.FullTitle + (Helpers.IsAdmin ? " (Administrator)" : string.Empty);
 
 		public bool IsMain { get; }
 		public IWindow Window { get; }
@@ -38,45 +38,30 @@ namespace WinDbgX.ViewModels {
 		public MainViewModel(bool main, IWindow window) {
 			IsMain = main;
 			Window = window;
-			AppManager = App.Container.GetExportedValue<AppManager>();
+			AppManager = AppManager.Instance;
 			DebugManager = AppManager.Debug;
 			UIManager = AppManager.UI;
 
 			UIManager.Windows.Add(this);
 
 			if (IsMain) {
-				var commandView = App.Container.GetExportedValue<CommandViewModel>();
+				var commandView = AppManager.Container.GetExportedValue<CommandViewModel>();
 				AddItem(commandView);
-			}
-		}
-
-		public object Hello {
-			get {
-				return AppManager;
 			}
 		}
 
 		public MenuViewModel Menu {
 			get {
 				if (_menu == null) {
-					_menu = Window.FindResource<MenuViewModel>("DefaultMenu");
-					if (_menu != null)
-						_menu.AddKeyBindings(Window.WindowObject, AppManager);
+					_menu = UIManager.MainMenu;
+					_menu.AddKeyBindings(Window.WindowObject);
 				}
 				return _menu;
 			}
 		}
 
-		ToolbarItems _toolbar;
 
-		public ToolbarItems Toolbar {
-			get {
-				if (_toolbar == null) {
-					_toolbar = Window.FindResource<ToolbarItems>("DefaultToolbar");
-				}
-				return _toolbar;
-			}
-		}
+		public ToolbarItems Toolbar => UIManager.MainToolBar;
 
 		private TabItemViewModelBase _selectedTab;
 
@@ -102,5 +87,9 @@ namespace WinDbgX.ViewModels {
 			if (select)
 				SelectedTab = tab;
 		}
+
+		public ICommand CloseWindowCommand => new DelegateCommand(() => UIManager.Windows.Remove(this));
+
+		public ICommand InitCommand => new DelegateCommand(() => UIManager.UpdateCommands(), () => IsMain);
 	}
 }

@@ -30,9 +30,16 @@
     <DataTemplate DataType="{x:Type vm:AttachToProcessViewModel}">
         <view:AttachToProcessView Margin="12" />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:CallStackViewModel}">
+        <view:CallStackView />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vm:SourceCodeViewModel}">
+        <view:SourceFileView />
+    </DataTemplate>
+    
     <DataTemplate DataType="{x:Type ui:ToolBarButtonViewModel}">
         <Button Command="{Binding Command}" CommandParameter="{Binding CommandParameter, TargetNullValue={x:Static models:AppManager.Instance}}" Margin="{Binding Margin}" 
-                ToolTipService.ShowOnDisabled="True"
+                ToolTipService.ShowOnDisabled="True" FontSize="{Binding Settings.Fonts.ToolbarFontSize, FallbackValue=12}" FontWeight="SemiBold"
                         ToolTip="{Binding ToolTip}">
             <StackPanel Orientation="Horizontal">
                 <Image Source="{Binding Icon}" Width="20" Height="20" />
@@ -45,5 +52,4 @@
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
-
 </ResourceDictionary>

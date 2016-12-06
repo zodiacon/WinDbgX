@@ -1,5 +1,6 @@
 ﻿using DebuggerEngine;
 using DebuggerEngine.Interop;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,6 +8,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Threading;
 using WinDbgX.Models;
 using WinDbgX.UICore;
@@ -24,13 +26,15 @@ namespace WinDbgX.ViewModels {
 		[Import]
 		UIManager UIManager;
 
+		BreakpointViewModel[] _breakpoints;
 		public IEnumerable<BreakpointViewModel> Breakpoints {
 			get {
 				if (DebugManager.Status != DebuggerEngine.Interop.DEBUG_STATUS.BREAK)
 					return null;
 
 				var breakpoints = DebugManager.Debugger.GetBreakpoints();
-				return breakpoints.Select(bp => new BreakpointViewModel(bp, DebugManager)).ToArray();
+				_breakpoints = breakpoints.Select(bp => new BreakpointViewModel(bp, DebugManager)).ToArray();
+				return _breakpoints;
 			}
 		}
 
@@ -41,8 +45,16 @@ namespace WinDbgX.ViewModels {
 
 		private void Debugger_BreakpointChanged(object sender, BreakpointChangedEventArgs e) {
 			UIManager.Dispatcher.InvokeAsync(() => {
-				foreach (var bp in Breakpoints)
-					bp.Refresh();
+				if (e.BreakpointId != uint.MaxValue) {
+					var bp = _breakpoints.FirstOrDefault(b => b.Id == e.BreakpointId);
+					if (bp != null)
+						bp.Refresh();
+					else
+						OnPropertyChanged(nameof(Breakpoints));
+				}
+				else {
+					OnPropertyChanged(nameof(Breakpoints));
+				}
 			});
 		}
 
@@ -53,6 +65,28 @@ namespace WinDbgX.ViewModels {
 					OnPropertyChanged(nameof(Breakpoints));
 				}
 			});
+		}
+
+		public ToolbarItems Toolbar => new ToolbarItems {
+			new ToolBarButtonViewModel { Text = "New...", Icon = Icons.NewBreakpoint, Command = NewBreakpointCommand },
+			new ToolBarButtonViewModel { Text = "Enable All", Icon = Icons.EnableBreakpoint, Command = EnableAllBreakpointsCommand },
+			new ToolBarButtonViewModel { Text = "Disable All", Icon = Icons.DisableBreakpoint, Command = DisableAllBreakpointsCommand },
+			new ToolBarButtonViewModel { Text = "Delete All", Icon = Icons.DeleteBreakpoints, Command = DeleteAllBreakpointsCommand },
+		};
+
+		public ICommand EnableAllBreakpointsCommand => new DelegateCommand(() => EnableBreakpoints(true));
+		public ICommand DisableAllBreakpointsCommand => new DelegateCommand(() => EnableBreakpoints(false));
+		public ICommand DeleteAllBreakpointsCommand => new DelegateCommand(() => {
+			DebugManager.Debugger.DeleteAllBreakpoints();
+			OnPropertyChanged(nameof(Breakpoints));
+		});
+
+		public ICommand NewBreakpointCommand => new DelegateCommand(() => {
+		});
+
+		private void EnableBreakpoints(bool enable) {
+			foreach (var bp in _breakpoints)
+				bp.IsEnabled = enable;
 		}
 	}
 }

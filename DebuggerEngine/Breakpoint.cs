@@ -28,6 +28,9 @@ namespace DebuggerEngine {
 			return _client.RunAsync(() => {
 				uint size;
 				_bp.GetOffsetExpressionWide(_text, _text.Capacity, &size);
+				if (_text.Length == 0) {
+					_client.Symbols.GetNameByOffsetWide(Offset, _text, _text.Capacity, &size, null); 
+				}
 				return _text.ToString();
 			}).Result;
 		}
@@ -46,6 +49,19 @@ namespace DebuggerEngine {
 						_bp.RemoveFlags(DEBUG_BREAKPOINT_FLAG.ONE_SHOT);
 						_parameters.Flags &= ~DEBUG_BREAKPOINT_FLAG.ONE_SHOT;
 					}
+				}).Wait();
+			}
+		}
+
+		public uint HitCount => _parameters.PassCount;
+
+		public uint HitTarget {
+			get { return _parameters.CurrentPassCount; }
+			set {
+				_client.RunAsync(() => {
+					_bp.SetPassCount(value).ThrowIfFailed();
+					_bp.GetPassCount(out _parameters.PassCount);
+					_bp.GetCurrentPassCount(out _parameters.CurrentPassCount);
 				}).Wait();
 			}
 		}
@@ -79,17 +95,20 @@ namespace DebuggerEngine {
 			}).Result;
 		}
 
-		public void Enable(bool enable) {
-			_client.RunAsync(() => {
-				if (enable)
-					_bp.AddFlags(DEBUG_BREAKPOINT_FLAG.ENABLED);
-				else
-					_bp.RemoveFlags(DEBUG_BREAKPOINT_FLAG.ENABLED);
-				_bp.GetFlags(out _parameters.Flags);
-			}).Wait();
+		public bool IsEnabled {
+			get {
+				return _parameters.Flags.HasFlag(DEBUG_BREAKPOINT_FLAG.ENABLED);
+			}
+			set {
+				_client.RunAsync(() => {
+					if (value)
+						_bp.AddFlags(DEBUG_BREAKPOINT_FLAG.ENABLED);
+					else
+						_bp.RemoveFlags(DEBUG_BREAKPOINT_FLAG.ENABLED);
+					_bp.GetFlags(out _parameters.Flags);
+				}).Wait();
+			}
 		}
-
-		public bool IsEnabled => _parameters.Flags.HasFlag(DEBUG_BREAKPOINT_FLAG.ENABLED);
 
 		public void SetOffsetExpression(string expression) {
 			_client.RunAsync(() => {

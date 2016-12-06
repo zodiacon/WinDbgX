@@ -19,15 +19,12 @@ namespace WinDbgX {
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
-		public static CompositionContainer Container { get; private set; }
-
-        protected override void OnStartup(StartupEventArgs e) {
-            base.OnStartup(e);
-
-            var container = new CompositionContainer(
-                new AggregateCatalog(
-                    new AssemblyCatalog(typeof(IFileDialogService).Assembly),
-                    new AssemblyCatalog(Assembly.GetExecutingAssembly())));
+		public App() {
+			var container = new CompositionContainer(
+				new AggregateCatalog(
+					new AssemblyCatalog(typeof(IFileDialogService).Assembly),
+					new AssemblyCatalog(typeof(IWindow).Assembly),
+					new AssemblyCatalog(Assembly.GetExecutingAssembly())));
 
 			var defaults = new UIServicesDefaults();
 			container.ComposeExportedValue(defaults.DialogService);
@@ -37,16 +34,19 @@ namespace WinDbgX {
 
 			var appManager = container.GetExportedValue<AppManager>();
 
-			Container = container;
+		}
+
+		protected override void OnStartup(StartupEventArgs e) {
 			var win = new MainWindow();
 			var vm = new MainViewModel(true, new IWindowImpl(win));
 			win.DataContext = vm;
 
 			win.Show();
+
         }
 
         protected override void OnExit(ExitEventArgs e) {
-			Container.GetExportedValue<DebugManager>().Dispose();
+			AppManager.Instance.Debug.Dispose();
             base.OnExit(e);
         }
     }

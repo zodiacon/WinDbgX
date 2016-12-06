@@ -3,15 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:WinDbgX"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:WinDbgX.UICore;assembly=WinDbgX.UICore"
              xmlns:z="http://zodiacon.wpf/2016"
              xmlns:drgblz="clr-namespace:Dragablz;assembly=Dragablz"
              xmlns:conv="clr-namespace:WinDbgX.UICore.Converters;assembly=WinDbgX.UICore"
+             xmlns:conv2="clr-namespace:WinDbgX.Converters"
              xmlns:root="clr-namespace:WinDbgX"
              xmlns:models="clr-namespace:WinDbgX.Models"            
              d:DesignHeight="300" d:DesignWidth="300" x:Name="This"
              mc:Ignorable="d">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding InitCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <UserControl.Resources>
         <z:BindingProxy x:Key="Proxy" Data="{Binding}" />
         <z:BooleanToVisibilityConverter x:Key="bool2vis" />
@@ -29,16 +36,42 @@
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
-
+            <conv2:CommandParameterConverter x:Key="paramConverter" />
+            <Style TargetType="MenuItem" x:Key="SeparatorStyle" BasedOn="{StaticResource MetroMenuItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Separator />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="MenuItem" x:Key="MenuItemStyle" BasedOn="{StaticResource MetroMenuItem}">
+                <Setter Property="Command" Value="{Binding Command}" />
+                <Setter Property="CommandParameter" Value="{Binding CommandParameter, Converter={StaticResource paramConverter}}" />
+                <Setter Property="Header" Value="{Binding Text}" />
+                <Setter Property="ItemsSource" Value="{Binding Items}" />
+                <Setter Property="Icon" >
+                    <Setter.Value>
+                        <Image Source="{Binding Icon}" Width="20" Height="20" x:Name="icon" />
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Icon}" Value="{x:Null}">
+                        <Setter Property="Icon" Value="{x:Null}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <ui:MenuItemStyleSelector x:Key="menuItemStyleSelector" SeparatorStyleKey="SeparatorStyle" MenuItemStyleKey="MenuItemStyle" />
             <DataTemplate x:Key="seperatorDataTemplate">
                 <Separator />
             </DataTemplate>
             <ui:MenuItemTemplateSelector x:Key="menuItemTemplateSelector" MenuItemTemplateKey="menuItemTemplate" SeparatorTemplateKey="seperatorDataTemplate" />
             <conv:IconConverter x:Key="iconConverter" />
             <HierarchicalDataTemplate x:Key="menuItemTemplate" ItemsSource="{Binding Items}">
-                <MenuItem Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{x:Static models:AppManager.Instance}"
-                          ToolTip="{Binding Description}" IsChecked="{Binding IsChecked}"
-                          ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
+                <MenuItem ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
+                          Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{Binding CommandParameter, Converter={StaticResource paramConverter}}"
+                          ToolTip="{Binding Description}" IsChecked="{Binding IsChecked}"                  
                           InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item" Tag="{Binding ElementName=This}"
                           Icon="{Binding Icon, Converter={StaticResource iconConverter}}">
                 </MenuItem>
@@ -50,12 +83,14 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Menu ItemsSource="{Binding Menu}" UsesItemContainerTemplate="True" 
+        <Menu ItemsSource="{Binding Menu}"  
               FontSize="{Binding Settings.Fonts.MenuFontSize, FallbackValue=12}" FontFamily="{Binding Settings.Fonts.MenuFontFamily}"
-              ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}">
+              ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True">
         </Menu>
 
-        <ToolBar Grid.Row="1" ItemsSource="{Binding Toolbar}" />
+        <ToolBarTray Grid.Row="1">
+            <ToolBar Grid.Row="1" ItemsSource="{Binding Toolbar}" />
+        </ToolBarTray>
         
         <drgblz:TabablzControl ItemsSource="{Binding TabItems}" Grid.Row="2" x:FieldModifier="internal" x:Name="TabablzControl" Margin="2"
                                SelectedItem="{Binding SelectedTab, Mode=TwoWay}" AdjacentHeaderItemOffset="-4"
@@ -65,13 +100,13 @@
             <drgblz:TabablzControl.HeaderItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" >
-                        <Image Source="{Binding Icon}" Width="16" Height="16" />
+                        <Image Source="{Binding Icon}" Width="20" Height="20" />
                         <Grid>
                             <TextBlock Margin="4,0,0,0" VerticalAlignment="Center" Text="{Binding Title}" />
                             <Thumb Style="{StaticResource InvisibleThumbStyle}" drgblz:DragablzItem.IsCustomThumb="True" />
                         </Grid>
                         <Button BorderThickness="0" Margin="4,0,0,0" Background="Transparent" Visibility="{Binding CanClose, Converter={StaticResource bool2vis}}" 
-                                Command="{Binding Data.CloseTabCommand, Source={StaticResource Proxy}}" Opacity=".7"
+                                Command="{Binding Data.CloseTabCommand, Source={StaticResource Proxy}}" Opacity=".7" VerticalAlignment="Center"
                                 CommandParameter="{Binding}">
                             <Image Source="/icons/close.ico" Width="16" Height="16" />
                         </Button>

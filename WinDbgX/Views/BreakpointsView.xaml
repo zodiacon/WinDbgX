@@ -27,8 +27,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Pass Count" Binding="{Binding PassCount}" />
-                <DataGridTextColumn Header="Pass Target" Binding="{Binding PassTarget, Mode=TwoWay}" IsReadOnly="False"/>
+                <DataGridTextColumn Header="Hit Target" Binding="{Binding HitTarget, Mode=TwoWay}" />
+                <DataGridTextColumn Header="Hit Count" Binding="{Binding HitCount}" />
             </DataGrid.Columns>    
         </DataGrid>
     </Grid>

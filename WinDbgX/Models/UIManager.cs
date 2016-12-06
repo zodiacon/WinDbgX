@@ -7,12 +7,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
-using WinDbgX.Commands;
 using WinDbgX.UICore;
 using WinDbgX.ViewModels;
 using Zodiacon.WPF;
@@ -23,20 +19,33 @@ using System.Windows;
 namespace WinDbgX.Models {
 	[Export]
 	sealed class UIManager : IPartImportsSatisfiedNotification {
-		ObservableCollection<MainViewModel> _windows = new ObservableCollection<MainViewModel>();
-		ObservableCollection<string> _recentWorkspaces = new ObservableCollection<string>();
-		static readonly List<DelegateCommandBase> _commands = new List<DelegateCommandBase>(32);
+		readonly ObservableCollection<MainViewModel> _windows = new ObservableCollection<MainViewModel>();
+		readonly ObservableCollection<string> _recentWorkspaces = new ObservableCollection<string>();
+		readonly ObservableCollection<Executable> _recentExecutables = new ObservableCollection<Executable>();
+		readonly MenuItemCollectionViewModel _recentExecutablesMenuItems = new MenuItemCollectionViewModel();
 
-		//public static readonly UIManager Instance = new UIManager();
+		readonly IDictionary<string, ICommand> _commands = new Dictionary<string, ICommand>(32, StringComparer.InvariantCultureIgnoreCase);
 
-		static UIManager() {
-			Type[] types = {
-				typeof(FileCommands), typeof(ViewCommands), typeof(OptionsCommands), typeof(DebugCommands)
-			};
-			foreach(var type in types)
-				_commands.AddRange(type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-					.Where(pi => pi.PropertyType == typeof(DelegateCommandBase))
-					.Select(pi => pi.GetValue(null) as DelegateCommandBase));
+		public IList<string> RecentWorkspaces => _recentWorkspaces;
+		public IEnumerable<Executable> RecentExecutables => _recentExecutables;
+		public MenuItemCollectionViewModel RecentExecutablesMenuItems => _recentExecutablesMenuItems;
+
+		MenuViewModel _menu;
+		public MenuViewModel MainMenu {
+			get {
+				if (_menu == null)
+					_menu = Application.Current.FindResource("DefaultMenu") as MenuViewModel; 
+				return _menu;
+			}
+		}
+
+		ToolbarItems _mainToolBar;
+		public ToolbarItems MainToolBar {
+			get {
+				if (_mainToolBar == null)
+					_mainToolBar = Application.Current.FindResource("DefaultToolbar") as ToolbarItems;
+				return _mainToolBar;
+			}
 		}
 
 		[Import]
@@ -53,6 +62,29 @@ namespace WinDbgX.Models {
 				MessageBoxService.ShowMessage($"Error: {ErrorToString(e)}", Constants.Title, MessageBoxButton.OK, MessageBoxImage.Error);
 			});
 		}
+
+		public void AddExecutable(Executable executable) {
+			var index = _recentExecutables.IndexOf(executable);
+			if (index >= 0) {
+				_recentExecutables.RemoveAt(index);
+				_recentExecutablesMenuItems.RemoveAt(index);
+
+			}
+
+			_recentExecutables.Insert(0, executable);
+			_recentExecutablesMenuItems.Insert(0, new MenuItemViewModel {
+				Text = $"{executable.Path} {executable.Arguments?.Substring(0, 50)}",
+				Command = RunRecentExecutableCommand,
+				CommandParameter = executable
+			});
+
+			if (_recentExecutables.Count == 11) {
+				_recentExecutables.RemoveAt(10);
+				_recentExecutablesMenuItems.RemoveAt(10);
+			}
+		}
+
+		public ICommand RunRecentExecutableCommand { get; private set; } 
 
 		private object ErrorToString(ErrorEventArgs e) {
 			switch (e.Error) {
@@ -87,8 +119,6 @@ namespace WinDbgX.Models {
 			});
 		}
 
-		public IReadOnlyList<string> RecentWorkspaces => _recentWorkspaces;
-
 		public MainViewModel CurrentWindow { get; internal set; }
 
 		public IList<MainViewModel> Windows => _windows;
@@ -105,20 +135,36 @@ namespace WinDbgX.Models {
 			return null;
 		}
 
-		public void LoadWorkspace(string path) {
+		[ImportMany]
+		List<ICommandCollection> AllCommands;
+
+		public Workspace LoadWorkspace(string path) {
+			return null;
 		}
 
 		public void OnImportsSatisfied() {
 			DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
 			DebugManager.Debugger.Error += Debugger_Error;
 
-			UpdateCommands();
+			RunRecentExecutableCommand = new DelegateCommand<Executable>(executable => {
+				AddExecutable(executable);
+			}, _ => DebugManager.Status == DEBUG_STATUS.NO_DEBUGGEE);
+
+			var commandList = AllCommands.SelectMany(list => list.GetCommands());
+			foreach (var pair in commandList)
+				_commands.Add(pair);
+
 		}
 
-		private void UpdateCommands() {
-			foreach (var cmd in _commands)
+		internal void UpdateCommands() {
+			foreach (var cmd in _commands.Values.OfType<DelegateCommandBase>())
 				cmd.RaiseCanExecuteChanged();
+		}
 
+		public ICommand GetCommand(string name) {
+			ICommand cmd;
+			_commands.TryGetValue(name, out cmd);
+			return cmd;
 		}
 	}
 }

@@ -1,25 +1,28 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ui="clr-namespace:WinDbgX.UICore;assembly=WinDbgX.UICore"
-                    
+                    xmlns:models="clr-namespace:WinDbgX.Models"
+                    xmlns:ext="clr-namespace:WinDbgX.Extensions"
                     xmlns:cmds="clr-namespace:WinDbgX.Commands"
                     >
-    <ui:MenuViewModel x:Key="DefaultMenu" x:Shared="False">
+    <ui:MenuViewModel x:Key="DefaultMenu" >
         <ui:MenuItemViewModel Text="_File" >
-            <ui:MenuItemViewModel Text="_Run Executable..." KeyGesture="Ctrl+R" Icon="/icons/debug_run.ico" Command="cmds:FileCommands.RunExecutable" />
-            <ui:MenuItemViewModel Text="Attach to _Process..." KeyGesture="F6" Icon="/icons/debug_attach.ico" Command="cmds:FileCommands.AttachToProcess" />
-            <ui:MenuItemViewModel Text="Open Dump File..." Icon="/icons/data_out.ico" Command="cmds:FileCommands.OpenDumpFile" KeyGesture="Ctrl+D"/>
+            <ui:MenuItemViewModel Text="_Run Executable..." KeyGesture="Ctrl+R" Icon="/icons/debug_run.ico" Command="{ext:Command RunExecutable}" />
+            <ui:MenuItemViewModel Text="Attach to _Process..." KeyGesture="F6" Icon="/icons/debug_attach.ico" Command="{ext:Command AttachToProcess}" />
+            <ui:MenuItemViewModel Text="Open Dump File..." Icon="/icons/data_out.ico" KeyGesture="Ctrl+D" Command="{ext:Command OpenDumpFile}"/>
+            <ui:MenuItemViewModel Text="Open Source File..." KeyGesture="Ctrl+O" Icon="/icons/code.ico" Command="{ext:Command OpenSourceFile}" />
             <ui:MenuItemViewModel IsSeparator="True" />
-            <ui:MenuItemViewModel Text="Attach to _Local Kernel" Command="cmds:FileCommands.AttachToLocalKernel"  />
-            <ui:MenuItemViewModel Text="Attach to _Kernel..." Command="cmds:FileCommands.AttachToKernel" />
+            <ui:MenuItemViewModel Text="Attach to _Local Kernel" Command="{ext:Command AttachToLocalKernel}" />
+            <ui:MenuItemViewModel Text="Attach to _Kernel..." Command="{ext:Command AttachToKernel}"/>
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Load Workspace..." />
             <ui:MenuItemViewModel Text="Save Workspace" />
             <ui:MenuItemViewModel Text="Save Workspace As..." />
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Recent Workspaces" />
+            <ui:MenuItemViewModel Text="Recent Executables" Key="RecentExecutables" />
             <ui:MenuItemViewModel IsSeparator="True" />
-            <ui:MenuItemViewModel Text="E_xit" Command="cmds:FileCommands.Exit"/>
+            <ui:MenuItemViewModel Text="E_xit" Command="{ext:Command Exit}" />
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Edit" >
             <ui:MenuItemViewModel Text="_Copy" Command="Copy" Icon="/icons/copy.ico" KeyGesture="Ctrl+C" />
@@ -27,40 +30,47 @@
             <ui:MenuItemViewModel Text="_Find..." Icon="/icons/find.ico" KeyGesture="Ctrl+F"/>
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_View">
-            <ui:MenuItemViewModel Text="Command" Icon="/icons/console.ico" Command="cmds:ViewCommands.Command" KeyGesture="Alt+1"/>
-            <ui:MenuItemViewModel Text="Processes and Threads" Icon="/icons/gears.ico" Command="cmds:ViewCommands.Threads" />
-            <ui:MenuItemViewModel Text="Event Log" Icon="/icons/flash.ico" Command="cmds:ViewCommands.EventLog"/>
-            <ui:MenuItemViewModel Text="Modules" Icon="/icons/components.ico" Command="cmds:ViewCommands.Modules"/>
-            <ui:MenuItemViewModel Text="Memory" Icon="/icons/memory.ico"/>
-            <ui:MenuItemViewModel Text="Registers" Icon="/icons/cpu.ico" Command="cmds:ViewCommands.Registers"/>
-            <ui:MenuItemViewModel Text="Breakpoints" Icon="/icons/breakpoints.ico" KeyGesture="Alt+F9" Command="cmds:ViewCommands.Breakpoints"/>
+            <ui:MenuItemViewModel Text="Command" Icon="/icons/console.ico" Command="{ext:Command ViewCommand}" KeyGesture="Alt+1"/>
+            <ui:MenuItemViewModel Text="Processes and Threads" Icon="/icons/gears.ico" Command="{ext:Command ViewThreads}"  KeyGesture="Alt+2"/>
+            <ui:MenuItemViewModel Text="Event Log" Icon="/icons/flash.ico" Command="{ext:Command ViewEventLog}"  Key="Alt+3"/>
+            <ui:MenuItemViewModel Text="Call Stack" Icon="/icons/callstack.ico" Command="{ext:Command ViewCallStack}"  KeyGesture="Alt+4"/>
+            <ui:MenuItemViewModel Text="Output" Icon="/icons/output.ico" KeyGesture="Alt+5"/>
+            <ui:MenuItemViewModel Text="Modules" Icon="/icons/components.ico" Command="{ext:Command ViewModules}"  KeyGesture="Alt+6"/>
+            <ui:MenuItemViewModel Text="Memory" Icon="/icons/memory.ico" KeyGesture="Alt+7"/>
+            <ui:MenuItemViewModel Text="Registers" Icon="/icons/cpu.ico" Command="{ext:Command ViewRegisters}"  KeyGesture="Alt+8" />
+            <ui:MenuItemViewModel Text="Variables" KeyGesture="Alt+9" />
+            <ui:MenuItemViewModel Text="Breakpoints" Icon="/icons/breakpoints.ico" KeyGesture="Alt+F9" Command="{ext:Command ViewBreakpoints}" />
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Debug">
-            <ui:MenuItemViewModel Text="_Go" KeyGesture="F5" Icon="/icons/run.ico" Command="cmds:DebugCommands.Go"/>
-            <ui:MenuItemViewModel Text="Break" KeyGesture="Ctrl+Break" Icon="/icons/break.ico" Command="cmds:DebugCommands.Break"/>
-            <ui:MenuItemViewModel Text="Sto_p" KeyGesture="Shift+F5" Icon="/icons/stop.ico" Command="cmds:DebugCommands.Stop"/>
-            <ui:MenuItemViewModel Text="Detach" Command="cmds:DebugCommands.Detach" />
-            <ui:MenuItemViewModel Text="Detach All" Command="cmds:DebugCommands.DetachAll" />
-            <ui:MenuItemViewModel Text="Step _Over" KeyGesture="F10" Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver" />
-            <ui:MenuItemViewModel Text="Step _Into" KeyGesture="F11" Icon="/icons/debug_into.ico" Command="cmds:DebugCommands.StepInto" />
-            <ui:MenuItemViewModel Text="Step Out" KeyGesture="Shift+F11" Icon="/icons/debug_out.ico" Command="cmds:DebugCommands.StepOut" />
+            <ui:MenuItemViewModel Text="_Go" KeyGesture="F5" Icon="/icons/run.ico" Command="{ext:Command Go}"/>
+            <ui:MenuItemViewModel Text="Break" KeyGesture="Ctrl+Break" Icon="/icons/break.ico" Command="{ext:Command Break}"/>
+            <ui:MenuItemViewModel Text="Sto_p" KeyGesture="Shift+F5" Icon="/icons/stop.ico" Command="{ext:Command Stop}"/>
+            <ui:MenuItemViewModel Text="Detach" Command="{ext:Command Detach}" />
+            <ui:MenuItemViewModel Text="Detach All" Command="{ext:Command DetachAll}" />
+            <ui:MenuItemViewModel Text="Step _Over" KeyGesture="F10" Icon="/icons/debug_next.ico" Command="{ext:Command StepOver}" />
+            <ui:MenuItemViewModel Text="Step _Into" KeyGesture="F11" Icon="/icons/debug_into.ico" Command="{ext:Command StepInto}" />
+            <ui:MenuItemViewModel Text="Step Out" KeyGesture="Shift+F11" Icon="/icons/debug_out.ico" Command="{ext:Command StepOut}" />
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Advanced Step">
-                <ui:MenuItemViewModel Text="Step to Branch" Command="cmds:DebugCommands.StepToBranch" />
-                <ui:MenuItemViewModel Text="Step to Call" Command="cmds:DebugCommands.StepToCall" />
-                <ui:MenuItemViewModel Text="Step to Return" Command="cmds:DebugCommands.StepToReturn" />
+                <ui:MenuItemViewModel Text="Step to Branch" Command="{ext:Command StepToBranch}" />
+                <ui:MenuItemViewModel Text="Step to Call" Command="{ext:Command StepToCall}" />
+                <ui:MenuItemViewModel Text="Step to Return" Command="{ext:Command StepToReturn}" />
             </ui:MenuItemViewModel>
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Breakpoints">
                 <ui:MenuItemViewModel Text="New Breakpoint..." Icon="/icons/breakpoint_add.ico" KeyGesture="Ctrl+B" />
-                <ui:MenuItemViewModel Text="Delete All Breakpoints" Icon="/icons/breakpoints_delete.ico" KeyGesture="Ctrl+Shift+F9" />
+                <ui:MenuItemViewModel Text="Delete All Breakpoints" Icon="/icons/breakpoints_delete.ico" KeyGesture="Ctrl+Shift+F9" Command="{ext:Command DeleteAllBreakpoints}"/>
             </ui:MenuItemViewModel>
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="Events..." />
             <ui:MenuItemViewModel Text="Exceptions..." />
         </ui:MenuItemViewModel>
+        <ui:MenuItemViewModel Text="_Symbols">
+            <ui:MenuItemViewModel Text="Symbol Search Path..." />
+            <ui:MenuItemViewModel Text="Reload All Symbols" />
+        </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Options">
-            <ui:MenuItemViewModel Text="Always on Top" Key="AlwaysOnTop" Command="cmds:OptionsCommands.AlwaysOnTop" />
+            <ui:MenuItemViewModel Text="Always on Top" Key="AlwaysOnTop" Command="{ext:Command AlwaysOnTop}" />
             <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="_General..." />
             <ui:MenuItemViewModel Text="Symbols..." />
@@ -78,18 +88,19 @@
         </ui:MenuItemViewModel>
     </ui:MenuViewModel>
     
-    <ui:ToolbarItems x:Key="DefaultToolbar" x:Shared="False">
-        <ui:ToolBarButtonViewModel Icon="/icons/run.ico" Command="cmds:DebugCommands.Go" LeftMargin="2" ToolTip="Run (F5)"/>
-        <ui:ToolBarButtonViewModel Icon="/icons/break.ico" Command="cmds:DebugCommands.Break" LeftMargin="2" ToolTip="Break" />
-        <ui:ToolBarButtonViewModel Icon="/icons/stop.ico" Command="cmds:DebugCommands.Stop" LeftMargin="2" ToolTip="Stop Debugging" />
-        <ui:ToolBarButtonViewModel Icon="/icons/debug_next.ico" Command="cmds:DebugCommands.StepOver" LeftMargin="4" ToolTip="Step Over (F10)"/>
-        <ui:ToolBarButtonViewModel Icon="/icons/debug_into.ico" Command="cmds:DebugCommands.StepInto" LeftMargin="2" ToolTip="Step Into (F11)"/>
-        <ui:ToolBarButtonViewModel Icon="/icons/debug_out.ico" Command="cmds:DebugCommands.StepOut" LeftMargin="2" ToolTip="Step Out (Shift+F11)"/>
+    <ui:ToolbarItems x:Key="DefaultToolbar">
+        <ui:ToolBarButtonViewModel Icon="/icons/run.ico" Command="{ext:Command Go}" LeftMargin="2" ToolTip="Go (F5)"/>
+        <ui:ToolBarButtonViewModel Icon="/icons/break.ico" Command="{ext:Command Break}" LeftMargin="2" ToolTip="Break" />
+        <ui:ToolBarButtonViewModel Icon="/icons/stop.ico" Command="{ext:Command Stop}" LeftMargin="2" ToolTip="Stop Debugging" />
+        <ui:ToolBarButtonViewModel Icon="/icons/debug_next.ico" Command="{ext:Command StepOver}" LeftMargin="4" ToolTip="Step Over (F10)"/>
+        <ui:ToolBarButtonViewModel Icon="/icons/debug_into.ico" Command="{ext:Command StepInto}" LeftMargin="2" ToolTip="Step Into (F11)"/>
+        <ui:ToolBarButtonViewModel Icon="/icons/debug_out.ico" Command="{ext:Command StepOut}" LeftMargin="2" ToolTip="Step Out (Shift+F11)"/>
 
-        <ui:ToolBarButtonViewModel Icon="/icons/console.ico" Command="cmds:ViewCommands.Command" LeftMargin="10" ToolTip="Command" />
-        <ui:ToolBarButtonViewModel Icon="/icons/gears.ico" Command="cmds:ViewCommands.Threads" LeftMargin="2" ToolTip="Threads and Processes" />
-        <ui:ToolBarButtonViewModel Icon="/icons/flash.ico" Command="cmds:ViewCommands.EventLog" ToolTip="Event Log" />
-        <ui:ToolBarButtonViewModel Icon="/icons/components.ico" Command="cmds:ViewCommands.Modules" LeftMargin="2" ToolTip="Modules" />
+        <ui:ToolBarButtonViewModel Icon="/icons/console.ico" Command="{ext:Command ViewCommand}"  LeftMargin="10" ToolTip="Command" />
+        <ui:ToolBarButtonViewModel Icon="/icons/gears.ico" Command="{ext:Command ViewThreads}"  LeftMargin="2" ToolTip="Threads and Processes" />
+        <ui:ToolBarButtonViewModel Icon="/icons/flash.ico" Command="{ext:Command ViewEventLog}"  ToolTip="Event Log" />
+        <ui:ToolBarButtonViewModel Icon="/icons/callstack.ico" Command="{ext:Command ViewCallStack}"  ToolTip="Call Stack" />
+        <ui:ToolBarButtonViewModel Icon="/icons/components.ico" Command="{ext:Command ViewModules}"  LeftMargin="2" ToolTip="Modules" />
     </ui:ToolbarItems>
 
 </ResourceDictionary>

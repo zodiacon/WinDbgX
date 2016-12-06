@@ -11,35 +11,22 @@ using System.Windows.Threading;
 using WinDbgX.Models;
 using WinDbgX.UICore;
 
+#pragma warning disable 649
+
 namespace WinDbgX.ViewModels {
 	[TabItem("Processes & Threads", Icon = "/icons/gears.ico")]
 	[Export]
-	class ThreadsViewModel : TabItemViewModelBase {
+	class ThreadsViewModel : TabItemViewModelBase, IPartImportsSatisfiedNotification {
 		Dispatcher _dispatcher;
 		ObservableCollection<ProcessViewModel> _processes = new ObservableCollection<ProcessViewModel>();
 
 		public IList<ProcessViewModel> Processes => _processes;
 
-		readonly DebugManager DebugContext;
+		[Import]
+		DebugManager DebugManager;
 
-		[ImportingConstructor]
-		public ThreadsViewModel(DebugManager debug) {
-			DebugContext = debug;
+		public ThreadsViewModel() {
 			_dispatcher = Dispatcher.CurrentDispatcher;
-			foreach (var process in DebugContext.Processes) {
-				var processVM = new ProcessViewModel(process);
-				foreach (var th in process.Threads)
-					processVM.Threads.Add(new ThreadViewModel(th));
-				_processes.Add(processVM);
-			}
-
-			Status = DebugContext.Status;
-			DebugContext.Debugger.StatusChanged += Debugger_StatusChanged;
-
-			DebugContext.Debugger.ProcessCreated += Debugger_ProcessCreated;
-			DebugContext.Debugger.ThreadCreated += Debugger_ThreadCreated;
-			DebugContext.Debugger.ThreadExited += Debugger_ThreadExited;
-			DebugContext.Debugger.ProcessExited += Debugger_ProcessExited;
 		}
 
 		private void Debugger_ProcessExited(object sender, ProcessExitedEventArgs e) {
@@ -75,6 +62,23 @@ namespace WinDbgX.ViewModels {
 					_dispatcher.InvokeAsync(() => Processes.Clear());
 				}
 			});
+		}
+
+		public void OnImportsSatisfied() {
+			foreach (var process in DebugManager.Processes) {
+				var processVM = new ProcessViewModel(process);
+				foreach (var th in process.Threads)
+					processVM.Threads.Add(new ThreadViewModel(th));
+				_processes.Add(processVM);
+			}
+
+			Status = DebugManager.Status;
+			DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
+
+			DebugManager.Debugger.ProcessCreated += Debugger_ProcessCreated;
+			DebugManager.Debugger.ThreadCreated += Debugger_ThreadCreated;
+			DebugManager.Debugger.ThreadExited += Debugger_ThreadExited;
+			DebugManager.Debugger.ProcessExited += Debugger_ProcessExited;
 		}
 
 		private DEBUG_STATUS _status;

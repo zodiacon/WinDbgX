@@ -18,6 +18,8 @@ namespace WinDbgX.UICore {
 	public class MenuItemViewModel : BindableBase {
 		private static readonly ICommand EmptyCommand = new DelegateCommand(() => { }, () => false);
 
+		public static object DefaultCommandParameter;
+
 		private string _text;
 
 		public string Text {
@@ -51,6 +53,9 @@ namespace WinDbgX.UICore {
 				}
 				return _items; 
 			}
+			set {
+				_items = value;
+			}
 		}
 
 		private bool _isChecked;
@@ -71,6 +76,13 @@ namespace WinDbgX.UICore {
 					AddInputBinding();
 				}
 			}
+		}
+
+		private object _commandParameter;
+
+		public object CommandParameter {
+			get { return _commandParameter ?? DefaultCommandParameter; }
+			set { SetProperty(ref _commandParameter, value); }
 		}
 
 		private string _shortcutText;
@@ -103,5 +115,11 @@ namespace WinDbgX.UICore {
     }
 
     public class MenuItemCollectionViewModel : ObservableCollection<MenuItemViewModel> {
+		public MenuItemCollectionViewModel(IEnumerable<MenuItemViewModel> items) : base(items) {
+		}
+
+		public MenuItemCollectionViewModel() {
+
+		}
 	}
 }

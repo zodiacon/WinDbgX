@@ -26,10 +26,10 @@ namespace DebuggerEngine {
 			});
 		}
 
-		public Task<bool> IsLocalKernelEnabled() {
+		public bool IsLocalKernelEnabled() {
 			return RunAsync(() => {
 				return Client.IsKernelDebuggerEnabled() == S_OK;
-			});
+			}).Result;
 		}
 
 		ulong GetThreadTeb(uint index) {

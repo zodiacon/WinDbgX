@@ -9,4 +9,5 @@
         <Setter Property="Padding" Value="4" />
         <Setter Property="FontSize" Value="14" />
     </Style>
+
 </ResourceDictionary>

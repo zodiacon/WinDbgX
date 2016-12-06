@@ -38,17 +38,19 @@ namespace WinDbgX.UICore {
 			_keyedItems.Add(item.Key, item);
 		}
 
-		public void AddKeyBindings(DependencyObject dp, object parameter) {
+		public void AddKeyBindings(DependencyObject dp) {
 			var win = Window.GetWindow(dp);
-			AddKeyBindings(win, this, parameter);
+			AddKeyBindings(win, this);
 		}
 
-		void AddKeyBindings(Window win, MenuItemCollectionViewModel items, object parameter) {
+		void AddKeyBindings(Window win, MenuItemCollectionViewModel items) {
 			foreach (var item in items) {
-				if (item.KeyGesture != null && item.Command != null)
-					win.InputBindings.Add(new KeyBinding(item.Command, item.KeyGesture) { CommandParameter = parameter });
+				if (item.Command != null) {
+					if (item.KeyGesture != null)
+						win.InputBindings.Add(new KeyBinding(item.Command, item.KeyGesture) { CommandParameter = item.CommandParameter });
+				}
 				if (item._items != null)
-					AddKeyBindings(win, item._items, parameter);
+					AddKeyBindings(win, item._items);
 			}
 		}
 	}

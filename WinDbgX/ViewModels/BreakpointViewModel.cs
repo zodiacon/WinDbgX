@@ -29,21 +29,33 @@ namespace WinDbgX.ViewModels {
 		}
 
 		public uint Id => Breakpoint.Id;
+
 		public bool IsEnabled {
 			get { return Breakpoint.IsEnabled; }
-			set { Breakpoint.Enable(value); }
+			set {
+				Breakpoint.IsEnabled = value;
+				OnPropertyChanged(nameof(IsEnabled));
+			}
 		}
 
 		public string Type => Breakpoint.Type.ToString();
 
 		public ulong Offset {
 			get { return Breakpoint.Offset; }
-			set { Breakpoint.SetOffset(value); }
+			set {
+				Breakpoint.SetOffset(value);
+				OnPropertyChanged(nameof(Offset));
+				OnPropertyChanged(nameof(OffsetExpression));
+			}
 		}
 
 		public string OffsetExpression {
 			get { return Breakpoint.GetOffsetExpression(); }
-			set { Breakpoint.SetOffsetExpression(value); }
+			set {
+				Breakpoint.SetOffsetExpression(value);
+				OnPropertyChanged(nameof(OffsetExpression));
+				OnPropertyChanged(nameof(Offset));
+			}
 		}
 
 		public bool OneShot {
@@ -67,6 +79,17 @@ namespace WinDbgX.ViewModels {
 				if (SetProperty(ref _selectedThread, value)) {
 					Breakpoint.SetThread(value == DummyThread.Instance ? null : value);
 				}
+			}
+		}
+
+		public uint HitCount => Breakpoint.HitCount;
+
+		public uint HitTarget {
+			get { return Breakpoint.HitTarget; }
+			set {
+				Breakpoint.HitTarget = value;
+				OnPropertyChanged(nameof(HitTarget));
+				OnPropertyChanged(nameof(HitTarget));
 			}
 		}
 

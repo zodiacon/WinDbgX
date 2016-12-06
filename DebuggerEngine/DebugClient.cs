@@ -185,12 +185,12 @@ namespace DebuggerEngine {
 			});
 		}
 
-		public Task<Breakpoint> CreateBreakpoint(DEBUG_BREAKPOINT_TYPE type, uint id = uint.MaxValue) {
+		public Breakpoint CreateBreakpoint(DEBUG_BREAKPOINT_TYPE type, uint id = uint.MaxValue) {
 			return RunAsync(() => {
 				IDebugBreakpoint bp;
 				Control.AddBreakpoint(type, id, out bp).ThrowIfFailed();
 				return new Breakpoint(this, (IDebugBreakpoint3)bp);
-			});
+			}).Result;
 		}
 
 		public IReadOnlyList<Breakpoint> GetBreakpoints() {
