@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using System.Windows.Input;
 using Prism.Commands;
 using System.IO;
+using System.Windows.Controls;
 
 namespace WinDbgX.ViewModels {
 	[Export]
@@ -139,16 +140,20 @@ namespace WinDbgX.ViewModels {
 		}, () => !string.IsNullOrWhiteSpace(CommandText))
 			.ObservesProperty(() => CommandText);
 
-		public ICommand NextCommand => new DelegateCommand(() => {
+		public ICommand NextCommand => new DelegateCommand<TextBox>(tb => {
 			if (_commandHistoryIndex >= _commandHistory.Count - 1)
 				return;
 			CommandText = _commandHistory[++_commandHistoryIndex];
+			if (tb != null)
+				tb.CaretIndex = CommandText.Length;
 		});
 
-		public ICommand PreviousCommand => new DelegateCommand(() => {
+		public ICommand PreviousCommand => new DelegateCommand<TextBox>(tb => {
 			if (_commandHistoryIndex == 0)
 				return;
 			CommandText = _commandHistory[--_commandHistoryIndex];
+			if(tb != null)
+				tb.CaretIndex = CommandText.Length;
 		});
 	}
 }

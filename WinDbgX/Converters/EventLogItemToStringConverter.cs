@@ -14,6 +14,7 @@ namespace WinDbgX.Converters {
 			var item = (EventLogItem)value;
 			TargetThread thread;
 			TargetProcess process;
+			TargetModule module;
 
 			switch (item.Type) {
 				case EventLogItemType.ProcessCreate:
@@ -31,6 +32,15 @@ namespace WinDbgX.Converters {
 				case EventLogItemType.ProcessExit:
 					process = (TargetProcess)item.EventData;
 					return $"Process {process.PID} exited with code {process.ExitCode}";
+
+				case EventLogItemType.ModuleLoad:
+					module = (TargetModule)item.EventData;
+					return $"Module {module.ImageName} was loaded in process {module.Process.PID} at address 0x{module.BaseAddress:X}";
+
+				case EventLogItemType.ModuleUnload:
+					module = (TargetModule)item.EventData;
+					return $"Module {module.Name} was unloaded from process {module.Process.PID}";
+
 			}
 			return Binding.DoNothing;
 		}

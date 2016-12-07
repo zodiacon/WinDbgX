@@ -164,19 +164,19 @@ namespace DebuggerEngine {
 			Symbols.EndSymbolMatch(handle);
 		}
 
-		public Task<TargetModule[]> GetModules() {
-			return RunAsync(() => {
-				uint loaded, unloaded;
-				Symbols.GetNumberModules(out loaded, out unloaded).ThrowIfFailed();
-				for (uint i = 0; i < loaded; i++) {
-					ulong moduleBase;
-					Symbols.GetModuleByIndex(i, out moduleBase).ThrowIfFailed();
-				}
-				var modules = new DEBUG_MODULE_PARAMETERS[loaded + unloaded];
-				Symbols.GetModuleParameters(loaded + unloaded, null, 0, modules).ThrowIfFailed();
-				return modules.Select(param => TargetModule.FromModuleParameters(param)).ToArray();
-			});
-		}
+		//public Task<TargetModule[]> GetModules() {
+		//	return RunAsync(() => {
+		//		uint loaded, unloaded;
+		//		Symbols.GetNumberModules(out loaded, out unloaded).ThrowIfFailed();
+		//		for (uint i = 0; i < loaded; i++) {
+		//			ulong moduleBase;
+		//			Symbols.GetModuleByIndex(i, out moduleBase).ThrowIfFailed();
+		//		}
+		//		var modules = new DEBUG_MODULE_PARAMETERS[loaded + unloaded];
+		//		Symbols.GetModuleParameters(loaded + unloaded, null, 0, modules).ThrowIfFailed();
+		//		return modules.Select(param => TargetModule.FromModuleParameters(param)).ToArray();
+		//	});
+		//}
 
 		public Task<bool> Execute(string command) {
 			return RunAsync(() => {

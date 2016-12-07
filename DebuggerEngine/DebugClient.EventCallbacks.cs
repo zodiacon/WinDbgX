@@ -188,7 +188,7 @@ namespace DebuggerEngine {
 			SystemObjects.GetCurrentProcessId(out id);
 			SystemObjects.GetCurrentProcessSystemId(out pid);
 
-			var module = new TargetModule {
+			var module = new TargetModule(Processes.First(p => p.PID == pid)) {
 				ImageName = ImageName,
 				Name = ModuleName,
 				BaseAddress = BaseOffset,

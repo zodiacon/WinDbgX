@@ -12,11 +12,16 @@ namespace DebuggerEngine {
 		public uint ProcessIndex { get; internal set; }
 		public uint PID { get; internal set; }
 
-        internal static TargetModule FromModuleParameters(DEBUG_MODULE_PARAMETERS parameters) {
-            return new TargetModule {
-                BaseAddress = parameters.Base,
-                Checksum = parameters.Checksum
-            };
-        }
+        //internal static TargetModule FromModuleParameters(DEBUG_MODULE_PARAMETERS parameters) {
+        //    return new TargetModule {
+        //        BaseAddress = parameters.Base,
+        //        Checksum = parameters.Checksum
+        //    };
+        //}
+
+		public TargetProcess Process { get; }
+		public TargetModule(TargetProcess process) {
+			Process = process;
+		}
     }
 }

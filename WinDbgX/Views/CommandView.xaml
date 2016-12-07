@@ -24,10 +24,10 @@
             <Button Content="Execute" DockPanel.Dock="Right" VerticalAlignment="Center" IsDefault="True" Command="{Binding ExecuteCommand}" Padding="8,2"/>
             <TextBlock Text="{Binding Prompt}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" FontFamily="{Binding Settings.Fonts.CommandFontFamily, FallbackValue=Consolas}"/>
             <TextBox Text="{Binding CommandText, UpdateSourceTrigger=PropertyChanged}" Margin="4,0" FontFamily="{Binding Settings.Fonts.CommandTextFontFamily, FallbackValue=Consolas}" 
-                     IsEnabled="{Binding IsNotBusy}" MaxLength="100" metro:TextBoxHelper.ClearTextButton="True">
+                     IsEnabled="{Binding IsNotBusy}" MaxLength="100" metro:TextBoxHelper.ClearTextButton="True" x:Name="_tb" >
                 <TextBox.InputBindings>
-                    <KeyBinding Key="Down" Command="{Binding NextCommand}" />
-                    <KeyBinding Key="Up" Command="{Binding PreviousCommand}" />
+                    <KeyBinding Key="Down" Command="{Binding NextCommand}" CommandParameter="{Binding ElementName=_tb}" />
+                    <KeyBinding Key="Up" Command="{Binding PreviousCommand}" CommandParameter="{Binding ElementName=_tb}" />
                 </TextBox.InputBindings>
                 <i:Interaction.Behaviors>
                     <z:FocusOnKeyDownBehavior Key="Esc" />

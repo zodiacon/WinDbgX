@@ -20,7 +20,10 @@ namespace WinDbgX.Models {
 		public readonly DebugClient Debugger;
 		ObservableCollection<EventLogItem> _log = new ObservableCollection<EventLogItem>();
 
-		Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+#pragma warning disable 649
+		[Import]
+		UIManager UI;
+#pragma warning restore 649
 
 		public IReadOnlyList<EventLogItem> Log => _log;
 
@@ -38,10 +41,19 @@ namespace WinDbgX.Models {
 			Debugger.ThreadExited += Debugger_ThreadExited;
 			Debugger.ProcessExited += Debugger_ProcessExited;
 			Debugger.ModuleLoaded += Debugger_ModuleLoaded;
+			Debugger.ModuleUnloaded += Debugger_ModuleUnloaded;
+		}
+
+		private void Debugger_ModuleUnloaded(object sender, ModuleEventArgs e) {
+			UI.Dispatcher.InvokeAsync(() => {
+				_log.Add(new EventLogItem<TargetModule>(EventLogItemType.ModuleUnload, DateTime.Now, e.Module));
+			});
 		}
 
 		private void Debugger_ModuleLoaded(object sender, ModuleEventArgs e) {
-			
+			UI.Dispatcher.InvokeAsync(() => {
+				_log.Add(new EventLogItem<TargetModule>(EventLogItemType.ModuleLoad, DateTime.Now, e.Module));
+			});			
 		}
 
 		public IEnumerable<TargetThread> GetAllThreads() {
@@ -49,31 +61,31 @@ namespace WinDbgX.Models {
 		}
 
 		private void Debugger_ProcessExited(object sender, ProcessExitedEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			UI.Dispatcher.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetProcess>(EventLogItemType.ProcessExit, DateTime.Now, e.Process));
 			});
 		}
 
 		private void Debugger_ThreadExited(object sender, ThreadExitedEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			UI.Dispatcher.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetThread>(EventLogItemType.ThreadExit, DateTime.Now, e.Thread));
 			});
 		}
 
 		private void Debugger_ThreadCreated(object sender, ThreadCreatedEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			UI.Dispatcher.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetThread>(EventLogItemType.ThreadCreate, DateTime.Now, e.Thread));
 			});
 		}
 
 		private void Debugger_ProcessCreated(object sender, ProcessCreatedEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			UI.Dispatcher.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetProcess>(EventLogItemType.ProcessCreate, DateTime.Now, e.Process));
 			});
 		}
 
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
-			_dispatcher.InvokeAsync(() => Status = e.NewStatus);
+			UI.Dispatcher.InvokeAsync(() => Status = e.NewStatus);
 		}
 		
 		private DEBUG_STATUS _status = DEBUG_STATUS.NO_DEBUGGEE;
