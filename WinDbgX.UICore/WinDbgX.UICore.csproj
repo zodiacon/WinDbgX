@@ -101,7 +101,6 @@
     <Compile Include="ICommandCollection.cs" />
     <Compile Include="IWindow.cs" />
     <Compile Include="IWindowImpl.cs" />
-    <Compile Include="MenuItemStyleSelector.cs" />
     <Compile Include="MenuItemTemplateSelector.cs" />
     <Compile Include="MenuItemViewModel.cs" />
     <Compile Include="MenuViewModel.cs" />

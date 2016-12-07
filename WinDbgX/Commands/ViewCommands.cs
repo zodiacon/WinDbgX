@@ -11,28 +11,47 @@ using WinDbgX.UICore;
 using WinDbgX.ViewModels;
 using System.Windows.Input;
 
+#pragma warning disable 649
+
 namespace WinDbgX.Commands {
 	[Export(typeof(ICommandCollection))]
 	class ViewCommands : ICommandCollection {
-		public DelegateCommandBase ViewModules { get; } = new DelegateCommand<AppManager>(context => ViewTab<ModulesViewModel>(context));
-		public DelegateCommandBase ViewCommand { get; } = new DelegateCommand<AppManager>(context => ViewTab<CommandViewModel>(context));
-		public DelegateCommandBase ViewRegisters { get; } = new DelegateCommand<AppManager>(context => ViewTab<RegistersViewModel>(context));
-		public DelegateCommandBase ViewThreads { get; } = new DelegateCommand<AppManager>(context => ViewTab<ThreadsViewModel>(context));
-		public DelegateCommandBase ViewEventLog { get; } = new DelegateCommand<AppManager>(context => ViewTab<EventLogViewModel>(context));
-		public DelegateCommandBase ViewBreakpoints { get; } = new DelegateCommand<AppManager>(context => ViewTab<BreakpointsViewModel>(context));
-		public DelegateCommandBase ViewCallStack { get; } = new DelegateCommand<AppManager>(context => ViewTab<CallStackViewModel>(context));
+		[Import]
+		UIManager UIManager;
 
-		static void ViewTab<T>(AppManager context) where T : TabItemViewModelBase {
+		[Import]
+		AppManager AppManager;
+
+		public DelegateCommandBase ViewModules { get; } 
+		public DelegateCommandBase ViewCommand { get; } 
+		public DelegateCommandBase ViewRegisters { get; } 
+		public DelegateCommandBase ViewThreads { get; } 
+		public DelegateCommandBase ViewEventLog { get; }
+		public DelegateCommandBase ViewBreakpoints { get; } 
+		public DelegateCommandBase ViewCallStack { get; } 
+
+		void ViewTab<T>() where T : TabItemViewModelBase {
 			MainViewModel vm;
-			var tab = context.UI.FindTab<T>(out vm);
+			var tab = UIManager.FindTab<T>(out vm);
 			if (tab == null) {
-				tab = context.Container.GetExportedValue<T>();
-				context.UI.CurrentWindow.AddItem(tab);
+				tab = AppManager.Container.GetExportedValue<T>();
+				UIManager.CurrentWindow.AddItem(tab);
 			}
 			else {
 				vm.Window.Activate();
 				vm.SelectedTab = tab;
 			}
+		}
+
+		private ViewCommands() {
+			ViewModules = new DelegateCommand(() => ViewTab<ModulesViewModel>());
+			ViewRegisters = new DelegateCommand(() => ViewTab<RegistersViewModel>());
+			ViewCommand = new DelegateCommand(() => ViewTab<CommandViewModel>());
+			ViewCallStack = new DelegateCommand(() => ViewTab<CallStackViewModel>());
+			ViewEventLog = new DelegateCommand(() => ViewTab<EventLogViewModel>());
+			ViewBreakpoints = new DelegateCommand(() => ViewTab<BreakpointsViewModel>());
+			ViewThreads = new DelegateCommand(() => ViewTab<ThreadsViewModel>());
+
 		}
 
 		public IDictionary<string, ICommand> GetCommands() {

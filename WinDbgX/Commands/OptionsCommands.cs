@@ -10,15 +10,26 @@ using WinDbgX.Models;
 using WinDbgX.UICore;
 using System.Windows.Input;
 
+#pragma warning disable 649
+
 namespace WinDbgX.Commands {
 	[Export(typeof(ICommandCollection))]
 	class OptionsCommands : ICommandCollection {
-		public static DelegateCommandBase AlwaysOnTop { get; } 
-			= new DelegateCommand<AppManager>(app => {
-				bool ontop = !app.UI.CurrentWindow.Window.Topmost;
-				app.UI.CurrentWindow.Window.Topmost = ontop;
-				app.UI.CurrentWindow.Menu["AlwaysOnTop"].IsChecked = ontop; 
+		[Import]
+		UIManager UIManager;
+
+		public DelegateCommandBase AlwaysOnTop { get; }
+		public DelegateCommandBase FontsOptions { get; }
+		public DelegateCommandBase ColorsOptions { get; }
+
+		private OptionsCommands() {
+			AlwaysOnTop = new DelegateCommand(() => {
+				var window = UIManager.CurrentWindow.Window;
+				bool ontop = !window.Topmost;
+				window.Topmost = ontop;
+				UIManager.CurrentWindow.Menu[nameof(AlwaysOnTop)].IsChecked = ontop;
 			});
+		}
 
 		public IDictionary<string, ICommand> GetCommands() {
 			return new Dictionary<string, ICommand> {

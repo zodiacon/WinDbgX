@@ -36,46 +36,7 @@
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
-            <conv2:CommandParameterConverter x:Key="paramConverter" />
-            <Style TargetType="MenuItem" x:Key="SeparatorStyle" BasedOn="{StaticResource MetroMenuItem}">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate>
-                            <Separator />
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="MenuItem" x:Key="MenuItemStyle" BasedOn="{StaticResource MetroMenuItem}">
-                <Setter Property="Command" Value="{Binding Command}" />
-                <Setter Property="CommandParameter" Value="{Binding CommandParameter, Converter={StaticResource paramConverter}}" />
-                <Setter Property="Header" Value="{Binding Text}" />
-                <Setter Property="ItemsSource" Value="{Binding Items}" />
-                <Setter Property="Icon" >
-                    <Setter.Value>
-                        <Image Source="{Binding Icon}" Width="20" Height="20" x:Name="icon" />
-                    </Setter.Value>
-                </Setter>
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding Icon}" Value="{x:Null}">
-                        <Setter Property="Icon" Value="{x:Null}"/>
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-            <ui:MenuItemStyleSelector x:Key="menuItemStyleSelector" SeparatorStyleKey="SeparatorStyle" MenuItemStyleKey="MenuItemStyle" />
-            <DataTemplate x:Key="seperatorDataTemplate">
-                <Separator />
-            </DataTemplate>
             <ui:MenuItemTemplateSelector x:Key="menuItemTemplateSelector" MenuItemTemplateKey="menuItemTemplate" SeparatorTemplateKey="seperatorDataTemplate" />
-            <conv:IconConverter x:Key="iconConverter" />
-            <HierarchicalDataTemplate x:Key="menuItemTemplate" ItemsSource="{Binding Items}">
-                <MenuItem ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
-                          Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{Binding CommandParameter, Converter={StaticResource paramConverter}}"
-                          ToolTip="{Binding Description}" IsChecked="{Binding IsChecked}"                  
-                          InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item" Tag="{Binding ElementName=This}"
-                          Icon="{Binding Icon, Converter={StaticResource iconConverter}}">
-                </MenuItem>
-            </HierarchicalDataTemplate>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -86,6 +47,21 @@
         <Menu ItemsSource="{Binding Menu}"  
               FontSize="{Binding Settings.Fonts.MenuFontSize, FallbackValue=12}" FontFamily="{Binding Settings.Fonts.MenuFontFamily}"
               ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True">
+            <Menu.Resources>
+                <DataTemplate x:Key="seperatorDataTemplate">
+                    <Separator />
+                </DataTemplate>
+                <conv:IconConverter x:Key="iconConverter" />
+                <HierarchicalDataTemplate x:Key="menuItemTemplate" ItemsSource="{Binding Items}">
+                    <MenuItem ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
+                          Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{Binding CommandParameter}"
+                          ToolTip="{Binding Description}" IsChecked="{Binding IsChecked}"                  
+                          InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item" Tag="{Binding ElementName=This}"
+                          Icon="{Binding Icon, Converter={StaticResource iconConverter}}">
+                    </MenuItem>
+                </HierarchicalDataTemplate>
+
+            </Menu.Resources>
         </Menu>
 
         <ToolBarTray Grid.Row="1">

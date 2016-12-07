@@ -10,27 +10,45 @@ using WinDbgX.Models;
 using WinDbgX.UICore;
 using System.Windows.Input;
 
+#pragma warning disable 649
+
 namespace WinDbgX.Commands {
 	[Export(typeof(ICommandCollection))]
     class DebugCommands : ICommandCollection {
-		public DelegateCommandBase Go { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Execute("g"), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
-		public DelegateCommandBase StepOver { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Execute("p"), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
-		public DelegateCommandBase StepInto { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Execute("t"), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
-		public DelegateCommandBase StepOut { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Execute("gu"), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
-		public DelegateCommandBase Restart { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Execute(".restart"), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
-		public DelegateCommandBase StepToCall { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Execute("gc"), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
-		public DelegateCommandBase StepToBranch { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Execute("ph"), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
-		public DelegateCommandBase StepToReturn { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Execute("pt"), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
-		public DelegateCommandBase Break { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Break(), 
-			context => context?.Debug.Status == DEBUG_STATUS.GO);
-		public DelegateCommandBase Stop { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Stop(), 
-			context => context != null && context.Debug.Status != DEBUG_STATUS.NO_DEBUGGEE);
+		[Import]
+		DebugManager DebugManager;
 
-		public DelegateCommandBase Detach { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.Detach(), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
-		public DelegateCommandBase DetachAll { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.DetachAll(), context => context?.Debug.Status == DEBUG_STATUS.BREAK);
+		public DelegateCommandBase Go { get; } 
+		public DelegateCommandBase StepOver { get; } 
+		public DelegateCommandBase StepInto { get; } 
+		public DelegateCommandBase StepOut { get; } 
+		public DelegateCommandBase Restart { get; } 
+		public DelegateCommandBase StepToCall { get; } 
+		public DelegateCommandBase StepToBranch { get; }
+		public DelegateCommandBase StepToReturn { get; } 
+		public DelegateCommandBase Break { get; } 
+		public DelegateCommandBase Stop { get; } 
 
-		public DelegateCommandBase DeleteAllBreakpoints { get; } = new DelegateCommand<AppManager>(context => context.Debug.Debugger.DeleteAllBreakpoints(),
-			context => (context ?? AppManager.Instance).Debug.Status != DEBUG_STATUS.NO_DEBUGGEE);
+		public DelegateCommandBase Detach { get; } 
+		public DelegateCommandBase DetachAll { get; } 
+
+		public DelegateCommandBase DeleteAllBreakpoints { get; } 
+
+		private DebugCommands() {
+			Go = new DelegateCommand(() => DebugManager.Debugger.Execute("g"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepOver = new DelegateCommand(() => DebugManager.Debugger.Execute("p"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepInto = new DelegateCommand(() => DebugManager.Debugger.Execute("t"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepOver = new DelegateCommand(() => DebugManager.Debugger.Execute("gu"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			Restart = new DelegateCommand(() => DebugManager.Debugger.Execute(".restart"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepToCall = new DelegateCommand(() => DebugManager.Debugger.Execute("gc"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepToBranch = new DelegateCommand(() => DebugManager.Debugger.Execute("ph"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepToReturn = new DelegateCommand(() => DebugManager.Debugger.Execute("pt"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			Break = new DelegateCommand(() => DebugManager.Debugger.Break(), () => DebugManager.Status == DEBUG_STATUS.GO);
+			Stop = new DelegateCommand(() => DebugManager.Debugger.Stop(), () => DebugManager.Status != DEBUG_STATUS.NO_DEBUGGEE);
+			Detach = new DelegateCommand(() => DebugManager.Debugger.Detach(), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			DetachAll = new DelegateCommand(() => DebugManager.Debugger.DetachAll(), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			DeleteAllBreakpoints = new DelegateCommand(() => DebugManager.Debugger.DeleteAllBreakpoints(), () => DebugManager.Status != DEBUG_STATUS.NO_DEBUGGEE);
+		}
 
 		public IDictionary<string, ICommand> GetCommands() {
 			return new Dictionary<string, ICommand> {
