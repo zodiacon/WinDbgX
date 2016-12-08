@@ -85,7 +85,10 @@ namespace WinDbgX.Models {
 		}
 
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => Status = e.NewStatus);
+			UI.Dispatcher.InvokeAsync(() => {
+				Status = e.NewStatus;
+				OnPropertyChanged(nameof(Processes));
+			});
 		}
 		
 		private DEBUG_STATUS _status = DEBUG_STATUS.NO_DEBUGGEE;

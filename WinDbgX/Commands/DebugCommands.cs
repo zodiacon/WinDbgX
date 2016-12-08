@@ -14,7 +14,7 @@ using System.Windows.Input;
 
 namespace WinDbgX.Commands {
 	[Export(typeof(ICommandCollection))]
-    class DebugCommands : ICommandCollection {
+	class DebugCommands : ICommandCollection {
 		[Import]
 		DebugManager DebugManager;
 
@@ -44,7 +44,7 @@ namespace WinDbgX.Commands {
 			StepToBranch = new DelegateCommand(() => DebugManager.Debugger.Execute("ph"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
 			StepToReturn = new DelegateCommand(() => DebugManager.Debugger.Execute("pt"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
 			Break = new DelegateCommand(() => DebugManager.Debugger.Break(), () => DebugManager.Status == DEBUG_STATUS.GO);
-			Stop = new DelegateCommand(() => DebugManager.Debugger.Stop(), () => DebugManager.Status != DEBUG_STATUS.NO_DEBUGGEE);
+			Stop = new DelegateCommand(() => DebugManager.Debugger.Stop(), () => DebugManager.Status == DEBUG_STATUS.BREAK);
 			Detach = new DelegateCommand(() => DebugManager.Debugger.Detach(), () => DebugManager.Status == DEBUG_STATUS.BREAK);
 			DetachAll = new DelegateCommand(() => DebugManager.Debugger.DetachAll(), () => DebugManager.Status == DEBUG_STATUS.BREAK);
 			DeleteAllBreakpoints = new DelegateCommand(() => DebugManager.Debugger.DeleteAllBreakpoints(), () => DebugManager.Status != DEBUG_STATUS.NO_DEBUGGEE);

@@ -33,7 +33,7 @@
         </DockPanel>
 
         <TextBlock Text="Arguments:" Grid.Row="2" VerticalAlignment="Center" />
-        <TextBox Grid.Column="2" Grid.Row="2" Text="{Binding CommandLineA}" metro:TextBoxHelper.Watermark="Command line arguments" metro:TextBoxHelper.ClearTextButton="True"/>
+        <TextBox Grid.Column="2" Grid.Row="2" Text="{Binding CommandLine}" metro:TextBoxHelper.Watermark="Command line arguments" metro:TextBoxHelper.ClearTextButton="True"/>
 
         <TextBlock Grid.Row="4" Text="Start Directory:" VerticalAlignment="Center"/>
         <DockPanel Grid.Column="2" Grid.Row="4">

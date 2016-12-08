@@ -33,8 +33,10 @@ namespace WinDbgX.Models {
 		MenuViewModel _menu;
 		public MenuViewModel MainMenu {
 			get {
-				if (_menu == null)
-					_menu = Application.Current.FindResource("DefaultMenu") as MenuViewModel; 
+                if (_menu == null) {
+                    _menu = Application.Current.FindResource("DefaultMenu") as MenuViewModel;
+                    _menu[nameof(RecentExecutables)].Items = _recentExecutablesMenuItems;
+                }
 				return _menu;
 			}
 		}
@@ -72,8 +74,11 @@ namespace WinDbgX.Models {
 			}
 
 			_recentExecutables.Insert(0, executable);
+            var args = executable.Arguments ?? string.Empty;
+            args = args.Substring(0, Math.Min(50, args.Length));
+
 			_recentExecutablesMenuItems.Insert(0, new MenuItemViewModel {
-				Text = $"{executable.Path} {executable.Arguments?.Substring(0, 50)}",
+				Text = $"{executable.Path} {args}",
 				Command = RunRecentExecutableCommand,
 				CommandParameter = executable
 			});
@@ -84,7 +89,7 @@ namespace WinDbgX.Models {
 			}
 		}
 
-		public ICommand RunRecentExecutableCommand { get; private set; } 
+		public DelegateCommandBase RunRecentExecutableCommand { get; private set; } 
 
 		private object ErrorToString(ErrorEventArgs e) {
 			switch (e.Error) {
@@ -116,6 +121,7 @@ namespace WinDbgX.Models {
 
 				_status = e.NewStatus;
 				UpdateCommands();
+                RunRecentExecutableCommand.RaiseCanExecuteChanged();
 			});
 		}
 
@@ -146,8 +152,9 @@ namespace WinDbgX.Models {
 			DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
 			DebugManager.Debugger.Error += Debugger_Error;
 
-			RunRecentExecutableCommand = new DelegateCommand<Executable>(executable => {
-				AddExecutable(executable);
+			RunRecentExecutableCommand = new DelegateCommand<Executable>(async executable => {
+                await DebugManager.Debugger.DebugProcess(executable.Path, executable.Arguments, AttachProcessFlags.Invasive, true);
+                AddExecutable(executable);
 			}, _ => DebugManager.Status == DEBUG_STATUS.NO_DEBUGGEE);
 
 			var commandList = AllCommands.SelectMany(list => list.GetCommands());
