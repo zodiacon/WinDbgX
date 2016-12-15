@@ -66,14 +66,14 @@ namespace DebuggerEngine {
 		[DllImport("dbgeng", PreserveSig = true)]
 		private static extern int DebugCreate(ref Guid iid, [MarshalAs(UnmanagedType.Interface)] out object iface);
 
-		public static Task<DebugClient> CreateAsync() {
+		public static DebugClient Create() {
 			var scheduler = new SingleThreadedTaskScheduler();
 			return Task.Factory.StartNew(() => {
 				var iid = typeof(IDebugClient).GUID;
 				object client;
 				DebugCreate(ref iid, out client).ThrowIfFailed();
 				return new DebugClient(client, scheduler);
-			}, CancellationToken.None, TaskCreationOptions.None, scheduler);
+			}, CancellationToken.None, TaskCreationOptions.None, scheduler).Result;
 		}
 
 

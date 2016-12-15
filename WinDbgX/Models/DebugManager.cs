@@ -18,7 +18,7 @@ namespace WinDbgX.Models {
 	[Export]
 	sealed class DebugManager : BindableBase, IDisposable {
 		public readonly DebugClient Debugger;
-		ObservableCollection<EventLogItem> _log = new ObservableCollection<EventLogItem>();
+		readonly ObservableCollection<EventLogItem> _log = new ObservableCollection<EventLogItem>();
 
 #pragma warning disable 649
 		[Import]
@@ -34,7 +34,7 @@ namespace WinDbgX.Models {
 		}
 
 		private DebugManager() {
-			Debugger = DebugClient.CreateAsync().Result;
+			Debugger = DebugClient.Create();
 			Debugger.StatusChanged += Debugger_StatusChanged;
 			Debugger.ProcessCreated += Debugger_ProcessCreated;
 			Debugger.ThreadCreated += Debugger_ThreadCreated;

@@ -46,7 +46,7 @@ namespace WinDbgX {
         }
 
         protected override void OnExit(ExitEventArgs e) {
-			AppManager.Instance.Debug.Dispose();
+            AppManager.Instance.Dispose();
             base.OnExit(e);
         }
     }

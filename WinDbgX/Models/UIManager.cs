@@ -13,30 +13,40 @@ using WinDbgX.UICore;
 using WinDbgX.ViewModels;
 using Zodiacon.WPF;
 using System.Windows;
+using Prism.Mvvm;
+using WinDbgX.Extensions;
 
 #pragma warning disable 649
 
 namespace WinDbgX.Models {
 	[Export]
-	sealed class UIManager : IPartImportsSatisfiedNotification {
+	sealed class UIManager : BindableBase, IPartImportsSatisfiedNotification {
 		readonly ObservableCollection<MainViewModel> _windows = new ObservableCollection<MainViewModel>();
 		readonly ObservableCollection<string> _recentWorkspaces = new ObservableCollection<string>();
-		readonly ObservableCollection<Executable> _recentExecutables = new ObservableCollection<Executable>();
+		ObservableCollection<Executable> _recentExecutables;
 		readonly MenuItemCollectionViewModel _recentExecutablesMenuItems = new MenuItemCollectionViewModel();
 
 		readonly IDictionary<string, ICommand> _commands = new Dictionary<string, ICommand>(32, StringComparer.InvariantCultureIgnoreCase);
 
 		public IList<string> RecentWorkspaces => _recentWorkspaces;
-		public IEnumerable<Executable> RecentExecutables => _recentExecutables;
-		public MenuItemCollectionViewModel RecentExecutablesMenuItems => _recentExecutablesMenuItems;
+		public IEnumerable<Executable> RecentExecutables => _recentExecutables ?? (_recentExecutables = new ObservableCollection<Executable>());
+
+		public MenuItemCollectionViewModel RecentExecutablesMenuItems {
+			get {
+				SetRecentMenuItems();
+				Debug.Assert(_recentExecutablesMenuItems != null);
+				return _recentExecutablesMenuItems;
+			}
+		}
 
 		MenuViewModel _menu;
 		public MenuViewModel MainMenu {
 			get {
-                if (_menu == null) {
-                    _menu = Application.Current.FindResource("DefaultMenu") as MenuViewModel;
-                    _menu[nameof(RecentExecutables)].Items = _recentExecutablesMenuItems;
-                }
+				if (_menu == null) {
+					_menu = Application.Current.FindResource("DefaultMenu") as MenuViewModel;
+					_menu[nameof(RecentExecutables)].Items = _recentExecutablesMenuItems;
+					SetRecentMenuItems();
+				}
 				return _menu;
 			}
 		}
@@ -52,6 +62,9 @@ namespace WinDbgX.Models {
 
 		[Import]
 		DebugManager DebugManager;
+
+		[Import]
+		AppManager AppManager;
 
 		public Dispatcher Dispatcher { get; } = Dispatcher.CurrentDispatcher;
 
@@ -74,8 +87,8 @@ namespace WinDbgX.Models {
 			}
 
 			_recentExecutables.Insert(0, executable);
-            var args = executable.Arguments ?? string.Empty;
-            args = args.Substring(0, Math.Min(50, args.Length));
+			var args = executable.Arguments ?? string.Empty;
+			args = args.Substring(0, Math.Min(50, args.Length));
 
 			_recentExecutablesMenuItems.Insert(0, new MenuItemViewModel {
 				Text = $"{executable.Path} {args}",
@@ -87,9 +100,11 @@ namespace WinDbgX.Models {
 				_recentExecutables.RemoveAt(10);
 				_recentExecutablesMenuItems.RemoveAt(10);
 			}
+			AppManager.Settings.RecentExecutables = _recentExecutables;
+
 		}
 
-		public DelegateCommandBase RunRecentExecutableCommand { get; private set; } 
+		public DelegateCommandBase RunRecentExecutableCommand { get; private set; }
 
 		private object ErrorToString(ErrorEventArgs e) {
 			switch (e.Error) {
@@ -121,7 +136,7 @@ namespace WinDbgX.Models {
 
 				_status = e.NewStatus;
 				UpdateCommands();
-                RunRecentExecutableCommand.RaiseCanExecuteChanged();
+				RunRecentExecutableCommand.RaiseCanExecuteChanged();
 			});
 		}
 
@@ -153,14 +168,24 @@ namespace WinDbgX.Models {
 			DebugManager.Debugger.Error += Debugger_Error;
 
 			RunRecentExecutableCommand = new DelegateCommand<Executable>(async executable => {
-                await DebugManager.Debugger.DebugProcess(executable.Path, executable.Arguments, AttachProcessFlags.Invasive, true);
-                AddExecutable(executable);
+				await DebugManager.Debugger.DebugProcess(executable.Path, executable.Arguments, AttachProcessFlags.Invasive, true);
+				AddExecutable(executable);
 			}, _ => DebugManager.Status == DEBUG_STATUS.NO_DEBUGGEE);
 
 			var commandList = AllCommands.SelectMany(list => list.GetCommands());
 			foreach (var pair in commandList)
 				_commands.Add(pair);
 
+		}
+
+		private void SetRecentMenuItems() {
+			_recentExecutables = AppManager.Settings.RecentExecutables;
+
+			_recentExecutables.Select(executable => new MenuItemViewModel {
+				Text = $"{executable.Path} {executable.Arguments}",
+				Command = RunRecentExecutableCommand,
+				CommandParameter = executable
+			}).ForEach(item => _recentExecutablesMenuItems.Add(item));
 		}
 
 		internal void UpdateCommands() {

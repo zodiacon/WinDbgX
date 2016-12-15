@@ -102,6 +102,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA035\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -137,12 +138,14 @@
     <Compile Include="Converters\EventLogItemToStringConverter.cs" />
     <Compile Include="CustomTabClient.cs" />
     <Compile Include="Extensions\CommandExtension.cs" />
+    <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Models\AppManager.cs" />
     <Compile Include="Models\DebugManager.cs" />
     <Compile Include="Commands\FileCommands.cs" />
     <Compile Include="Models\EventLogItem.cs" />
     <Compile Include="Models\Executable.cs" />
+    <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\UIManager.cs" />
     <Compile Include="Models\Workspace.cs" />
     <Compile Include="Models\WorkspaceTab.cs" />
