@@ -45,9 +45,9 @@ namespace WinDbgX.Models {
 			Settings.Save(GetSettingsFile());
 		}
 
-        public void Dispose() {
-            SaveSettings();
-            Debug.Dispose();
-        }
-    }
+		public void Dispose() {
+			SaveSettings();
+			Debug.Dispose();
+		}
+	}
 }

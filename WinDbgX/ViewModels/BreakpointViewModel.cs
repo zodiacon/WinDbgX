@@ -93,7 +93,21 @@ namespace WinDbgX.ViewModels {
 			}
 		}
 
-		public IEnumerable<TargetThread> Threads => _debugManager.GetAllThreads().Concat(Enumerable.Range(0, 1).
+        private string _filename;
+
+        public string Filename {
+            get { return _filename; }
+            set { SetProperty(ref _filename, value); }
+        }
+
+        private int _line;
+
+        public int Line {
+            get { return _line; }
+            set { SetProperty(ref _line, value); }
+        }
+
+        public IEnumerable<TargetThread> Threads => _debugManager.GetAllThreads().Concat(Enumerable.Range(0, 1).
 			Select(i => DummyThread.Instance)).OrderBy(t => t.TID).ToArray();
 	}
 }

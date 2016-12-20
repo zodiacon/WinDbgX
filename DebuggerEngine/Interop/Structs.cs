@@ -1196,22 +1196,22 @@ namespace DebuggerEngine.Interop {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public struct DEBUG_SYMBOL_SOURCE_ENTRY {
-		private readonly ulong ModuleBase;
-		private readonly ulong Offset;
-		private readonly ulong FileNameId;
-		private readonly ulong EngineInternal;
-		private readonly uint Size;
-		private readonly uint Flags;
-		private readonly uint FileNameSize;
+		public readonly ulong ModuleBase;
+		public readonly ulong Offset;
+		public readonly ulong FileNameId;
+		public readonly ulong EngineInternal;
+		public readonly uint Size;
+		public readonly uint Flags;
+		public readonly uint FileNameSize;
 		// Line numbers are one-based.
 		// May be DEBUG_ANY_ID if unknown.
-		private readonly uint StartLine;
-		private readonly uint EndLine;
+		public readonly uint StartLine;
+		public readonly uint EndLine;
 		// Column numbers are one-based byte indices.
 		// May be DEBUG_ANY_ID if unknown.
-		private readonly uint StartColumn;
-		private readonly uint EndColumn;
-		private readonly uint Reserved;
+		public readonly uint StartColumn;
+		public readonly uint EndColumn;
+		public readonly uint Reserved;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

@@ -14,81 +14,96 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.TextFormatting;
+using WinDbgX.Controls;
 using WinDbgX.Models;
 using WinDbgX.UICore;
 
 #pragma warning disable 649
 
 namespace WinDbgX.ViewModels {
-	[Export, PartCreationPolicy(CreationPolicy.NonShared)]
-	[TabItem("")]
-	class SourceCodeViewModel : TabItemViewModelBase, IPartImportsSatisfiedNotification {
-		[Import]
-		DebugManager DebugManager;
+    [Export, PartCreationPolicy(CreationPolicy.NonShared)]
+    [TabItem("")]
+    class SourceCodeViewModel : TabItemViewModelBase, IPartImportsSatisfiedNotification {
+        [Import]
+        DebugManager DebugManager;
 
-		[Import]
-		UIManager UIManager;
+        [Import]
+        UIManager UIManager;
 
-		public void OnImportsSatisfied() {
-			DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
-		}
+        [Import]
+        AppManager AppManager;
 
-		private void Debugger_StatusChanged(object sender, DebuggerEngine.StatusChangedEventArgs e) {
-			UIManager.Dispatcher.InvokeAsync(() => ToggleBreakpointCommand.RaiseCanExecuteChanged());
-		}
+        BreakpointMargin _margin;
 
-		public void OpenFile(string filename) {
-			_document = new TextDocument(FileReader.ReadFileContent(filename, Encoding.Unicode));
-			_document.FileName = filename;
-			OnPropertyChanged(nameof(Title));
-			OnPropertyChanged(nameof(Icon));
-			var ext = Path.GetExtension(filename);
-			SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(ext);
-		}
+        public void OnImportsSatisfied() {
+            DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
+        }
 
-		private IHighlightingDefinition _syntaxHighlighting;
+        private void Debugger_StatusChanged(object sender, DebuggerEngine.StatusChangedEventArgs e) {
+            UIManager.Dispatcher.InvokeAsync(() => ToggleBreakpointCommand.RaiseCanExecuteChanged());
+        }
 
-		public IHighlightingDefinition SyntaxHighlighting {
-			get { return _syntaxHighlighting; }
-			set { SetProperty(ref _syntaxHighlighting, value); }
-		}
+        public void OpenFile(string filename) {
+            _document = new TextDocument(FileReader.ReadFileContent(filename, Encoding.Unicode));
+            _document.FileName = filename;
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(Icon));
+            var ext = Path.GetExtension(filename);
+            SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(ext);
+        }
 
-		public override string Title => Path.GetFileName(_document.FileName);
-		public override string Icon => GetIconFromFileType();
+        private IHighlightingDefinition _syntaxHighlighting;
 
-		private string GetIconFromFileType() {
-			switch (Path.GetExtension(_document.FileName).ToLower()) {
-				case ".c":
-					return Icons.SourceFileC;
+        public IHighlightingDefinition SyntaxHighlighting {
+            get { return _syntaxHighlighting; }
+            set { SetProperty(ref _syntaxHighlighting, value); }
+        }
 
-				case ".cpp":
-				case ".cc":
-				case ".cxx":
-				case ".h":
-				case ".hpp":
-				case ".hxx":
-					return Icons.SourceFileCpp;
+        public override string Title => Path.GetFileName(_document.FileName);
+        public override string Icon => GetIconFromFileType();
 
-				default:
-					return Icons.GenericSourceFile;
-			}
-		}
+        private string GetIconFromFileType() {
+            switch (Path.GetExtension(_document.FileName).ToLower()) {
+                case ".c":
+                    return Icons.SourceFileC;
 
-		private TextDocument _document;
+                case ".cpp":
+                case ".cc":
+                case ".cxx":
+                case ".h":
+                case ".hpp":
+                case ".hxx":
+                    return Icons.SourceFileCpp;
 
-		public TextDocument Document {
-			get { return _document; }
-			set { SetProperty(ref _document, value); }
-		}
+                default:
+                    return Icons.GenericSourceFile;
+            }
+        }
 
-		public DelegateCommandBase ToggleBreakpointCommand => new DelegateCommand<TextArea>(async textArea => {
-			int line = textArea.Caret.Line;
-			var offset = await DebugManager.Debugger.GetOffsetByLineAsync(line, _document.FileName);
-			if (offset == 0) {
-				return;
-			}
-			var bp = DebugManager.Debugger.CreateBreakpoint(DEBUG_BREAKPOINT_TYPE.CODE);
-			bp.SetOffset(offset);
-		}, _ => DebugManager.Status != DEBUG_STATUS.NO_DEBUGGEE);
-	}
+        private TextDocument _document;
+
+        public TextDocument Document {
+            get { return _document; }
+            set { SetProperty(ref _document, value); }
+        }
+
+        public DelegateCommandBase ToggleBreakpointCommand => new DelegateCommand<TextArea>(async textArea => {
+            int line = textArea.Caret.Line;
+            if (_margin == null)
+                _margin = AppManager.Container.GetExportedValue<BreakpointMargin>(_document.FileName);
+
+            try {
+                var symbol = await DebugManager.Debugger.GetClosestSourceEntryByLineAsync(line, _document.FileName);
+                var bp = DebugManager.Debugger.CreateBreakpoint(DEBUG_BREAKPOINT_TYPE.CODE);
+                bp.SetOffset(symbol.Offset);
+                bp.IsEnabled = true;
+                _margin.Breakpoints.Add(new BreakpointViewModel(bp, DebugManager) {
+                    Line = (int)symbol.EndLine
+                });
+            }
+            catch (Exception ex) {
+                UIManager.ReportError(ex);
+            }
+        }, _ => DebugManager.Status != DEBUG_STATUS.NO_DEBUGGEE);
+    }
 }

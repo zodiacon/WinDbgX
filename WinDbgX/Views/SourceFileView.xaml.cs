@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ICSharpCode.AvalonEdit.Document;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WinDbgX.Controls;
+using WinDbgX.Models;
 
 namespace WinDbgX.Views {
 	/// <summary>
@@ -24,7 +27,11 @@ namespace WinDbgX.Views {
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e) {
-			_editor.TextArea.LeftMargins.Add(new BreakpointMargin());
-		}
+            var margin = new BreakpointMargin();
+            _editor.TextArea.LeftMargins.Add(margin);
+            var doc = _editor.TextArea.GetService(typeof(IDocument)) as IDocument;
+            AppManager.Instance.Container.ComposeExportedValue(doc.FileName, margin);
+
+        }
 	}
 }

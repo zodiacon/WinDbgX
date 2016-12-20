@@ -34,12 +34,20 @@ namespace DebuggerEngine {
 			}).Result;
 		}
 
-		public Task<ulong> GetOffsetByLineAsync(int line, string fileName) {
+		public ulong GetOffsetByLine(int line, string fileName) {
 			return RunAsync(() => {
 				ulong offset = 0;
-				Symbols.GetOffsetByLineWide((uint)line - 1, fileName, out offset);
+				Symbols.GetOffsetByLineWide((uint)line, fileName, out offset);
 				return offset;
-			});
+			}).Result;
 		}
+
+        public unsafe Task<DEBUG_SYMBOL_SOURCE_ENTRY> GetClosestSourceEntryByLineAsync(int line, string filename, DEBUG_GSEL flags = DEBUG_GSEL.ALLOW_HIGHER | DEBUG_GSEL.NEAREST_ONLY) {
+            return RunAsync(() => {
+                var entry = new DEBUG_SYMBOL_SOURCE_ENTRY[1];
+                Symbols.GetSourceEntriesByLineWide((uint)line, filename, (uint)flags, entry, 1, null).ThrowIfFailed();
+                return entry[0];
+            });
+        }
 	}
 }
