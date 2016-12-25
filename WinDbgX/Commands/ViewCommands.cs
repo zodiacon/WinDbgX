@@ -22,6 +22,9 @@ namespace WinDbgX.Commands {
 		[Import]
 		AppManager AppManager;
 
+		[Import]
+		DebugManager DebugManager;
+
 		public DelegateCommandBase ViewModules { get; } 
 		public DelegateCommandBase ViewCommand { get; } 
 		public DelegateCommandBase ViewRegisters { get; } 
@@ -49,7 +52,7 @@ namespace WinDbgX.Commands {
 			ViewCommand = new DelegateCommand(() => ViewTab<CommandViewModel>());
 			ViewCallStack = new DelegateCommand(() => ViewTab<CallStackViewModel>());
 			ViewEventLog = new DelegateCommand(() => ViewTab<EventLogViewModel>());
-			ViewBreakpoints = new DelegateCommand(() => ViewTab<BreakpointsViewModel>());
+			ViewBreakpoints = new DelegateCommand(() => ViewTab<BreakpointsViewModel>(), () => !DebugManager.IsDumpFile);
 			ViewThreads = new DelegateCommand(() => ViewTab<ThreadsViewModel>());
 
 		}

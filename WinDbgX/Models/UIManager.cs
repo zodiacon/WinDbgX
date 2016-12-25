@@ -114,6 +114,14 @@ namespace WinDbgX.Models {
 			return e.Error.ToString();
 		}
 
+		public DispatcherOperation InvokeAsync(Action action) {
+			return Dispatcher.InvokeAsync(action);
+		}
+
+		public DispatcherOperation<T> InvokeAsync<T>(Func<T> action) {
+			return Dispatcher.InvokeAsync(action);
+		}
+
 		[Import]
 		public IFileDialogService FileDialogService { get; private set; }
 

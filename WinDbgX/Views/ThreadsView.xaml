@@ -11,7 +11,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Processes}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -24,6 +24,19 @@
                             </DataGrid>
                             <Expander ExpandDirection="Down" IsExpanded="True" Header="Threads">
                                 <DataGrid IsReadOnly="True" Grid.Row="1" ItemsSource="{Binding Threads}" AutoGenerateColumns="False" >
+									<DataGrid.RowStyle>
+										<Style TargetType="DataGridRow" BasedOn="{StaticResource MetroDataGridRow}">
+											<Style.Triggers>
+												<Trigger Property="IsSelected" Value="True">
+													<Setter Property="Background" >
+														<Setter.Value>
+															<SolidColorBrush Color="{DynamicResource AccentColor}" Opacity=".7" />
+														</Setter.Value>
+													</Setter>
+												</Trigger>
+											</Style.Triggers>
+										</Style>
+									</DataGrid.RowStyle>
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Index" Binding="{Binding Index}" />
                                         <DataGridTextColumn Header="OS ID" Binding="{Binding OSID}" />

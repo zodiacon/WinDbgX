@@ -17,7 +17,6 @@ namespace WinDbgX.ViewModels {
 	[TabItem("Processes & Threads", Icon = "/icons/gears.ico")]
 	[Export]
 	class ThreadsViewModel : TabItemViewModelBase, IPartImportsSatisfiedNotification {
-		Dispatcher _dispatcher;
 		ObservableCollection<ProcessViewModel> _processes = new ObservableCollection<ProcessViewModel>();
 
 		public IList<ProcessViewModel> Processes => _processes;
@@ -25,41 +24,43 @@ namespace WinDbgX.ViewModels {
 		[Import]
 		DebugManager DebugManager;
 
+		[Import]
+		UIManager UI;
+
 		public ThreadsViewModel() {
-			_dispatcher = Dispatcher.CurrentDispatcher;
 		}
 
 		private void Debugger_ProcessExited(object sender, ProcessExitedEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			UI.Dispatcher.InvokeAsync(() => {
 				_processes.Remove(_processes.First(p => p.ProcessId == e.Process.PID));
 			});
 		}
 
 		private void Debugger_ThreadExited(object sender, ThreadExitedEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			UI.Dispatcher.InvokeAsync(() => {
 				var threads = _processes.First(p => p.ProcessId == e.Process.PID).Threads;
 				threads.Remove(threads.First(th => th.OSID == e.Thread.TID));
 			});
 		}
 
 		private void Debugger_ThreadCreated(object sender, ThreadCreatedEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			UI.Dispatcher.InvokeAsync(() => {
 				_processes[(int)e.Thread.ProcessIndex].Threads.Add(new ThreadViewModel(e.Thread));
 			});
 		}
 
 		private void Debugger_ProcessCreated(object sender, ProcessCreatedEventArgs e) {
-			_dispatcher.InvokeAsync(() => {
+			UI.Dispatcher.InvokeAsync(() => {
 				_processes.Add(new ProcessViewModel(e.Process));
 			});
 		}
 
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
 			var status = e.NewStatus;
-			_dispatcher.InvokeAsync(() => {
+			UI.Dispatcher.InvokeAsync(() => {
 				Status = status;
 				if (Status == DEBUG_STATUS.NO_DEBUGGEE) {
-					_dispatcher.InvokeAsync(() => Processes.Clear());
+					UI.Dispatcher.InvokeAsync(() => Processes.Clear());
 				}
 			});
 		}

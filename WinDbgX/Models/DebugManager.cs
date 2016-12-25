@@ -53,7 +53,7 @@ namespace WinDbgX.Models {
 		private void Debugger_ModuleLoaded(object sender, ModuleEventArgs e) {
 			UI.Dispatcher.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetModule>(EventLogItemType.ModuleLoad, DateTime.Now, e.Module));
-			});			
+			});
 		}
 
 		public IEnumerable<TargetThread> GetAllThreads() {
@@ -87,10 +87,16 @@ namespace WinDbgX.Models {
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
 			UI.Dispatcher.InvokeAsync(() => {
 				Status = e.NewStatus;
+				var oldStatus = e.OldStatus;
 				OnPropertyChanged(nameof(Processes));
+				if (Status == DEBUG_STATUS.NO_DEBUGGEE || oldStatus == DEBUG_STATUS.NO_DEBUGGEE) {
+					var info = Debugger.GetTargetInfo();
+					if (info != null)
+						IsDumpFile = !info.Live;
+				}
 			});
 		}
-		
+
 		private DEBUG_STATUS _status = DEBUG_STATUS.NO_DEBUGGEE;
 
 		public DEBUG_STATUS Status {
@@ -101,5 +107,7 @@ namespace WinDbgX.Models {
 		public void Dispose() {
 			Debugger.Dispose();
 		}
+
+		public bool IsDumpFile { get; internal set; }
 	}
 }

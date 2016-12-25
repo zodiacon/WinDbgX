@@ -35,19 +35,19 @@ namespace WinDbgX.Commands {
 		public DelegateCommandBase DeleteAllBreakpoints { get; } 
 
 		private DebugCommands() {
-			Go = new DelegateCommand(() => DebugManager.Debugger.Execute("g"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
-			StepOver = new DelegateCommand(() => DebugManager.Debugger.Execute("p"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
-			StepInto = new DelegateCommand(() => DebugManager.Debugger.Execute("t"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
-			StepOver = new DelegateCommand(() => DebugManager.Debugger.Execute("gu"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
-			Restart = new DelegateCommand(() => DebugManager.Debugger.Execute(".restart"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
-			StepToCall = new DelegateCommand(() => DebugManager.Debugger.Execute("gc"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
-			StepToBranch = new DelegateCommand(() => DebugManager.Debugger.Execute("ph"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
-			StepToReturn = new DelegateCommand(() => DebugManager.Debugger.Execute("pt"), () => DebugManager.Status == DEBUG_STATUS.BREAK);
+			Go = new DelegateCommand(() => DebugManager.Debugger.Execute("g"), () => !DebugManager.IsDumpFile && DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepOver = new DelegateCommand(() => DebugManager.Debugger.Execute("p"), () => !DebugManager.IsDumpFile && DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepInto = new DelegateCommand(() => DebugManager.Debugger.Execute("t"), () => !DebugManager.IsDumpFile && DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepOver = new DelegateCommand(() => DebugManager.Debugger.Execute("gu"), () => !DebugManager.IsDumpFile && DebugManager.Status == DEBUG_STATUS.BREAK);
+			Restart = new DelegateCommand(() => DebugManager.Debugger.Execute(".restart"), () => !DebugManager.IsDumpFile && DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepToCall = new DelegateCommand(() => DebugManager.Debugger.Execute("gc"), () => !DebugManager.IsDumpFile && DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepToBranch = new DelegateCommand(() => DebugManager.Debugger.Execute("ph"), () => !DebugManager.IsDumpFile && DebugManager.Status == DEBUG_STATUS.BREAK);
+			StepToReturn = new DelegateCommand(() => DebugManager.Debugger.Execute("pt"), () => !DebugManager.IsDumpFile && DebugManager.Status == DEBUG_STATUS.BREAK);
 			Break = new DelegateCommand(() => DebugManager.Debugger.Break(), () => DebugManager.Status == DEBUG_STATUS.GO);
 			Stop = new DelegateCommand(() => DebugManager.Debugger.Stop(), () => DebugManager.Status == DEBUG_STATUS.BREAK);
 			Detach = new DelegateCommand(() => DebugManager.Debugger.Detach(), () => DebugManager.Status == DEBUG_STATUS.BREAK);
 			DetachAll = new DelegateCommand(() => DebugManager.Debugger.DetachAll(), () => DebugManager.Status == DEBUG_STATUS.BREAK);
-			DeleteAllBreakpoints = new DelegateCommand(() => DebugManager.Debugger.DeleteAllBreakpoints(), () => DebugManager.Status != DEBUG_STATUS.NO_DEBUGGEE);
+			DeleteAllBreakpoints = new DelegateCommand(() => DebugManager.Debugger.DeleteAllBreakpoints(), () => !DebugManager.IsDumpFile && DebugManager.Status != DEBUG_STATUS.NO_DEBUGGEE);
 		}
 
 		public IDictionary<string, ICommand> GetCommands() {

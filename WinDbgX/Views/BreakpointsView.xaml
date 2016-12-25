@@ -29,7 +29,8 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Hit Target" Binding="{Binding HitTarget, Mode=TwoWay}" />
                 <DataGridTextColumn Header="Hit Count" Binding="{Binding HitCount}" />
-            </DataGrid.Columns>    
+				<DataGridTextColumn Header="Command" Binding="{Binding Command}" MinWidth="50"/>
+			</DataGrid.Columns>    
         </DataGrid>
     </Grid>
 </UserControl>

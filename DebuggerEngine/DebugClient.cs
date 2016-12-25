@@ -25,7 +25,7 @@ namespace DebuggerEngine {
 		internal readonly IDebugDataSpaces4 DataSpaces;
 		internal readonly IDebugSymbols5 Symbols;
 		internal readonly IDebugSystemObjects2 SystemObjects;
-		internal readonly IDebugControl6 Control;
+		internal readonly IDebugControl7 Control;
 
 		readonly TaskScheduler _scheduler;
 
@@ -39,7 +39,7 @@ namespace DebuggerEngine {
 			_scheduler = scheduler;
 
 			Client = (IDebugClient5)client;
-			Control = (IDebugControl6)client;
+			Control = (IDebugControl7)client;
 			DataSpaces = (IDebugDataSpaces4)client;
 			SystemObjects = (IDebugSystemObjects2)client;
 			Symbols = (IDebugSymbols5)client;
@@ -59,6 +59,7 @@ namespace DebuggerEngine {
 			return Task.Run(() => {
 				Control.SetInterrupt(DEBUG_INTERRUPT.ACTIVE);
 				Client.TerminateProcesses().ThrowIfFailed();
+				_processes.Clear();
 			});
 		}
 
@@ -696,6 +697,56 @@ namespace DebuggerEngine {
 			}
 			await RunAsync(() => Client.DetachProcesses());
 			((IDisposable)_scheduler)?.Dispose();
+		}
+
+		public DebugTargetInfo GetTargetInfo() {
+			return RunAsync(() => {
+				DEBUG_CLASS cls;
+				DEBUG_CLASS_QUALIFIER qualifier;
+				if (FAILED(Control.GetDebuggeeType2(GET_DEBUGGEE_TYPE2_FLAGS.DEBUG_EXEC_FLAGS_NONBLOCK, out cls, out qualifier)))
+					return null;
+
+				if (cls == DEBUG_CLASS.UNINITIALIZED)
+					return null;
+
+				var info = new DebugTargetInfo {
+					UserMode = cls == DEBUG_CLASS.USER_WINDOWS,
+				};
+
+				if (info.UserMode) {
+					switch (qualifier) {
+						case DEBUG_CLASS_QUALIFIER.USER_WINDOWS_DUMP:
+							info.DumpType = DumpType.Full;
+							break;
+						case DEBUG_CLASS_QUALIFIER.USER_WINDOWS_SMALL_DUMP:
+							info.DumpType = DumpType.Mini;
+							break;
+						default:
+							info.Live = true;
+							break;
+					}
+				}
+				else {
+					info.LocalKernel = qualifier == DEBUG_CLASS_QUALIFIER.KERNEL_LOCAL;
+					if (!info.LocalKernel) {
+						switch (qualifier) {
+							case DEBUG_CLASS_QUALIFIER.KERNEL_SMALL_DUMP:
+								info.DumpType = DumpType.Small;
+								break;
+							case DEBUG_CLASS_QUALIFIER.KERNEL_FULL_DUMP:
+								info.DumpType = DumpType.Full;
+								break;
+							case DEBUG_CLASS_QUALIFIER.KERNEL_DUMP:
+								info.DumpType = DumpType.Kernel;
+								break;
+							default:
+								info.Live = true;
+								break;
+						}
+					}
+				}
+				return info;
+			}).Result;
 		}
 	}
 }

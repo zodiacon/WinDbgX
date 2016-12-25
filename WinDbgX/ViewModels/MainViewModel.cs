@@ -17,6 +17,7 @@ using System.Windows.Input;
 using Prism.Commands;
 using WinDbgX.Commands;
 using System.Reflection;
+using DebuggerEngine.Interop;
 
 namespace WinDbgX.ViewModels {
 	sealed class MainViewModel : BindableBase {
@@ -48,6 +49,20 @@ namespace WinDbgX.ViewModels {
 				var commandView = AppManager.Container.GetExportedValue<CommandViewModel>();
 				AddItem(commandView);
 			}
+
+			DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
+		}
+
+		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
+			var oldStatus = e.OldStatus;
+			var newStatus = e.NewStatus;
+			UIManager.InvokeAsync(() => {
+				if (oldStatus == DEBUG_STATUS.NO_DEBUGGEE || newStatus == DEBUG_STATUS.NO_DEBUGGEE) {
+					OnPropertyChanged(nameof(UserOrKernel));
+					OnPropertyChanged(nameof(LiveOrDump));
+					OnPropertyChanged(nameof(TargetDetail));
+				}
+			});
 		}
 
 		public MenuViewModel Menu {
@@ -91,5 +106,37 @@ namespace WinDbgX.ViewModels {
 		public ICommand CloseWindowCommand => new DelegateCommand(() => UIManager.Windows.Remove(this));
 
 		public ICommand InitCommand => new DelegateCommand(() => UIManager.UpdateCommands(), () => IsMain);
+
+		public string UserOrKernel {
+			get {
+				var info = DebugManager.Debugger.GetTargetInfo();
+				if (info == null)
+					return "(Not Connected)";
+				return info.UserMode ? "User" : "Kernel";
+			}
+		}
+
+		public string LiveOrDump {
+			get {
+				var info = DebugManager.Debugger.GetTargetInfo();
+				if (info == null)
+					return string.Empty;
+				return info.Live ? "Live" : "File";
+			}
+		}
+
+		public string TargetDetail {
+			get {
+				var info = DebugManager.Debugger.GetTargetInfo();
+				if (info == null)
+					return string.Empty;
+				if (info.LocalKernel)
+					return "Local";
+
+				if (!info.Live)
+					return info.DumpType.ToString();
+				return string.Empty;
+			}
+		}
 	}
 }

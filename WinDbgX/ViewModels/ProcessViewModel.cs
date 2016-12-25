@@ -32,7 +32,6 @@ namespace WinDbgX.ViewModels {
 		[DisplayName("Image Name")]
 		public string ImageName => Process.ImageName;
 
-		[DisplayName("Checksum")]
 		public string Checksum => "0x" + Process.Checksum.ToString("X");
 
 		IEnumerable<object> _properties;

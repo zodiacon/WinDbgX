@@ -102,6 +102,7 @@ namespace WinDbgX.Commands {
 				if (filename == null) return;
 
 				DebugManager.Debugger.OpenDumpFile(filename);
+				DebugManager.IsDumpFile = true;
 			}, () => DebugManager.Status == DEBUG_STATUS.NO_DEBUGGEE);
 
 			OpenSourceFile = new DelegateCommand(() => {

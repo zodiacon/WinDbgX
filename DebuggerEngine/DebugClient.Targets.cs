@@ -7,24 +7,24 @@ using System;
 
 namespace DebuggerEngine {
 	partial class DebugClient {
-		List<DebugTarget> _targets = new List<DebugTarget>(2);
+		//List<DebugTarget> _targets = new List<DebugTarget>(2);
 
-		public Task<IList<DebugTarget>> GetTargets() {
-			return RunAsync(() => {
-				uint processes;
-				SystemObjects.GetNumberProcesses(out processes).ThrowIfFailed();
+		//public Task<IList<DebugTarget>> GetTargets() {
+		//	return RunAsync(() => {
+		//		uint processes;
+		//		SystemObjects.GetNumberProcesses(out processes).ThrowIfFailed();
 
-				uint[] ids = new uint[processes];
-				uint[] pids = new uint[processes];
+		//		uint[] ids = new uint[processes];
+		//		uint[] pids = new uint[processes];
 
-				SystemObjects.GetProcessIdsByIndex(0, processes, ids, pids);
-				uint current;
-				SystemObjects.GetCurrentProcessId(out current);
-				var targets = (IList<DebugTarget>)Enumerable.Range(0, (int)processes).Select(i => GetTarget(i)).ToList();
-				SystemObjects.SetCurrentProcessId(current);
-				return targets;
-			});
-		}
+		//		SystemObjects.GetProcessIdsByIndex(0, processes, ids, pids);
+		//		uint current;
+		//		SystemObjects.GetCurrentProcessId(out current);
+		//		var targets = (IList<DebugTarget>)Enumerable.Range(0, (int)processes).Select(i => GetTarget(i)).ToList();
+		//		SystemObjects.SetCurrentProcessId(current);
+		//		return targets;
+		//	});
+		//}
 
 		public bool IsLocalKernelEnabled() {
 			return RunAsync(() => {
@@ -63,15 +63,15 @@ namespace DebuggerEngine {
 		//	});
 		//}
 
-		public Task<DebugTarget> GetCurrentTarget() {
-			return RunAsync(() => GetCurrentTargetInternal());
-		}
+		//public Task<DebugTarget> GetCurrentTarget() {
+		//	return RunAsync(() => GetCurrentTargetInternal());
+		//}
 
-		DebugTarget GetCurrentTargetInternal() {
-			uint id;
-			int hr = SystemObjects.GetCurrentProcessId(out id);
-			return hr < 0 ? null : _targets.FirstOrDefault(t => t.Index == id);
-		}
+		//DebugTarget GetCurrentTargetInternal() {
+		//	uint id;
+		//	int hr = SystemObjects.GetCurrentProcessId(out id);
+		//	return hr < 0 ? null : _targets.FirstOrDefault(t => t.Index == id);
+		//}
 
 		public Task<int> GetCurrentThreadIndex() {
 			return RunAsync(() => GetCurrentThreadInternal());
@@ -83,34 +83,34 @@ namespace DebuggerEngine {
 			return (int)id;
 		}
 
-		private DebugTarget GetTarget(int i) {
-			if (SystemObjects.SetCurrentProcessId((uint)i) < 0)
-				return null;
+		//private DebugTarget GetTarget(int i) {
+		//	if (SystemObjects.SetCurrentProcessId((uint)i) < 0)
+		//		return null;
 
-			DEBUG_CLASS debugClass;
-			DEBUG_CLASS_QUALIFIER qualifier;
-			Control.GetDebuggeeType(out debugClass, out qualifier);
-			switch (debugClass) {
-				case DEBUG_CLASS.IMAGE_FILE:
-					break;
-			}
-			return null;
-		}
+		//	DEBUG_CLASS debugClass;
+		//	DEBUG_CLASS_QUALIFIER qualifier;
+		//	Control.GetDebuggeeType(out debugClass, out qualifier);
+		//	switch (debugClass) {
+		//		case DEBUG_CLASS.IMAGE_FILE:
+		//			break;
+		//	}
+		//	return null;
+		//}
 
-		public Task SetCurrentTarget(DebugTarget target) {
-			return RunAsync(() => {
-				var id = _targets.IndexOf(target);
-				if (id < 0)
-					return;
+		//public Task SetCurrentTarget(DebugTarget target) {
+		//	return RunAsync(() => {
+		//		var id = _targets.IndexOf(target);
+		//		if (id < 0)
+		//			return;
 
-				uint currentId;
-				SystemObjects.GetCurrentProcessId(out currentId);
-				if (currentId != id) {
-					SystemObjects.SetCurrentProcessId((uint)id);
-					Control.OutputPromptWide(DEBUG_OUTCTL.THIS_CLIENT, null);
-				}
-			});
-		}
+		//		uint currentId;
+		//		SystemObjects.GetCurrentProcessId(out currentId);
+		//		if (currentId != id) {
+		//			SystemObjects.SetCurrentProcessId((uint)id);
+		//			Control.OutputPromptWide(DEBUG_OUTCTL.THIS_CLIENT, null);
+		//		}
+		//	});
+		//}
 
 		public Task<int> SetCurrentThreadIndex(int index) {
 			return RunAsync(() => {

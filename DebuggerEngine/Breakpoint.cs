@@ -29,7 +29,8 @@ namespace DebuggerEngine {
 				uint size;
 				_bp.GetOffsetExpressionWide(_text, _text.Capacity, &size);
 				if (_text.Length == 0) {
-					_client.Symbols.GetNameByOffsetWide(Offset, _text, _text.Capacity, &size, null); 
+					ulong displacement;
+					_client.Symbols.GetNameByOffsetWide(Offset, _text, _text.Capacity, &size, &displacement); 
 				}
 				return _text.ToString();
 			}).Result;
@@ -114,6 +115,19 @@ namespace DebuggerEngine {
 			_client.RunAsync(() => {
 				_bp.SetOffsetExpressionWide(expression).ThrowIfFailed();
 			}).Wait();
+		}
+
+		public unsafe string Command {
+			get {
+				var sb = new StringBuilder(512);
+				return _client.RunAsync(() => {
+					_bp.GetCommandWide(sb, sb.Capacity, null).ThrowIfFailed();
+					return sb.ToString();
+				}).Result;
+			}
+			set {
+				_client.RunAsync(() => _bp.SetCommandWide(value)).Wait();
+			}
 		}
 
 		internal void Remove() {
