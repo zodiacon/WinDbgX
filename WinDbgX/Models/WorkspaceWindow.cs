@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WinDbgX.Models {
-	class WorkspaceWindow {
-		List<WorkspaceTab> _tabs = new List<WorkspaceTab>();
+	public class WorkspaceWindow {
+		public List<WorkspaceTab> Tabs { get; set; }
+
+		public string AccentName { get; set; }
 	}
 }

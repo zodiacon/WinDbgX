@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WinDbgX.Models {
-	class WorkspaceTab {
-		
+	public class WorkspaceTab {
+		public Type TabType { get; set; }
 	}
 }

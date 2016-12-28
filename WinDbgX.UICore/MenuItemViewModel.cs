@@ -104,6 +104,8 @@ namespace WinDbgX.UICore {
 			}
 		}
 
+		public bool Shared { get; set; } = true;
+
 		public void AddInputBinding() {
 			if (GestureText == null)
 				GestureText = KeyGesture.GetDisplayStringForCulture(CultureInfo.CurrentUICulture);
@@ -112,14 +114,29 @@ namespace WinDbgX.UICore {
 		public string Description { get; set; }
 
         public string GestureText { get; set; }
-    }
+
+		public MenuItemViewModel Clone() => (MenuItemViewModel)MemberwiseClone();
+	}
 
     public class MenuItemCollectionViewModel : ObservableCollection<MenuItemViewModel> {
 		public MenuItemCollectionViewModel(IEnumerable<MenuItemViewModel> items) : base(items) {
 		}
 
 		public MenuItemCollectionViewModel() {
+		}
 
+		public bool ReplaceItem(MenuItemViewModel oldItem, MenuItemViewModel newItem) {
+			for (int i = 0; i < Items.Count; i++) {
+				if (Items[i] == oldItem) {
+					RemoveAt(i);
+					Insert(i, newItem);
+					return true;
+				}
+				if (Items[i]._items != null)
+					if (Items[i]._items.ReplaceItem(oldItem, newItem))
+						return true;
+			}
+			return false;
 		}
 	}
 }

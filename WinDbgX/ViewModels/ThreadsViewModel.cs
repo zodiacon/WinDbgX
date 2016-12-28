@@ -31,36 +31,36 @@ namespace WinDbgX.ViewModels {
 		}
 
 		private void Debugger_ProcessExited(object sender, ProcessExitedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				_processes.Remove(_processes.First(p => p.ProcessId == e.Process.PID));
 			});
 		}
 
 		private void Debugger_ThreadExited(object sender, ThreadExitedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				var threads = _processes.First(p => p.ProcessId == e.Process.PID).Threads;
 				threads.Remove(threads.First(th => th.OSID == e.Thread.TID));
 			});
 		}
 
 		private void Debugger_ThreadCreated(object sender, ThreadCreatedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				_processes[(int)e.Thread.ProcessIndex].Threads.Add(new ThreadViewModel(e.Thread));
 			});
 		}
 
 		private void Debugger_ProcessCreated(object sender, ProcessCreatedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				_processes.Add(new ProcessViewModel(e.Process));
 			});
 		}
 
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
 			var status = e.NewStatus;
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				Status = status;
 				if (Status == DEBUG_STATUS.NO_DEBUGGEE) {
-					UI.Dispatcher.InvokeAsync(() => Processes.Clear());
+					UI.InvokeAsync(() => Processes.Clear());
 				}
 			});
 		}

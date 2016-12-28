@@ -44,7 +44,7 @@ namespace WinDbgX.ViewModels {
 		}
 
 		private void Debugger_BreakpointChanged(object sender, BreakpointChangedEventArgs e) {
-			UIManager.Dispatcher.InvokeAsync(() => {
+			UIManager.InvokeAsync(() => {
 				if (e.BreakpointId != uint.MaxValue) {
 					var bp = _breakpoints.FirstOrDefault(b => b.Id == e.BreakpointId);
 					if (bp != null)
@@ -60,7 +60,7 @@ namespace WinDbgX.ViewModels {
 
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
 			var state = e.NewStatus;
-			UIManager.Dispatcher.InvokeAsync(() => {
+			UIManager.InvokeAsync(() => {
 				if (state == DEBUG_STATUS.BREAK) {
 					OnPropertyChanged(nameof(Breakpoints));
 				}

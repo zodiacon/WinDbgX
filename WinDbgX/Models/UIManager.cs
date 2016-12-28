@@ -72,7 +72,7 @@ namespace WinDbgX.Models {
 		}
 
 		private void Debugger_Error(object sender, ErrorEventArgs e) {
-			Dispatcher.InvokeAsync(() => {
+			InvokeAsync(() => {
 				MessageBoxService.SetOwner(Application.Current.MainWindow);
 				MessageBoxService.ShowMessage($"Error: {ErrorToString(e)}", Constants.Title, MessageBoxButton.OK, MessageBoxImage.Error);
 			});
@@ -138,7 +138,7 @@ namespace WinDbgX.Models {
 
 		DEBUG_STATUS _status = DEBUG_STATUS.NO_DEBUGGEE;
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
-			Dispatcher.InvokeAsync(() => {
+			InvokeAsync(() => {
 				if (e.NewStatus == _status)
 					return;
 
@@ -205,6 +205,32 @@ namespace WinDbgX.Models {
 			ICommand cmd;
 			_commands.TryGetValue(name, out cmd);
 			return cmd;
+		}
+
+		public Workspace BuildWorkspace(string name) {
+			var workspace = new Workspace {
+				Name = name,
+				Windows = new List<WorkspaceWindow>()
+			};
+			foreach (var win in Windows) {
+				var wksWindow = new WorkspaceWindow {
+					AccentName = win.CurrentAccent.Name,
+					Tabs = new List<WorkspaceTab>()
+				};
+				foreach (var tab in win.TabItems) {
+					var wksTab = new WorkspaceTab {
+						TabType = tab.GetType()
+					};
+					wksWindow.Tabs.Add(wksTab);
+				}
+				workspace.Windows.Add(wksWindow);
+			}
+
+			return workspace;
+		}
+
+		public void ApplyWorkspace(Workspace workspace) {
+			
 		}
 	}
 }

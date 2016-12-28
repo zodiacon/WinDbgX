@@ -11,7 +11,9 @@ namespace WinDbgX.Models {
     public class Settings {
         public ObservableCollection<Executable> RecentExecutables { get; set; }
 
-        public void Save(string path) {
+		public Workspace Workspace { get; set; }
+
+		public void Save(string path) {
             using (var stm = File.Open(path, FileMode.Create)) {
                 var serializer = new DataContractSerializer(GetType());
                 serializer.WriteObject(stm, this);

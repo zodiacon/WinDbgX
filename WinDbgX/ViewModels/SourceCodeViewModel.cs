@@ -40,7 +40,7 @@ namespace WinDbgX.ViewModels {
         }
 
         private void Debugger_StatusChanged(object sender, DebuggerEngine.StatusChangedEventArgs e) {
-            UIManager.Dispatcher.InvokeAsync(() => ToggleBreakpointCommand.RaiseCanExecuteChanged());
+            UIManager.InvokeAsync(() => ToggleBreakpointCommand.RaiseCanExecuteChanged());
         }
 
         public void OpenFile(string filename) {

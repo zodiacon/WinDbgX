@@ -18,6 +18,8 @@ using Prism.Commands;
 using WinDbgX.Commands;
 using System.Reflection;
 using DebuggerEngine.Interop;
+using System.Windows;
+using MahApps.Metro;
 
 namespace WinDbgX.ViewModels {
 	sealed class MainViewModel : BindableBase {
@@ -50,6 +52,8 @@ namespace WinDbgX.ViewModels {
 				AddItem(commandView);
 			}
 
+			CurrentAccent = Accents.First(accent => accent.Name == "Cobalt");
+
 			DebugManager.Debugger.StatusChanged += Debugger_StatusChanged;
 		}
 
@@ -72,6 +76,17 @@ namespace WinDbgX.ViewModels {
 					_menu.AddKeyBindings(Window.WindowObject);
 				}
 				return _menu;
+			}
+		}
+
+		private bool _isAlwaysOnTop;
+
+		public bool IsAlwaysOnTop {
+			get { return _isAlwaysOnTop; }
+			set {
+				if (SetProperty(ref _isAlwaysOnTop, value)) {
+					Window.Topmost = value;
+				}
 			}
 		}
 
@@ -119,7 +134,7 @@ namespace WinDbgX.ViewModels {
 		public string LiveOrDump {
 			get {
 				var info = DebugManager.Debugger.GetTargetInfo();
-				if (info == null)
+				if (info == null || info.LocalKernel)
 					return string.Empty;
 				return info.Live ? "Live" : "File";
 			}
@@ -138,5 +153,17 @@ namespace WinDbgX.ViewModels {
 				return string.Empty;
 			}
 		}
+
+		public AccentViewModel CurrentAccent { get; private set; }
+
+		public ICommand ChangeAccentCommand => new DelegateCommand<AccentViewModel>(accent => {
+			if (CurrentAccent != null)
+				CurrentAccent.IsCurrent = false;
+			accent.ChangeAccentColor(Window.WindowObject as Window);
+			(CurrentAccent = accent).IsCurrent = true;
+		});
+
+		AccentViewModel[] _accents;
+		public AccentViewModel[] Accents => _accents ?? (_accents = ThemeManager.Accents.Select(accent => new AccentViewModel(accent)).ToArray());
 	}
 }

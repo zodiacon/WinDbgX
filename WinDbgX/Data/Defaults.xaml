@@ -70,8 +70,6 @@
             <ui:MenuItemViewModel Text="Reload All Symbols" />
         </ui:MenuItemViewModel>
         <ui:MenuItemViewModel Text="_Options">
-            <ui:MenuItemViewModel Text="Always on Top" Key="AlwaysOnTop" Command="{ext:Command AlwaysOnTop}" />
-            <ui:MenuItemViewModel IsSeparator="True" />
             <ui:MenuItemViewModel Text="_General..." />
             <ui:MenuItemViewModel Text="Symbols..." />
             <ui:MenuItemViewModel Text="_Colors..." />

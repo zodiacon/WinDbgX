@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WinDbgX.Models {
-	class Workspace {
+	public class Workspace {
 		public string Name { get; set; }
 
-		List<WorkspaceWindow> _windows = new List<WorkspaceWindow>();
+		public List<WorkspaceWindow> Windows { get; set; }
 
-		public IList<WorkspaceWindow> Windows => _windows;
 	}
 }

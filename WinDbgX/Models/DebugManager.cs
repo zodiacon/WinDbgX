@@ -45,13 +45,13 @@ namespace WinDbgX.Models {
 		}
 
 		private void Debugger_ModuleUnloaded(object sender, ModuleEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetModule>(EventLogItemType.ModuleUnload, DateTime.Now, e.Module));
 			});
 		}
 
 		private void Debugger_ModuleLoaded(object sender, ModuleEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetModule>(EventLogItemType.ModuleLoad, DateTime.Now, e.Module));
 			});
 		}
@@ -61,31 +61,31 @@ namespace WinDbgX.Models {
 		}
 
 		private void Debugger_ProcessExited(object sender, ProcessExitedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetProcess>(EventLogItemType.ProcessExit, DateTime.Now, e.Process));
 			});
 		}
 
 		private void Debugger_ThreadExited(object sender, ThreadExitedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetThread>(EventLogItemType.ThreadExit, DateTime.Now, e.Thread));
 			});
 		}
 
 		private void Debugger_ThreadCreated(object sender, ThreadCreatedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetThread>(EventLogItemType.ThreadCreate, DateTime.Now, e.Thread));
 			});
 		}
 
 		private void Debugger_ProcessCreated(object sender, ProcessCreatedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				_log.Add(new EventLogItem<TargetProcess>(EventLogItemType.ProcessCreate, DateTime.Now, e.Process));
 			});
 		}
 
 		private void Debugger_StatusChanged(object sender, StatusChangedEventArgs e) {
-			UI.Dispatcher.InvokeAsync(() => {
+			UI.InvokeAsync(() => {
 				Status = e.NewStatus;
 				var oldStatus = e.OldStatus;
 				OnPropertyChanged(nameof(Processes));
