@@ -20,5 +20,6 @@ namespace DebuggerEngine {
 		public ulong Handle { get; internal set; }
 		public uint ProcessIndex { get; internal set; }
 		public uint ExitCode { get; set; }
+
 	}
 }

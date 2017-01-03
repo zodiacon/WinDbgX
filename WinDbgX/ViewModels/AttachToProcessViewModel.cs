@@ -59,7 +59,7 @@ namespace WinDbgX.ViewModels {
 
 		private bool Is32Bit(Process p) {
 			bool wow64 = false;
-			var hProcess = NativeMethods.OpenProcess(NativeMethods.ProcessAccessRights.QUERY_LIMITED_INFORMATION, p.Id);
+			var hProcess = NativeMethods.OpenProcess(NativeMethods.ProcessAccessRights.QueryLimitedInformation, false, p.Id);
 			if (hProcess == IntPtr.Zero)
 				return false;
 			NativeMethods.IsWow64Process(hProcess, out wow64);

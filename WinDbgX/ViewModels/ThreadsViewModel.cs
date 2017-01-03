@@ -48,7 +48,7 @@ namespace WinDbgX.ViewModels {
 
 		private void Debugger_ThreadCreated(object sender, ThreadCreatedEventArgs e) {
 			UI.InvokeAsync(() => {
-				_processes[(int)e.Thread.ProcessIndex].Threads.Add(new ThreadViewModel(e.Thread));
+				_processes[(int)e.Thread.ProcessIndex].Threads.Add(new ThreadViewModel(e.Thread, DebugManager));
 			});
 		}
 
@@ -72,7 +72,7 @@ namespace WinDbgX.ViewModels {
 			foreach (var process in DebugManager.Processes) {
 				var processVM = new ProcessViewModel(process);
 				foreach (var th in process.Threads)
-					processVM.Threads.Add(new ThreadViewModel(th));
+					processVM.Threads.Add(new ThreadViewModel(th, DebugManager));
 				_processes.Add(processVM);
 			}
 

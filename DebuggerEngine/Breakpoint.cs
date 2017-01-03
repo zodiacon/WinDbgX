@@ -24,17 +24,15 @@ namespace DebuggerEngine {
 
 		static StringBuilder _text = new StringBuilder(128);
 
-		public unsafe string GetOffsetExpression() {
-			return _client.RunAsync(() => {
-				uint size;
-				_bp.GetOffsetExpressionWide(_text, _text.Capacity, &size);
-				if (_text.Length == 0) {
-					ulong displacement;
-					_client.Symbols.GetNameByOffsetWide(Offset, _text, _text.Capacity, &size, &displacement); 
-				}
-				return _text.ToString();
-			}).Result;
-		}
+		public unsafe string GetOffsetExpression() => _client.RunAsync(() => {
+			uint size;
+			_bp.GetOffsetExpressionWide(_text, _text.Capacity, &size);
+			if (_text.Length == 0) {
+				ulong displacement;
+				_client.Symbols.GetNameByOffsetWide(Offset, _text, _text.Capacity, &size, &displacement);
+			}
+			return _text.ToString();
+		}).Result;
 
 		public bool IsOneShot {
 			get {

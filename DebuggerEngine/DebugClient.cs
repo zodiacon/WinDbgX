@@ -133,7 +133,7 @@ namespace DebuggerEngine {
 				if (!debugChildProcesses)
 					options.CreateFlags |= DEBUG_CREATE_PROCESS.DEBUG_ONLY_THIS_PROCESS;
 
-				Client.CreateProcessAndAttach2Wide(0, commandLine + " " + (args ?? string.Empty), ref options, (uint)Marshal.SizeOf<DEBUG_CREATE_PROCESS_OPTIONS>(), 
+				Client.CreateProcessAndAttach2Wide(0, commandLine + " " + (args ?? string.Empty), ref options, (uint)Marshal.SizeOf<DEBUG_CREATE_PROCESS_OPTIONS>(),
 					null, null, 0, (DEBUG_ATTACH)attachFlags).ThrowIfFailed();
 				WaitForEvent().ThrowIfFailed();
 			});
@@ -179,20 +179,16 @@ namespace DebuggerEngine {
 		//	});
 		//}
 
-		public Task<bool> Execute(string command) {
-			return RunAsync(() => {
-				Control.ExecuteWide(DEBUG_OUTCTL.ALL_CLIENTS, command, DEBUG_EXECUTE.DEFAULT);
-				return DoPostCommand();
-			});
-		}
+		public Task<bool> Execute(string command) => RunAsync(() => {
+			Control.ExecuteWide(DEBUG_OUTCTL.ALL_CLIENTS, command, DEBUG_EXECUTE.DEFAULT);
+			return DoPostCommand();
+		});
 
-		public Breakpoint CreateBreakpoint(DEBUG_BREAKPOINT_TYPE type, uint id = uint.MaxValue) {
-			return RunAsync(() => {
-				IDebugBreakpoint bp;
-				Control.AddBreakpoint(type, id, out bp).ThrowIfFailed();
-				return new Breakpoint(this, (IDebugBreakpoint3)bp);
-			}).Result;
-		}
+		public Breakpoint CreateBreakpoint(DEBUG_BREAKPOINT_TYPE type, uint id = uint.MaxValue) => RunAsync(() => {
+			IDebugBreakpoint bp;
+			Control.AddBreakpoint(type, id, out bp).ThrowIfFailed();
+			return new Breakpoint(this, (IDebugBreakpoint3)bp);
+		}).Result;
 
 		public IReadOnlyList<Breakpoint> GetBreakpoints() => Task.Run(() => {
 			uint count;
@@ -217,7 +213,7 @@ namespace DebuggerEngine {
 				if (FAILED(Control.GetBreakpointById(breakpointId, out bp)))
 					return null;
 				return new Breakpoint(this, (IDebugBreakpoint3)bp);
-			}).Result; 
+			}).Result;
 		}
 
 		public void DeleteBreakpoint(Breakpoint bp) {
@@ -655,17 +651,12 @@ namespace DebuggerEngine {
 			return FieldAddress;
 		}
 
-		public Task OutputPrompt(DEBUG_OUTCTL outControl = DEBUG_OUTCTL.THIS_CLIENT, string format = null) {
-			return RunAsync(() => Control.OutputPromptWide(outControl, format));
-		}
+		public Task OutputPrompt(DEBUG_OUTCTL outControl = DEBUG_OUTCTL.THIS_CLIENT, string format = null) =>
+			RunAsync(() => Control.OutputPromptWide(outControl, format));
 
-		public Task Detach() {
-			return RunAsync(() => Client.DetachCurrentProcess());
-		}
+		public Task Detach() => RunAsync(() => Client.DetachCurrentProcess());
 
-		public Task DetachAll() {
-			return RunAsync(() => Client.DetachProcesses());
-		}
+		public Task DetachAll() => RunAsync(() => Client.DetachProcesses());
 
 		public event EventHandler<StatusChangedEventArgs> StatusChanged;
 
@@ -702,54 +693,61 @@ namespace DebuggerEngine {
 			((IDisposable)_scheduler)?.Dispose();
 		}
 
-		public DebugTargetInfo GetTargetInfo() {
-			return RunAsync(() => {
-				DEBUG_CLASS cls;
-				DEBUG_CLASS_QUALIFIER qualifier;
-				if (FAILED(Control.GetDebuggeeType2(GET_DEBUGGEE_TYPE2_FLAGS.DEBUG_EXEC_FLAGS_NONBLOCK, out cls, out qualifier)))
-					return null;
+		public DebugTargetInfo GetTargetInfo() => RunAsync(() => {
+			DEBUG_CLASS cls;
+			DEBUG_CLASS_QUALIFIER qualifier;
+			if (FAILED(Control.GetDebuggeeType2(GET_DEBUGGEE_TYPE2_FLAGS.DEBUG_EXEC_FLAGS_NONBLOCK, out cls, out qualifier)))
+				return null;
 
-				if (cls == DEBUG_CLASS.UNINITIALIZED)
-					return null;
+			if (cls == DEBUG_CLASS.UNINITIALIZED)
+				return null;
 
-				var info = new DebugTargetInfo {
-					UserMode = cls == DEBUG_CLASS.USER_WINDOWS,
-				};
+			var info = new DebugTargetInfo {
+				UserMode = cls == DEBUG_CLASS.USER_WINDOWS,
+			};
 
-				if (info.UserMode) {
+			if (info.UserMode) {
+				switch (qualifier) {
+					case DEBUG_CLASS_QUALIFIER.USER_WINDOWS_DUMP:
+						info.DumpType = DumpType.Full;
+						break;
+					case DEBUG_CLASS_QUALIFIER.USER_WINDOWS_SMALL_DUMP:
+						info.DumpType = DumpType.Mini;
+						break;
+					default:
+						info.Live = true;
+						break;
+				}
+			}
+			else {
+				info.LocalKernel = qualifier == DEBUG_CLASS_QUALIFIER.KERNEL_LOCAL;
+				if (!info.LocalKernel) {
 					switch (qualifier) {
-						case DEBUG_CLASS_QUALIFIER.USER_WINDOWS_DUMP:
+						case DEBUG_CLASS_QUALIFIER.KERNEL_SMALL_DUMP:
+							info.DumpType = DumpType.Small;
+							break;
+						case DEBUG_CLASS_QUALIFIER.KERNEL_FULL_DUMP:
 							info.DumpType = DumpType.Full;
 							break;
-						case DEBUG_CLASS_QUALIFIER.USER_WINDOWS_SMALL_DUMP:
-							info.DumpType = DumpType.Mini;
+						case DEBUG_CLASS_QUALIFIER.KERNEL_DUMP:
+							info.DumpType = DumpType.Kernel;
 							break;
 						default:
 							info.Live = true;
 							break;
 					}
 				}
-				else {
-					info.LocalKernel = qualifier == DEBUG_CLASS_QUALIFIER.KERNEL_LOCAL;
-					if (!info.LocalKernel) {
-						switch (qualifier) {
-							case DEBUG_CLASS_QUALIFIER.KERNEL_SMALL_DUMP:
-								info.DumpType = DumpType.Small;
-								break;
-							case DEBUG_CLASS_QUALIFIER.KERNEL_FULL_DUMP:
-								info.DumpType = DumpType.Full;
-								break;
-							case DEBUG_CLASS_QUALIFIER.KERNEL_DUMP:
-								info.DumpType = DumpType.Kernel;
-								break;
-							default:
-								info.Live = true;
-								break;
-						}
-					}
-				}
-				return info;
-			}).Result;
-		}
+			}
+			return info;
+		}).Result;
+
+		StringBuilder _genericString = new StringBuilder(256);
+
+		public unsafe Task<string> GetSymbolByOffsetAsync(ulong offset) => RunAsync(() => {
+			uint size;
+			if (FAILED(Symbols.GetNameByOffsetWide(offset, _genericString, _genericString.Capacity, &size, null)))
+				return null;
+			return _genericString.ToString();
+		});
 	}
 }
