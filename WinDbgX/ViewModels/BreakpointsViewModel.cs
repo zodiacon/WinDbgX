@@ -27,13 +27,17 @@ namespace WinDbgX.ViewModels {
 		UIManager UIManager;
 
 		BreakpointViewModel[] _breakpoints;
-		public IEnumerable<BreakpointViewModel> Breakpoints {
+		public BreakpointViewModel[] Breakpoints {
 			get {
 				if (DebugManager.Status != DebuggerEngine.Interop.DEBUG_STATUS.BREAK)
 					return null;
 
 				var breakpoints = DebugManager.Debugger.GetBreakpoints();
+				if (breakpoints == null)
+					return null;
+
 				_breakpoints = breakpoints.Select(bp => new BreakpointViewModel(bp, DebugManager)).ToArray();
+				OnPropertyChanged(nameof(AnyBreakpoints));
 				return _breakpoints;
 			}
 		}
@@ -44,9 +48,10 @@ namespace WinDbgX.ViewModels {
 		}
 
 		private void Debugger_BreakpointChanged(object sender, BreakpointChangedEventArgs e) {
+			var id = e.BreakpointId;
 			UIManager.InvokeAsync(() => {
-				if (e.BreakpointId != uint.MaxValue) {
-					var bp = _breakpoints.FirstOrDefault(b => b.Id == e.BreakpointId);
+				if (id != uint.MaxValue) {
+					var bp = _breakpoints.FirstOrDefault(b => b.Id == id);
 					if (bp != null)
 						bp.Refresh();
 					else
@@ -74,12 +79,15 @@ namespace WinDbgX.ViewModels {
 			new ToolBarButtonViewModel { Text = "Delete All", Icon = Icons.DeleteBreakpoints, Command = DeleteAllBreakpointsCommand },
 		};
 
-		public ICommand EnableAllBreakpointsCommand => new DelegateCommand(() => EnableBreakpoints(true));
-		public ICommand DisableAllBreakpointsCommand => new DelegateCommand(() => EnableBreakpoints(false));
+		bool AnyBreakpoints => _breakpoints != null && _breakpoints.Any();
+
+		public ICommand EnableAllBreakpointsCommand => new DelegateCommand(() => EnableBreakpoints(true), () => AnyBreakpoints).ObservesProperty(() => AnyBreakpoints);
+		public ICommand DisableAllBreakpointsCommand => new DelegateCommand(() => EnableBreakpoints(false), () => AnyBreakpoints).ObservesProperty(() => AnyBreakpoints);
+
 		public ICommand DeleteAllBreakpointsCommand => new DelegateCommand(() => {
 			DebugManager.Debugger.DeleteAllBreakpoints();
 			OnPropertyChanged(nameof(Breakpoints));
-		});
+		}, () => AnyBreakpoints).ObservesProperty(() => AnyBreakpoints);
 
 		public ICommand NewBreakpointCommand => new DelegateCommand(() => {
 		});

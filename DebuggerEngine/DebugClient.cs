@@ -194,25 +194,28 @@ namespace DebuggerEngine {
 			}).Result;
 		}
 
-		public IReadOnlyList<Breakpoint> GetBreakpoints() {
-			return RunAsync(() => {
-				uint count;
-				Control.GetNumberBreakpoints(out count).ThrowIfFailed();
-				var breakpoints = new List<Breakpoint>((int)count);
+		public IReadOnlyList<Breakpoint> GetBreakpoints() => Task.Run(() => {
+			uint count;
+			int hr = Control.GetNumberBreakpoints(out count);
+			if (FAILED(hr))
+				return null;
 
-				for (uint i = 0; i < count; i++) {
-					IDebugBreakpoint bp;
-					Control.GetBreakpointByIndex(i, out bp);
-					breakpoints.Add(new Breakpoint(this, (IDebugBreakpoint3)bp));
-				}
-				return breakpoints;
-			}).Result;
-		}
+			var breakpoints = new List<Breakpoint>((int)count);
+
+			for (uint i = 0; i < count; i++) {
+				IDebugBreakpoint bp;
+				if (FAILED(Control.GetBreakpointByIndex(i, out bp)))
+					continue;
+				breakpoints.Add(new Breakpoint(this, (IDebugBreakpoint3)bp));
+			}
+			return breakpoints;
+		}).Result;
 
 		public Breakpoint GetBreakpointById(uint breakpointId) {
 			return RunAsync(() => {
 				IDebugBreakpoint bp;
-				Control.GetBreakpointById(breakpointId, out bp).ThrowIfFailed();
+				if (FAILED(Control.GetBreakpointById(breakpointId, out bp)))
+					return null;
 				return new Breakpoint(this, (IDebugBreakpoint3)bp);
 			}).Result; 
 		}

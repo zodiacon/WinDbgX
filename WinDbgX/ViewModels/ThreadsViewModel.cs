@@ -38,7 +38,10 @@ namespace WinDbgX.ViewModels {
 
 		private void Debugger_ThreadExited(object sender, ThreadExitedEventArgs e) {
 			UI.InvokeAsync(() => {
-				var threads = _processes.First(p => p.ProcessId == e.Process.PID).Threads;
+				var process = _processes.FirstOrDefault(p => p.ProcessId == e.Process.PID);
+				if (process == null)
+					return;
+				var threads = process.Threads;
 				threads.Remove(threads.First(th => th.OSID == e.Thread.TID));
 			});
 		}

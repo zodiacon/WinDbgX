@@ -125,18 +125,16 @@ namespace WinDbgX.ViewModels {
 		}
 
 		public ICommand ExecuteCommand => new DelegateCommand(() => {
-			_dispatcher.InvokeAsync(async () => {
-				_history.Add(new CommandHistoryItem {
-					Text = Prompt + " " + CommandText + Environment.NewLine,
-					Color = ColorFromType(DEBUG_OUTPUT.NORMAL)
-				});
-				_commandHistory.Add(CommandText);
-				var cmd = CommandText;
-				CommandText = string.Empty;
-				var target = await _debugger.Execute(cmd);
-				_commandHistoryIndex = _commandHistory.Count;
-
+			_history.Add(new CommandHistoryItem {
+				Text = Prompt + " " + CommandText + Environment.NewLine,
+				Color = ColorFromType(DEBUG_OUTPUT.NORMAL)
 			});
+			_commandHistory.Add(CommandText);
+			var cmd = CommandText;
+			CommandText = string.Empty;
+			_debugger.Execute(cmd);
+			_commandHistoryIndex = _commandHistory.Count;
+
 		}, () => !string.IsNullOrWhiteSpace(CommandText))
 			.ObservesProperty(() => CommandText);
 
@@ -152,7 +150,7 @@ namespace WinDbgX.ViewModels {
 			if (_commandHistoryIndex == 0)
 				return;
 			CommandText = _commandHistory[--_commandHistoryIndex];
-			if(tb != null)
+			if (tb != null)
 				tb.CaretIndex = CommandText.Length;
 		});
 	}
