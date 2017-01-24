@@ -1,19 +1,20 @@
 ﻿using DebuggerEngine;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using WinDbgX.Models;
 
 namespace WinDbgX.ViewModels {
 	[Export]
 	class ProcessViewModel : BindableBase {
+
 		ObservableCollection<ThreadViewModel> _threads = new ObservableCollection<ThreadViewModel>();
 		public IList<ThreadViewModel> Threads => _threads;
 
@@ -44,5 +45,23 @@ namespace WinDbgX.ViewModels {
 							  Name = nameAttribute.DisplayName,
 							  Value = pi.GetValue(this)
 						  }).ToArray());
+
+		public void Refresh() {
+			foreach (var th in Threads)
+				th.Refresh();
+		}
+
+
+		ThreadViewModel[] _selectedThreads = new ThreadViewModel[4];
+
+		public IEnumerable<ThreadViewModel> SelectedThreads => _selectedThreads.TakeWhile(th => th != null);
+
+		public DelegateCommandBase SetSelectedItemsCommand => new DelegateCommand<IList>(items => {
+			if (_selectedThreads.Length < items.Count)
+				Array.Resize(ref _selectedThreads, items.Count);
+			items.CopyTo(_selectedThreads, 0);
+		});
+
+
 	}
 }

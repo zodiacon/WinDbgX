@@ -1,7 +1,9 @@
 ﻿using DebuggerEngine;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,5 +36,30 @@ namespace WinDbgX.ViewModels {
 		public ulong StartAddress => Thread.StartAddress;
 
 		public string StartAddressSymbol { get; private set; }
+
+		private bool _isLastEvent;
+
+		public bool IsLastEvent {
+			get { return _isLastEvent; }
+			set { SetProperty(ref _isLastEvent, value); }
+		}
+
+		private bool _isCurrent;
+
+		public bool IsCurrent {
+			get { return _isCurrent; }
+			set { SetProperty(ref _isCurrent, value); }
+		}
+
+		public ThreadPriorityLevel Priority => Thread.GetPriority();
+
+		public void Refresh() {
+			OnPropertyChanged(nameof(Priority));
+		}
+
+		public void SetPriority(ThreadPriorityLevel priority) {
+			Thread.SetPriority(priority);
+			OnPropertyChanged(nameof(Priority));
+		}
 	}
 }

@@ -53,7 +53,7 @@ namespace WinDbgX.Commands {
 			ViewCallStack = new DelegateCommand(() => ViewTab<CallStackViewModel>());
 			ViewEventLog = new DelegateCommand(() => ViewTab<EventLogViewModel>());
 			ViewBreakpoints = new DelegateCommand(() => ViewTab<BreakpointsViewModel>(), () => !DebugManager.IsDumpFile);
-			ViewThreads = new DelegateCommand(() => ViewTab<ThreadsViewModel>());
+			ViewThreads = new DelegateCommand(() => ViewTab<ProcessesViewModel>());
 
 		}
 

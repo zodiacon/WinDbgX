@@ -20,7 +20,7 @@
 	<DataTemplate DataType="{x:Type vm:RegistersViewModel}">
 		<view:RegistersView />
 	</DataTemplate>
-	<DataTemplate DataType="{x:Type vm:ThreadsViewModel}">
+	<DataTemplate DataType="{x:Type vm:ProcessesViewModel}">
 		<view:ThreadsView />
 	</DataTemplate>
 	<DataTemplate DataType="{x:Type vm:EventLogViewModel}">
