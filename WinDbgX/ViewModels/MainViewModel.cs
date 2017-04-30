@@ -62,9 +62,9 @@ namespace WinDbgX.ViewModels {
 			var newStatus = e.NewStatus;
 			UIManager.InvokeAsync(() => {
 				if (oldStatus == DEBUG_STATUS.NO_DEBUGGEE || newStatus == DEBUG_STATUS.NO_DEBUGGEE) {
-					OnPropertyChanged(nameof(UserOrKernel));
-					OnPropertyChanged(nameof(LiveOrDump));
-					OnPropertyChanged(nameof(TargetDetail));
+					RaisePropertyChanged(nameof(UserOrKernel));
+					RaisePropertyChanged(nameof(LiveOrDump));
+					RaisePropertyChanged(nameof(TargetDetail));
 				}
 			});
 		}
