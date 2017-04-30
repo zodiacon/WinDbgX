@@ -34,7 +34,7 @@ namespace WinDbgX.ViewModels {
 			get { return Breakpoint.IsEnabled; }
 			set {
 				Breakpoint.IsEnabled = value;
-				OnPropertyChanged(nameof(IsEnabled));
+				RaisePropertyChanged(nameof(IsEnabled));
 			}
 		}
 
@@ -44,8 +44,8 @@ namespace WinDbgX.ViewModels {
 			get { return Breakpoint.Offset; }
 			set {
 				Breakpoint.SetOffset(value);
-				OnPropertyChanged(nameof(Offset));
-				OnPropertyChanged(nameof(OffsetExpression));
+				RaisePropertyChanged(nameof(Offset));
+				RaisePropertyChanged(nameof(OffsetExpression));
 			}
 		}
 
@@ -53,8 +53,8 @@ namespace WinDbgX.ViewModels {
 			get { return Breakpoint.GetOffsetExpression(); }
 			set {
 				Breakpoint.SetOffsetExpression(value);
-				OnPropertyChanged(nameof(OffsetExpression));
-				OnPropertyChanged(nameof(Offset));
+				RaisePropertyChanged(nameof(OffsetExpression));
+				RaisePropertyChanged(nameof(Offset));
 			}
 		}
 
@@ -64,11 +64,11 @@ namespace WinDbgX.ViewModels {
 		}
 
 		public void Refresh() {
-			OnPropertyChanged(nameof(SelectedThread));
-			OnPropertyChanged(nameof(OneShot));
-			OnPropertyChanged(nameof(IsEnabled));
-			OnPropertyChanged(nameof(Offset));
-			OnPropertyChanged(nameof(OffsetExpression));
+			RaisePropertyChanged(nameof(SelectedThread));
+			RaisePropertyChanged(nameof(OneShot));
+			RaisePropertyChanged(nameof(IsEnabled));
+			RaisePropertyChanged(nameof(Offset));
+			RaisePropertyChanged(nameof(OffsetExpression));
 		}
 
 		private TargetThread _selectedThread;
@@ -88,8 +88,8 @@ namespace WinDbgX.ViewModels {
 			get { return Breakpoint.HitTarget; }
 			set {
 				Breakpoint.HitTarget = value;
-				OnPropertyChanged(nameof(HitTarget));
-				OnPropertyChanged(nameof(HitTarget));
+				RaisePropertyChanged(nameof(HitTarget));
+				RaisePropertyChanged(nameof(HitTarget));
 			}
 		}
 

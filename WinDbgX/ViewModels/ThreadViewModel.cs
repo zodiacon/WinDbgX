@@ -26,7 +26,7 @@ namespace WinDbgX.ViewModels {
 			var symbol = await _debugManager.Debugger.GetSymbolByOffsetAsync(Thread.StartAddress);
 			if (symbol != null) {
 				StartAddressSymbol = symbol;
-				OnPropertyChanged(() => StartAddressSymbol);
+				RaisePropertyChanged(nameof(StartAddressSymbol));
 			}
 		}
 
@@ -54,12 +54,12 @@ namespace WinDbgX.ViewModels {
 		public ThreadPriorityLevel Priority => Thread.GetPriority();
 
 		public void Refresh() {
-			OnPropertyChanged(nameof(Priority));
+			RaisePropertyChanged(nameof(Priority));
 		}
 
 		public void SetPriority(ThreadPriorityLevel priority) {
 			Thread.SetPriority(priority);
-			OnPropertyChanged(nameof(Priority));
+			RaisePropertyChanged(nameof(Priority));
 		}
 	}
 }

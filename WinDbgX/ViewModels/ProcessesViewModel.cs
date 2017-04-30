@@ -104,7 +104,7 @@ namespace WinDbgX.ViewModels {
 			get { return _status; }
 			private set {
 				if (SetProperty(ref _status, value)) {
-					OnPropertyChanged(nameof(IsEnabled));
+					RaisePropertyChanged(nameof(IsEnabled));
 				}
 			}
 		}

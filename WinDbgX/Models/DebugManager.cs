@@ -88,7 +88,7 @@ namespace WinDbgX.Models {
 			UI.InvokeAsync(() => {
 				Status = e.NewStatus;
 				var oldStatus = e.OldStatus;
-				OnPropertyChanged(nameof(Processes));
+				RaisePropertyChanged(nameof(Processes));
 				if (Status == DEBUG_STATUS.NO_DEBUGGEE || oldStatus == DEBUG_STATUS.NO_DEBUGGEE) {
 					var info = Debugger.GetTargetInfo();
 					if (info != null)

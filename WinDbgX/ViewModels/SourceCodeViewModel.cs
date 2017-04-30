@@ -46,8 +46,8 @@ namespace WinDbgX.ViewModels {
         public void OpenFile(string filename) {
             _document = new TextDocument(FileReader.ReadFileContent(filename, Encoding.Unicode));
             _document.FileName = filename;
-            OnPropertyChanged(nameof(Title));
-            OnPropertyChanged(nameof(Icon));
+            RaisePropertyChanged(nameof(Title));
+            RaisePropertyChanged(nameof(Icon));
             var ext = Path.GetExtension(filename);
             SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(ext);
         }

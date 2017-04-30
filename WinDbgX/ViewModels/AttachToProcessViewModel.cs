@@ -66,6 +66,6 @@ namespace WinDbgX.ViewModels {
 			return wow64;
 		}
 
-		public ICommand RefreshCommand => new DelegateCommand(() => OnPropertyChanged(nameof(Processes)));
+		public ICommand RefreshCommand => new DelegateCommand(() => RaisePropertyChanged(nameof(Processes)));
 	}
 }

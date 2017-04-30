@@ -37,7 +37,7 @@ namespace WinDbgX.ViewModels {
 					return null;
 
 				_breakpoints = breakpoints.Select(bp => new BreakpointViewModel(bp, DebugManager)).ToArray();
-				OnPropertyChanged(nameof(AnyBreakpoints));
+				RaisePropertyChanged(nameof(AnyBreakpoints));
 				return _breakpoints;
 			}
 		}
@@ -55,10 +55,10 @@ namespace WinDbgX.ViewModels {
 					if (bp != null)
 						bp.Refresh();
 					else
-						OnPropertyChanged(nameof(Breakpoints));
+						RaisePropertyChanged(nameof(Breakpoints));
 				}
 				else {
-					OnPropertyChanged(nameof(Breakpoints));
+					RaisePropertyChanged(nameof(Breakpoints));
 				}
 			});
 		}
@@ -67,7 +67,7 @@ namespace WinDbgX.ViewModels {
 			var state = e.NewStatus;
 			UIManager.InvokeAsync(() => {
 				if (state == DEBUG_STATUS.BREAK) {
-					OnPropertyChanged(nameof(Breakpoints));
+					RaisePropertyChanged(nameof(Breakpoints));
 				}
 			});
 		}
@@ -86,7 +86,7 @@ namespace WinDbgX.ViewModels {
 
 		public ICommand DeleteAllBreakpointsCommand => new DelegateCommand(() => {
 			DebugManager.Debugger.DeleteAllBreakpoints();
-			OnPropertyChanged(nameof(Breakpoints));
+			RaisePropertyChanged(nameof(Breakpoints));
 		}, () => AnyBreakpoints).ObservesProperty(() => AnyBreakpoints);
 
 		public ICommand NewBreakpointCommand => new DelegateCommand(() => {
