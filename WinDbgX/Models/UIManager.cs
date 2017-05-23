@@ -188,8 +188,10 @@ namespace WinDbgX.Models {
 
 		private void SetRecentMenuItems() {
 			_recentExecutables = AppManager.Settings.RecentExecutables;
-			if (_recentExecutables == null)
-				return;
+            if (_recentExecutables == null) {
+                _recentExecutables = new ObservableCollection<Executable>();
+                return;
+            }
 
 			_recentExecutables.Select(executable => new MenuItemViewModel {
 				Text = $"{executable.Path} {executable.Arguments}",
