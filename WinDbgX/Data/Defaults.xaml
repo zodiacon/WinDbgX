@@ -32,6 +32,7 @@
         <ui:MenuItemViewModel Text="_View">
             <ui:MenuItemViewModel Text="Command" Icon="/icons/console.ico" Command="{ext:Command ViewCommand}" KeyGesture="Alt+1"/>
             <ui:MenuItemViewModel Text="Processes and Threads" Icon="/icons/gears.ico" Command="{ext:Command ViewThreads}"  KeyGesture="Alt+2"/>
+            <ui:MenuItemViewModel Text="_Processes" Icon="/icons/gears.ico" Command="{ext:Command ViewKernelProcesses}" KeyGesture="Alt+2" />
             <ui:MenuItemViewModel Text="Event Log" Icon="/icons/flash.ico" Command="{ext:Command ViewEventLog}"  Key="Alt+3"/>
             <ui:MenuItemViewModel Text="Call Stack" Icon="/icons/callstack.ico" Command="{ext:Command ViewCallStack}"  KeyGesture="Alt+4"/>
             <ui:MenuItemViewModel Text="Output" Icon="/icons/output.ico" KeyGesture="Alt+5"/>

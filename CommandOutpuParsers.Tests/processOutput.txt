@@ -1,0 +1,236 @@
+PROCESS ffffda06adee2640
+    SessionId: 1  Cid: 3790    Peb: 01141000  ParentCid: 3010
+    DirBase: 1eb397000  ObjectTable: 00000000  HandleCount:   0.
+    Image: MSBuild.exe
+
+PROCESS ffffda06a4674640
+    SessionId: 1  Cid: 0a38    Peb: b3f3ecd000  ParentCid: 8f90
+    DirBase: 45e2df000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069f4b1640
+    SessionId: 1  Cid: 638c    Peb: 3f6f509000  ParentCid: 1f84
+    DirBase: 2f2bc0000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06a66d7080
+    SessionId: 1  Cid: 2b54    Peb: 23b344f000  ParentCid: 02c0
+DeepFreeze
+    DirBase: 1a329c000  ObjectTable: ffff868c1c66ed80  HandleCount: 765.
+    Image: HxMail.exe
+
+PROCESS ffffda069a82b640
+    SessionId: 0  Cid: 263c    Peb: c77dbab000  ParentCid: 0060
+    DirBase: 689f1000  ObjectTable: ffff868c0bc2f580  HandleCount: 158.
+    Image: svchost.exe
+
+PROCESS ffffda06abab1640
+    SessionId: 1  Cid: 4bdc    Peb: ebbf189000  ParentCid: 6234
+    DirBase: 130d05000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069f4b2080
+    SessionId: 1  Cid: 1840    Peb: 1003ca000  ParentCid: 32dc
+    DirBase: 7c7618000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069ef2a080
+    SessionId: 1  Cid: 4250    Peb: dc768e9000  ParentCid: 41b4
+    DirBase: 483ea2000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06a020b080
+    SessionId: 1  Cid: 5330    Peb: 12014a7000  ParentCid: 0e04
+    DirBase: 647c34000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06b4071080
+    SessionId: 1  Cid: 6724    Peb: aaa6472000  ParentCid: abf4
+    DirBase: 815859000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069f82e640
+    SessionId: 1  Cid: aae8    Peb: e45088c000  ParentCid: 62b0
+    DirBase: 38004b000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06a8471640
+    SessionId: 1  Cid: 968c    Peb: dafec66000  ParentCid: 34f8
+    DirBase: 4142b1000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda068e977080
+    SessionId: 1  Cid: 64b0    Peb: aabf9ad000  ParentCid: 7eb8
+    DirBase: 354524000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069f597080
+    SessionId: 1  Cid: 7d48    Peb: 5a27196000  ParentCid: 8b24
+    DirBase: 2de4d000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069dbbc0c0
+    SessionId: 1  Cid: 2678    Peb: 180eec0000  ParentCid: 7ea8
+    DirBase: 796dc7000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06b7c03200
+    SessionId: 1  Cid: 8b50    Peb: 007ff000  ParentCid: 3010
+    DirBase: 69c87f000  ObjectTable: ffff868bf39fa9c0  HandleCount: 364.
+    Image: MSBuild.exe
+
+PROCESS ffffda06ade5e640
+    SessionId: 1  Cid: 5e6c    Peb: 9dbca62000  ParentCid: 8b50
+    DirBase: 3a6d0a000  ObjectTable: ffff868c03835500  HandleCount: 102.
+    Image: conhost.exe
+
+PROCESS ffffda069f485080
+    SessionId: 1  Cid: 4e88    Peb: 82d681f000  ParentCid: 8b50
+    DirBase: 5ab484000  ObjectTable: ffff868bf12e4040  HandleCount: 321.
+    Image: VBCSCompiler.exe
+
+PROCESS ffffda069f6a8640
+    SessionId: 1  Cid: 524c    Peb: 6ef32f5000  ParentCid: 4e88
+    DirBase: 21f484000  ObjectTable: ffff868beb464980  HandleCount: 103.
+    Image: conhost.exe
+
+PROCESS ffffda069fee8080
+    SessionId: 1  Cid: 4614    Peb: 90c7b2d000  ParentCid: 5ea8
+    DirBase: 3abbd3000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06a0090080
+    SessionId: 1  Cid: 9684    Peb: 84b5563000  ParentCid: 4314
+    DirBase: 204815000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06a7e5f080
+    SessionId: 1  Cid: 9f6c    Peb: f1b161000  ParentCid: 0af0
+    DirBase: 626230000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06aa085080
+    SessionId: 1  Cid: 4ff4    Peb: 1281f40000  ParentCid: 5a10
+    DirBase: 5864d4000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069d661640
+    SessionId: 0  Cid: a614    Peb: 73777f2000  ParentCid: 0060
+    DirBase: 6c1b57000  ObjectTable: ffff868bfee81040  HandleCount: 101.
+    Image: svchost.exe
+
+PROCESS ffffda069ff66080
+    SessionId: 1  Cid: aba0    Peb: 36c4777000  ParentCid: 75bc
+    DirBase: 668e52000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069f991640
+    SessionId: 1  Cid: 6cb0    Peb: 696d42e000  ParentCid: 4fe0
+    DirBase: 513c9c000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069e973640
+    SessionId: 1  Cid: 5428    Peb: 9018ddc000  ParentCid: 7314
+    DirBase: 66415c000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06b2015080
+    SessionId: 1  Cid: a5a0    Peb: 2a43b13000  ParentCid: 7140
+    DirBase: 6122ea000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069fedd640
+    SessionId: 1  Cid: 8ad4    Peb: 566cb13000  ParentCid: 4b6c
+    DirBase: 2e0419000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069f685640
+    SessionId: 1  Cid: 68a8    Peb: 89fd69000  ParentCid: a970
+    DirBase: 61d7e7000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06a0582080
+    SessionId: 1  Cid: 9464    Peb: 948de75000  ParentCid: 5398
+    DirBase: 799601000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069ff2c640
+    SessionId: 1  Cid: a7e4    Peb: 6b7b7ce000  ParentCid: 474c
+    DirBase: 530d18000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069f379640
+    SessionId: 1  Cid: 75e8    Peb: 3109084000  ParentCid: 7c88
+    DirBase: 2a048b000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06a00b8640
+    SessionId: 1  Cid: 5d10    Peb: 21249f000  ParentCid: 8168
+    DirBase: 83a6d7000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06a6a72640
+    SessionId: 1  Cid: 5874    Peb: 1874436000  ParentCid: 542c
+    DirBase: 55ebb3000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069dca6480
+    SessionId: 1  Cid: 98ac    Peb: ecc83d1000  ParentCid: 7938
+    DirBase: 35574c000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06abb9d640
+    SessionId: 1  Cid: 9a88    Peb: c099d8000  ParentCid: 09d0
+    DirBase: 75fad1000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069127f640
+    SessionId: 1  Cid: 8300    Peb: 28ed7dd000  ParentCid: 6fcc
+    DirBase: 618866000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda068dc31640
+    SessionId: 1  Cid: 8b10    Peb: 95c5027000  ParentCid: a174
+    DirBase: 68e2e6000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda069e3f9080
+    SessionId: 1  Cid: 573c    Peb: a14a918000  ParentCid: 16fc
+    DirBase: 23cd8a000  ObjectTable: 00000000  HandleCount:   0.
+    Image: conhost.exe
+
+PROCESS ffffda06b29b5640
+    SessionId: 1  Cid: 88f0    Peb: 00e20000  ParentCid: 3010
+    DirBase: 7f5a15000  ObjectTable: ffff868c0a41e040  HandleCount: 763.
+    Image: XDesProc.exe
+
+PROCESS ffffda06aa1df080
+    SessionId: 1  Cid: 9354    Peb: 1b8e2d5000  ParentCid: 02c0
+    DirBase: 28c986000  ObjectTable: ffff868bfc66bb00  HandleCount: 193.
+    Image: smartscreen.exe
+
+PROCESS ffffda06a16a8080
+    SessionId: 1  Cid: 9954    Peb: 4bd5b80000  ParentCid: 0730
+    DirBase: 7e6145000  ObjectTable: 00000000  HandleCount:   0.
+    Image: TabTip.exe
+
+PROCESS ffffda06a6f12640
+    SessionId: 1  Cid: 365c    Peb: 5c5305d000  ParentCid: 15b8
+    DirBase: 0e847000  ObjectTable: ffff868c1e3be980  HandleCount: 304.
+    Image: windbg.exe
+
+PROCESS ffffda069f416640
+    SessionId: 0  Cid: 8c20    Peb: 1ff4a33000  ParentCid: 0690
+    DirBase: 7601f0000  ObjectTable: ffff868bfed74b80  HandleCount: 349.
+    Image: SearchProtocolHost.exe
+
+PROCESS ffffda06b76a0640
+    SessionId: 0  Cid: 70bc    Peb: 913f3d1000  ParentCid: 0690
+    DirBase: 491ff1000  ObjectTable: ffff868c14de7400  HandleCount: 128.
+    Image: SearchFilterHost.exe
+
+PROCESS ffffda069d60e640
+    SessionId: 0  Cid: 938c    Peb: 24ee518000  ParentCid: 0060
+    DirBase: 75eddb000  ObjectTable: ffff868befeb0040  HandleCount: 170.
+    Image: svchost.exe
+

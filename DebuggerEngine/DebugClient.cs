@@ -179,10 +179,27 @@ namespace DebuggerEngine {
 		//	});
 		//}
 
-		public Task<bool> Execute(string command) => RunAsync(() => {
-			Control.ExecuteWide(DEBUG_OUTCTL.ALL_CLIENTS, command, DEBUG_EXECUTE.DEFAULT);
+		public Task<bool> Execute(string command, DEBUG_OUTCTL output = DEBUG_OUTCTL.ALL_CLIENTS) => RunAsync(() => {
+			Control.ExecuteWide(output, command, DEBUG_EXECUTE.DEFAULT);
 			return DoPostCommand();
 		});
+
+		const string OutputTextEventName = "OutputTextEvent";
+
+		public Task<string> ExecuteAndReturnOutputAsync(string command) {
+			ConsumeOutput = true;
+			var tcs = new TaskCompletionSource<string>();
+			RunAsync(() => {
+				using (var ev = new EventWaitHandle(false, EventResetMode.AutoReset, OutputTextEventName)) {
+					Control.ExecuteWide(DEBUG_OUTCTL.THIS_CLIENT, command, DEBUG_EXECUTE.NOT_LOGGED);
+					Control.Execute(DEBUG_OUTCTL.THIS_CLIENT, "!zzz", DEBUG_EXECUTE.NOT_LOGGED);
+					ev.WaitOne();
+					tcs.SetResult(OutputText.ToString());
+					OutputText.Clear();
+				}
+			});
+			return tcs.Task;
+		}
 
 		public Breakpoint CreateBreakpoint(DEBUG_BREAKPOINT_TYPE type, uint id = uint.MaxValue) => RunAsync(() => {
 			IDebugBreakpoint bp;

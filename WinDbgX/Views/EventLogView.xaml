@@ -22,7 +22,7 @@
             <TextBlock Text="Search:" VerticalAlignment="Center" />
             <TextBox Margin="4,0,0,0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=400}" Width="400" metro:TextBoxHelper.Watermark="Search Events" metro:TextBoxHelper.ClearTextButton="True" />
         </StackPanel>
-        <DataGrid Grid.Row="2" ItemsSource="{Binding Log}" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Log}" IsReadOnly="True" AutoGenerateColumns="False" metro:ButtonHelper.PreserveTextCase="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Time" Binding="{Binding Time}" />
                 <DataGridTextColumn Header="Event Type" Binding="{Binding Type}" />

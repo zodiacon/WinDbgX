@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:WinDbgX"
+             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:WinDbgX.UICore;assembly=WinDbgX.UICore"
@@ -55,7 +56,7 @@
                 <HierarchicalDataTemplate x:Key="menuItemTemplate" ItemsSource="{Binding Items}">
                     <MenuItem ItemContainerTemplateSelector="{StaticResource menuItemTemplateSelector}" UsesItemContainerTemplate="True"
                           Header="{Binding Text}" Command="{Binding Command}" CommandParameter="{Binding CommandParameter}"
-                          ToolTip="{Binding Description}" IsChecked="{Binding IsChecked}"                  
+                          ToolTip="{Binding Description}" IsChecked="{Binding IsChecked}" metro:VisibilityHelper.IsVisible="{Binding IsVisible}"                 
                           InputGestureText="{Binding GestureText}" ItemsSource="{Binding Items}" x:Name="item" Tag="{Binding ElementName=This}"
                           Icon="{Binding Icon, Converter={StaticResource iconConverter}}">
                     </MenuItem>

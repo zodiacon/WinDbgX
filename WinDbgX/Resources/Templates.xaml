@@ -41,8 +41,11 @@
 	<DataTemplate DataType="{x:Type vm:SourceCodeViewModel}">
 		<view:SourceFileView />
 	</DataTemplate>
-	
-	<DataTemplate DataType="{x:Type ui:ToolBarButtonViewModel}">
+    <DataTemplate DataType="{x:Type vm:KernelProcessesViewModel}">
+        <view:KernelProcessesView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ui:ToolBarButtonViewModel}">
 		<Button Command="{Binding Command}" CommandParameter="{Binding CommandParameter, TargetNullValue={x:Static models:AppManager.Instance}}" Margin="{Binding Margin}" 
 				ToolTipService.ShowOnDisabled="True" FontSize="{Binding Settings.Fonts.ToolbarFontSize, FallbackValue=12}" FontWeight="SemiBold"
 						ToolTip="{Binding ToolTip}">
@@ -58,3 +61,4 @@
 		</DataTemplate.Triggers>
 	</DataTemplate>
 </ResourceDictionary>
+    

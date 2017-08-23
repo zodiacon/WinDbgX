@@ -32,6 +32,7 @@ namespace WinDbgX.Commands {
 		public DelegateCommandBase ViewEventLog { get; }
 		public DelegateCommandBase ViewBreakpoints { get; } 
 		public DelegateCommandBase ViewCallStack { get; } 
+		public DelegateCommandBase ViewKernelProcesses { get; }
 
 		void ViewTab<T>() where T : TabItemViewModelBase {
 			MainViewModel vm;
@@ -53,8 +54,8 @@ namespace WinDbgX.Commands {
 			ViewCallStack = new DelegateCommand(() => ViewTab<CallStackViewModel>());
 			ViewEventLog = new DelegateCommand(() => ViewTab<EventLogViewModel>());
 			ViewBreakpoints = new DelegateCommand(() => ViewTab<BreakpointsViewModel>(), () => !DebugManager.IsDumpFile);
-			ViewThreads = new DelegateCommand(() => ViewTab<ProcessesViewModel>());
-
+			ViewThreads = new DelegateCommand(() => ViewTab<ProcessesViewModel>(), () => DebugManager.IsUserMode);
+			ViewKernelProcesses = new DelegateCommand(() => ViewTab<KernelProcessesViewModel>(), () => DebugManager.IsKernelMode);
 		}
 
 		public IDictionary<string, ICommand> GetCommands() {
@@ -66,6 +67,7 @@ namespace WinDbgX.Commands {
 				{ nameof(ViewEventLog), ViewEventLog },
 				{ nameof(ViewBreakpoints), ViewBreakpoints},
 				{ nameof(ViewCallStack), ViewCallStack},
+				{ nameof(ViewKernelProcesses), ViewKernelProcesses },
 			};
 		}
 	}

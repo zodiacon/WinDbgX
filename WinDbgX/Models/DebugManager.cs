@@ -91,8 +91,12 @@ namespace WinDbgX.Models {
 				RaisePropertyChanged(nameof(Processes));
 				if (Status == DEBUG_STATUS.NO_DEBUGGEE || oldStatus == DEBUG_STATUS.NO_DEBUGGEE) {
 					var info = Debugger.GetTargetInfo();
-					if (info != null)
+					if (info != null) {
 						IsDumpFile = !info.Live;
+						IsUserMode = info.UserMode;
+						IsKernelMode = !IsUserMode;
+						IsLocalKernel = info.LocalKernel;
+					}
 				}
 			});
 		}
@@ -109,5 +113,23 @@ namespace WinDbgX.Models {
 		}
 
 		public bool IsDumpFile { get; internal set; }
+
+		bool _isUserMode;
+		public bool IsUserMode {
+			get => _isUserMode;
+			set => SetProperty(ref _isUserMode, value);
+		}
+
+		bool _isLocalKernel;
+		public bool IsLocalKernel {
+			get => _isLocalKernel;
+			set => SetProperty(ref _isLocalKernel, value);
+		}
+
+		bool _isKernelMode;
+		public bool IsKernelMode {
+			get => _isKernelMode;
+			set => SetProperty(ref _isKernelMode, value);
+		}
 	}
 }
