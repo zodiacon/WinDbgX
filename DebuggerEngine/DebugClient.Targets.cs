@@ -131,7 +131,7 @@ namespace DebuggerEngine {
 				ulong ntdllModulebase;
 				if (SUCCEEDED(GetSymbolTypeIdWide("ntdll!_teb", out tebTypeId, out ntdllModulebase))) {
 					ulong pid;
-					GetFieldValue(ntdllModulebase, tebTypeId, "ClientId.UniqueProcess", thread.Teb, out pid);
+					GetFieldValueInternal(ntdllModulebase, tebTypeId, "ClientId.UniqueProcess", thread.Teb, out pid);
 				}
 				return thread;
 			});

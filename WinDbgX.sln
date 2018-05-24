@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebuggerEngine", "DebuggerE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinDbgX.UICore", "WinDbgX.UICore\WinDbgX.UICore.csproj", "{2757EE5A-4C8F-4F50-8B5D-F48A86FB289F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinDbgX.KernelParser", "WinDbgX.KernelParser\WinDbgX.KernelParser.csproj", "{69ED99C1-F44A-4280-B04E-592A20434063}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{2757EE5A-4C8F-4F50-8B5D-F48A86FB289F}.Release|x64.Build.0 = Release|x64
 		{2757EE5A-4C8F-4F50-8B5D-F48A86FB289F}.Release|x86.ActiveCfg = Release|x86
 		{2757EE5A-4C8F-4F50-8B5D-F48A86FB289F}.Release|x86.Build.0 = Release|x86
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Debug|x64.Build.0 = Debug|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Debug|x86.Build.0 = Debug|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Release|x64.ActiveCfg = Release|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Release|x64.Build.0 = Release|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Release|x86.ActiveCfg = Release|Any CPU
+		{69ED99C1-F44A-4280-B04E-592A20434063}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

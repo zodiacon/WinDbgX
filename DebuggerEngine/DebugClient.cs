@@ -152,7 +152,7 @@ namespace DebuggerEngine {
 			var sb = new StringBuilder(256);
 			uint matchSize;
 			ulong offset;
-			for (;;) {
+			for (; ; ) {
 				int hr = Symbols.GetNextSymbolMatchWide(handle, sb, 255, out matchSize, out offset);
 				if (hr < 0)
 					break;
@@ -365,7 +365,11 @@ namespace DebuggerEngine {
 			return hr;
 		}
 
-		public ulong ReadPointer(ulong offset) {
+		public Task<ulong> ReadPointer(ulong offset) {
+			return RunAsync(() => ReadPointerInternal(offset));
+		}
+
+		ulong ReadPointerInternal(ulong offset) {
 			var pointerArray = new ulong[1];
 			DataSpaces.ReadPointersVirtual(1, offset, pointerArray).ThrowIfFailed();
 
@@ -381,7 +385,17 @@ namespace DebuggerEngine {
 			return hr;
 		}
 
-		public unsafe int GetSymbolTypeIdWide(string symbolName, out uint typeId, out ulong moduleBase) {
+		public Task<(uint, ulong)> GetSymbolTypeId(string symbolName) {
+			return RunAsync(() => {
+				uint typeId;
+				ulong moduleBase;
+				if (0 == GetSymbolTypeIdWide(symbolName, out typeId, out moduleBase))
+					return (typeId, moduleBase);
+				return (0U, 0UL);
+			});
+		}
+
+		unsafe int GetSymbolTypeIdWide(string symbolName, out uint typeId, out ulong moduleBase) {
 			symbolName = symbolName.TrimEnd();
 			while (symbolName.EndsWith("*")) {
 				symbolName = symbolName.Substring(0, symbolName.Length - 1).TrimEnd();
@@ -421,7 +435,7 @@ namespace DebuggerEngine {
 				part1 = symbolparts[0];
 				part2 = symbolparts[1];
 			}
-			return GetFieldOffset(part1, part2, fieldName, out offset);
+			return GetFieldOffsetInternal(part1, part2, fieldName, out offset);
 		}
 
 		public unsafe int GetFieldOffset(ulong moduleBase, uint typeId, string fieldName, out uint offset) {
@@ -436,7 +450,11 @@ namespace DebuggerEngine {
 			return hr;
 		}
 
-		public uint GetFieldOffset(string symbolName, string fieldName) {
+		public Task<uint> GetFieldOffset(string symbolName, string fieldName) {
+			return RunAsync(() => GetFieldOffsetInternal(symbolName, fieldName));
+		}
+
+		private uint GetFieldOffsetInternal(string symbolName, string fieldName) {
 			string part1 = "";
 			string part2 = symbolName;
 			UInt32 offset;
@@ -446,12 +464,12 @@ namespace DebuggerEngine {
 				part1 = symbolparts[0];
 				part2 = symbolparts[1];
 			}
-			GetFieldOffset(part1, part2, fieldName, out offset).ThrowIfFailed();
+			GetFieldOffsetInternal(part1, part2, fieldName, out offset).ThrowIfFailed();
 
 			return offset;
 		}
 
-		public unsafe int GetFieldOffset(string moduleName, string typeName, string fieldName, out uint offset) {
+		public unsafe int GetFieldOffsetInternal(string moduleName, string typeName, string fieldName, out uint offset) {
 			moduleName = FixModuleName(moduleName);
 
 			ulong moduleBase;
@@ -488,7 +506,16 @@ namespace DebuggerEngine {
 			return hr;
 		}
 
-		unsafe public int GetFieldValue(ulong moduleBase, uint typeId, string fieldName, ulong structureAddress, out ulong fieldValue) {
+		public Task<ulong?> GetFieldValue(ulong moduleBase, uint typeId, string fieldName, ulong structureAddress) {
+			return RunAsync<ulong?>(() => {
+				ulong fieldValue;
+				if(GetFieldValueInternal(moduleBase, typeId, fieldName, structureAddress, out fieldValue) == 0)
+					return fieldValue;
+				return null;
+			});
+		}
+
+		unsafe int GetFieldValueInternal(ulong moduleBase, uint typeId, string fieldName, ulong structureAddress, out ulong fieldValue) {
 			int hr;
 			fieldValue = 0;
 
@@ -508,16 +535,16 @@ namespace DebuggerEngine {
 			IntPtr buffer = IntPtr.Zero;
 			IntPtr memPtr = IntPtr.Zero;
 			try {
-				_EXT_TYPED_DATA temporaryTypedDataForBufferConstruction;
+				_EXT_TYPED_DATA temp;
 
 				memPtr = Marshal.StringToHGlobalAnsi(fieldName);
 				int totalSize = sizeof(_EXT_TYPED_DATA) + fieldName.Length + 1; //+1 to account for the null terminator
 				buffer = Marshal.AllocHGlobal(totalSize);
 
-				temporaryTypedDataForBufferConstruction.Operation = _EXT_TDOP.EXT_TDOP_GET_FIELD;
-				temporaryTypedDataForBufferConstruction.InData = symbolTypedData.OutData;
-				temporaryTypedDataForBufferConstruction.InStrIndex = (uint)sizeof(_EXT_TYPED_DATA);
-				Utilities.CopyMemory(buffer, (IntPtr)(&temporaryTypedDataForBufferConstruction), sizeof(_EXT_TYPED_DATA));
+				temp.Operation = _EXT_TDOP.EXT_TDOP_GET_FIELD;
+				temp.InData = symbolTypedData.OutData;
+				temp.InStrIndex = (uint)sizeof(_EXT_TYPED_DATA);
+				Utilities.CopyMemory(buffer, (IntPtr)(&temp), sizeof(_EXT_TYPED_DATA));
 				Utilities.CopyMemory(buffer + sizeof(_EXT_TYPED_DATA), memPtr, fieldName.Length + 1);
 				if (FAILED(hr = Advanced.Request(DEBUG_REQUEST.EXT_TYPED_DATA_ANSI, (void*)buffer, totalSize, (void*)buffer, totalSize, null))) {
 					return hr;
@@ -577,7 +604,7 @@ namespace DebuggerEngine {
 			bool slow = false;
 			uint offset = 0;
 
-			int hr = GetFieldOffset(moduleName, typeName, fieldName, out offset);
+			int hr = GetFieldOffsetInternal(moduleName, typeName, fieldName, out offset);
 
 			if (hr < 0) {
 				return 0;

@@ -20,6 +20,8 @@
                 <DataGridTextColumn Header="Parent PID" Binding="{Binding ParentProcessId}" />
                 <DataGridTextColumn Header="Session" Binding="{Binding SessionId}" />
                 <DataGridHyperlinkColumn Header="PEB" Binding="{Binding PEB, StringFormat=X}" />
+                <DataGridTextColumn Header="Flags" Binding="{Binding Flags}" />
+                <DataGridTextColumn Header="Flags2" Binding="{Binding Flags2}" />
             </DataGrid.Columns>
         </DataGrid> 
     </Grid>
